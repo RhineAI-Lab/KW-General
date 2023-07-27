@@ -86,21 +86,41 @@ function Login() {
     check()
   }
 
+  const dpStyle = {
+    width:  isLogin ? '0' : '32px',
+    height: isLogin ? '0' : '32px',
+  }
+  const ddStyle = {
+    width:  isLogin ? '0' : '25px',
+    height: isLogin ? '0' : '25px',
+  }
+
   return (
     <div className={Style.Login}>
-      <div className={Style.decorateCorner}></div>
-      <div className={Style.decorateCorner}></div>
+      <div className={Style.decorateCorner} style={{backgroundColor: isLogin ? '#f4f4f4' : '#000'}}></div>
+      <div className={Style.decorateCorner} style={{backgroundColor: isLogin ? '#f4f4f4' : '#000'}}></div>
+      <div className={Style.space2}/>
       <div className={Style.box} style={{height: isLogin ? '550px' : '650px'}}>
         <div className={Style.decorates}>
-          <p></p>
-          <p></p>
-          <p></p>
-          <p></p>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+          <p style={dpStyle}></p>
+          <p style={dpStyle}></p>
+          <p style={dpStyle}></p>
+          <p style={dpStyle}></p>
+          <div style={ddStyle}></div>
+          <div style={ddStyle}></div>
+          <div style={ddStyle}></div>
+          <div style={ddStyle}></div>
         </div>
+        <div style={{width: isLogin ? '100%' : '0'}} className={Style.topLine}></div>
+        <div style={{width: isLogin ? '100%' : '0'}} className={Style.bottomLine}></div>
+        <div className={Style.decorateBackground} style={{
+          width: isLogin ? '84px' : '0',
+          height: isLogin ? '94px' : '0'
+        }}></div>
+        <div className={Style.decorate} style={{
+          width: isLogin ? '60px' : '0',
+          height: isLogin ? '70px' : '0'
+        }}></div>
         <span className={Style.title}>
           <h2>KW FRONTEND</h2>
           <h4>From Fudan University</h4>
@@ -149,6 +169,7 @@ function Login() {
           <Button size="large" variant="contained" color="black" sx={{width: "100%"}}>{isLogin ? 'LOGIN' : 'REGISTER'}</Button>
         </div>
       </div>
+      <div className={Style.space3}/>
     </div>
   )
 }
