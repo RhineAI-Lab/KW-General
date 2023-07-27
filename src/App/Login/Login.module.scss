@@ -5,12 +5,48 @@
   justify-content: center;
   align-items: center;
   background: #fff;
+  position: relative;
+  overflow: hidden;
+
+  .decorateCorner {
+    position: absolute;
+    width: 200px;
+    height: 50px;
+    margin: 75px 0;
+    background: #000;
+    transform: rotateZ(-45deg);
+  }
+
+  .decorateCorner:nth-child(1) {
+    top:  -50px;
+    left: -50px;
+  }
+
+  .decorateCorner:nth-child(2) {
+    right:  -50px;
+    bottom: -50px;
+  }
+
+  .decorateCorner:nth-child(3) {
+    bottom:  -50px;
+    left: -50px;
+    transform: rotateZ(45deg);
+  }
+
+  .decorateCorner:nth-child(4) {
+    right:  -50px;
+    top: -50px;
+    transform: rotateZ(45deg);
+  }
 
   .box {
     width: 500px;
     height: 550px;
-    border: 1px solid #000;
-    margin-bottom: 200px;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    //border-bottom: 1px solid #000;
+    //border-top: 1px solid #000;
+    margin-bottom: 20px;
     padding: 60px;
     display: flex;
     flex-direction: column;
@@ -20,7 +56,7 @@
     .title {
       display: inline-block;
       width: 548px;
-      border-right: 26px solid #9dee40;
+      border-right: 24px solid #9dee40;
 
       h2 {
         display: inline-block;
@@ -62,11 +98,12 @@
           padding: 6px;
           border-radius: 6px;
           transition: all 0.2s ease-in-out;
+          z-index: 1;
         }
 
         span:hover {
           color: #1c1f26;
-          background: #eceef3;
+          background: #f0f0f8;
         }
 
         span:active {
@@ -91,6 +128,68 @@
       height: 60px;
       border-left: black 12px solid;
       border-top: black 12px solid;
+    }
+
+    .decorates {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+
+      div {
+        position: absolute;
+        width:  24px;
+        height: 24px;
+        background: #000;
+      }
+
+      div:nth-child(5) {
+        top:  -12px;
+        left: -12px;
+      }
+
+      div:nth-child(6) {
+        bottom: -12px;
+        right:  -12px;
+      }
+
+      div:nth-child(7) {
+        top:   -12px;
+        right: -12px;
+      }
+
+      div:nth-child(8) {
+        bottom: -12px;
+        left:   -12px;
+      }
+
+      p {
+        position: absolute;
+        width:  40px;
+        height: 40px;
+        background: #fff;
+      }
+
+      p:nth-child(1) {
+        top: -10px;
+        left: -10px;
+      }
+
+      p:nth-child(2) {
+        bottom: -10px;
+        right: -10px;
+      }
+
+      p:nth-child(3) {
+        top: -10px;
+        right: -10px;
+      }
+
+      p:nth-child(4) {
+        bottom: -10px;
+        left: -10px;
+      }
     }
 
   }
