@@ -1,5 +1,5 @@
 {
-  "name": "react-template",
+  "name": "kw-frontend",
   "version": "0.1.0",
   "private": true,
   "main": "electron/main.js",
@@ -27,6 +27,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@material/web": "^1.0.0-pre.12",
+    "@mui/icons-material": "^5.14.1",
     "@mui/material": "^5.13.7",
     "@mui/styled-engine-sc": "^5.12.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
