@@ -2,8 +2,12 @@
 .MuiTextField-root {
 
     .MuiInputBase-root {
-        background-color: rgba(0, 0, 10, 0.04);
+        background-color: rgba(0, 0, 8, 0.028);
         border-top-left-radius: 0;
         border-top-right-radius: 0;
+    }
+
+    .MuiInputBase-root:before {
+        border-bottom: #222 1px solid;
     }
 }
