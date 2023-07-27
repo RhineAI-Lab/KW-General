@@ -1,7 +1,7 @@
 import React from 'react'
 import Style from './Login.module.scss'
 
-import {InputAdornment, TextField} from "@mui/material";
+import {Button, InputAdornment, TextField} from "@mui/material";
 import {LocalPhoneRounded, VpnKeyRounded} from "@mui/icons-material";
 function Login() {
   return (
@@ -26,8 +26,17 @@ function Login() {
               </InputAdornment>,
             }} sx={{width: "100%"}}/>
           </div>
+          <div className={Style.line}>
+            <span>注册</span>
+            <div></div>
+            <span>忘记密码?</span>
+          </div>
         </div>
-
+        <div className={Style.space}></div>
+        <div className={Style.btn}>
+          <Button size="large" variant="contained" color="black" sx={{width: "100%"}}>LOGIN</Button>
+        </div>
+        <div className={Style.decorate}></div>
       </div>
     </div>
   )

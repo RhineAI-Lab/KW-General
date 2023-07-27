@@ -4,13 +4,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background: #fff;
 
   .box {
     width: 500px;
-    height: 600px;
+    height: 550px;
     border: 1px solid #000;
     margin-bottom: 200px;
     padding: 60px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    position: relative;
 
     .title {
       display: inline-block;
@@ -34,14 +39,59 @@
 
     .inputs {
       display: block;
-      margin: 40px 0;
+      margin: 60px 0;
 
       .input {
-        margin: 20px 0;
+        margin: 24px 0;
         width: 100%;
+      }
+
+      .line {
+        margin-top: -6px;
+        display: flex;
+        font-family: "Microsoft YaHei UI Light", sans-serif;
+        user-select: none;
+
+        div {
+          flex-grow: 1;
+        }
+
+        span {
+          color: #373b42;
+          cursor: pointer;
+          padding: 6px;
+          border-radius: 6px;
+          transition: all 0.2s ease-in-out;
+        }
+
+        span:hover {
+          color: #1c1f26;
+          background: #eceef3;
+        }
+
+        span:active {
+          color: #0c0e13;
+          background: #dddfe3;
+        }
       }
     }
 
+    .space {
+      flex-grow: 1;
+    }
+
+    .btn {
+    }
+
+    .decorate {
+      position: absolute;
+      top: -6px;
+      left: -6px;
+      width: 60px;
+      height: 60px;
+      border-left: black 12px solid;
+      border-top: black 12px solid;
+    }
 
   }
 }

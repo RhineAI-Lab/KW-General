@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles';
+import {getContrastRatio} from "@mui/material";
 
 export const theme = createTheme({
   status: {
@@ -8,6 +9,11 @@ export const theme = createTheme({
     primary: {
       main: '#f5692c',
       darker: '#f5692c',
+    },
+    black: {
+      main: '#000000',
+      darker: '#000000',
+      contrastText: '#ffffff',
     },
     neutral: {
       main: '#64748B',
@@ -27,10 +33,12 @@ declare module '@mui/material/styles' {
   
   interface Palette {
     neutral: Palette['primary'];
+    black: Palette['primary'];
   }
   
   interface PaletteOptions {
     neutral: PaletteOptions['primary'];
+    black: PaletteOptions['primary'];
   }
   
   interface PaletteColor {
@@ -45,5 +53,11 @@ declare module '@mui/material/styles' {
     status: {
       danger: React.CSSProperties['color'];
     };
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    black: true;
   }
 }
