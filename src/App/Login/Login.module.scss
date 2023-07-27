@@ -1,0 +1,47 @@
+.Login {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .box {
+    width: 500px;
+    height: 600px;
+    border: 1px solid #000;
+    margin-bottom: 200px;
+    padding: 60px;
+
+    .title {
+      display: inline-block;
+      width: 548px;
+      border-right: 26px solid #9dee40;
+
+      h2 {
+        display: inline-block;
+        font-size: 55px;
+        font-weight: 700;
+      }
+
+      h4 {
+        display: inline-block;
+        font-size: 42px;
+        font-weight: 300;
+        margin-top: -10px;
+        transform: scaleY(0.8);
+      }
+    }
+
+    .inputs {
+      display: block;
+      margin: 40px 0;
+
+      .input {
+        margin: 20px 0;
+        width: 100%;
+      }
+    }
+
+
+  }
+}

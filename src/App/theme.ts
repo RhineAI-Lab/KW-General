@@ -6,8 +6,8 @@ export const theme = createTheme({
   },
   palette: {
     primary: {
-      main: '#6d33c2',
-      darker: '#6d33c2',
+      main: '#f5692c',
+      darker: '#f5692c',
     },
     neutral: {
       main: '#64748B',
@@ -15,6 +15,8 @@ export const theme = createTheme({
     },
   },
 });
+
+// #A5FF3D 点缀
 
 declare module '@mui/material/styles' {
   interface Theme {
