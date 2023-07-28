@@ -22,7 +22,7 @@
   .decorateCorner {
     position: absolute;
     width: 200px;
-    height: 50px;
+    height: 46px;
     margin: 75px 0;
     transform: rotateZ(-45deg);
     transition: background-color 0.2s ease-in-out;
@@ -236,6 +236,31 @@
       div:nth-child(8) {
         bottom: -13px;
         left:   -13px;
+      }
+
+      .none {
+        width: 0;
+        height: 0;
+      }
+
+      .none:nth-child(5) {
+        top: 0;
+        left: 0;
+      }
+
+      .none:nth-child(6) {
+        bottom: 0;
+        right:  0;
+      }
+
+      .none:nth-child(7) {
+        top:   0;
+        right: 0;
+      }
+
+      .none:nth-child(8) {
+        bottom: 0;
+        left:   0;
       }
 
       p {

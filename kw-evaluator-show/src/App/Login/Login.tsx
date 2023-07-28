@@ -90,10 +90,6 @@ function Login() {
     width:  isLogin ? '0' : '32px',
     height: isLogin ? '0' : '32px',
   }
-  const ddStyle = {
-    width:  isLogin ? '0' : '25px',
-    height: isLogin ? '0' : '25px',
-  }
 
   return (
     <div className={Style.Login}>
@@ -106,10 +102,10 @@ function Login() {
           <p style={dpStyle}></p>
           <p style={dpStyle}></p>
           <p style={dpStyle}></p>
-          <div style={ddStyle}></div>
-          <div style={ddStyle}></div>
-          <div style={ddStyle}></div>
-          <div style={ddStyle}></div>
+          <div className={isLogin ? Style.none : ""}></div>
+          <div className={isLogin ? Style.none : ""}></div>
+          <div className={isLogin ? Style.none : ""}></div>
+          <div className={isLogin ? Style.none : ""}></div>
         </div>
         <div style={{width: isLogin ? '100%' : '0'}} className={Style.topLine}></div>
         <div style={{width: isLogin ? '100%' : '0'}} className={Style.bottomLine}></div>

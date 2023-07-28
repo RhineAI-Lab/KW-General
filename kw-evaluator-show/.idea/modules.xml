@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../kw-evaluator-show.iml" filepath="$PROJECT_DIR$/../kw-evaluator-show.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/kw-evaluator-show.iml" filepath="$PROJECT_DIR$/.idea/kw-evaluator-show.iml" />
     </modules>
   </component>
 </project>
