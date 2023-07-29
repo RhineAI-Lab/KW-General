@@ -93,8 +93,8 @@ function Login() {
 
   return (
     <div className={Style.Login}>
-      <div className={Style.decorateCorner} style={{backgroundColor: isLogin ? '#f4f4f4' : '#000'}}></div>
-      <div className={Style.decorateCorner} style={{backgroundColor: isLogin ? '#f4f4f4' : '#000'}}></div>
+      <div className={Style.decorateCorner} style={{backgroundColor: isLogin ? '#f8f8f8' : '#f0f0f0'}}></div>
+      <div className={Style.decorateCorner} style={{backgroundColor: isLogin ? '#f8f8f8' : '#f0f0f0'}}></div>
       <div className={Style.space2}/>
       <div className={Style.box} style={{height: isLogin ? '550px' : '650px'}}>
         <div className={Style.decorates}>
@@ -111,11 +111,11 @@ function Login() {
         <div style={{width: isLogin ? '100%' : '0'}} className={Style.bottomLine}></div>
         <div className={Style.decorateBackground} style={{
           width: isLogin ? '84px' : '0',
-          height: isLogin ? '94px' : '0'
+          height: isLogin ? '104px' : '0'
         }}></div>
         <div className={Style.decorate} style={{
           width: isLogin ? '60px' : '0',
-          height: isLogin ? '70px' : '0'
+          height: isLogin ? '80px' : '0'
         }}></div>
         <span className={Style.title}>
           <h2>KW FRONTEND</h2>
