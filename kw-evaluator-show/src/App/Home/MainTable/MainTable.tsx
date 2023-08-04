@@ -1,129 +1,123 @@
 import { Chart } from '@antv/g2'
-import React, { useEffect, useRef } from 'react'
+import React, {DetailedHTMLProps, HTMLAttributes, useEffect, useRef} from 'react'
 import Style from './MainTable.module.scss'
 import {Column} from "@ant-design/plots";
-import {ColumnConfig} from "@ant-design/charts";
+import {ColumnConfig, Radar} from "@ant-design/charts";
+import {data} from "../Data";
+import { each, groupBy } from '@antv/util';
 
-export default function MainTable() {
-  const container = useRef(null)
-  const chart = useRef(null)
+export default function MainTable(props: MainTableProps) {
 
-  function updateBarChart(chart: any) {
-
+  const wholeData: any = []
+  let radarData: any[] = []
+  const types = ['价值认知', '高级认知', '基础认知']
+  for (const ti in types) {
+    let type = types[ti]
+    let datum = data[1][types.length - parseInt(ti) - 1]
+    let headers = []
+    for (const header of datum['header_list']) {
+      const v = parseInt(header['value'])
+      if (v >= 0 && v <= 2) {
+        headers.push(type + ' - ' + header['text'])
+        // headers.push(header['text'])
+      }
+    }
+    for (const line of datum['score_list']) {
+      wholeData.push({
+        type: type,
+        model: line['name'],
+        score: line[3]
+      })
+      for (const hi in headers) {
+        radarData.push({
+          type: headers[hi],
+          model: line['name'],
+          score: line[hi],
+        })
+      }
+    }
   }
+  radarData = radarData.slice(16).concat(radarData.slice(0, 16))
+  console.log(radarData)
 
-  const data = [
-    {
-      name: 'London',
-      月份: 'Jan.',
-      月均降雨量: 18.9,
-    },
-    {
-      name: 'London',
-      月份: 'Feb.',
-      月均降雨量: 28.8,
-    },
-    {
-      name: 'London',
-      月份: 'Mar.',
-      月均降雨量: 39.3,
-    },
-    {
-      name: 'London',
-      月份: 'Apr.',
-      月均降雨量: 81.4,
-    },
-    {
-      name: 'London',
-      月份: 'May',
-      月均降雨量: 47,
-    },
-    {
-      name: 'London',
-      月份: 'Jun.',
-      月均降雨量: 20.3,
-    },
-    {
-      name: 'London',
-      月份: 'Jul.',
-      月均降雨量: 24,
-    },
-    {
-      name: 'London',
-      月份: 'Aug.',
-      月均降雨量: 35.6,
-    },
-    {
-      name: 'Berlin',
-      月份: 'Jan.',
-      月均降雨量: 12.4,
-    },
-    {
-      name: 'Berlin',
-      月份: 'Feb.',
-      月均降雨量: 23.2,
-    },
-    {
-      name: 'Berlin',
-      月份: 'Mar.',
-      月均降雨量: 34.5,
-    },
-    {
-      name: 'Berlin',
-      月份: 'Apr.',
-      月均降雨量: 99.7,
-    },
-    {
-      name: 'Berlin',
-      月份: 'May',
-      月均降雨量: 52.6,
-    },
-    {
-      name: 'Berlin',
-      月份: 'Jun.',
-      月均降雨量: 35.5,
-    },
-    {
-      name: 'Berlin',
-      月份: 'Jul.',
-      月均降雨量: 37.4,
-    },
-    {
-      name: 'Berlin',
-      月份: 'Aug.',
-      月均降雨量: 42.4,
-    },
-  ];
+  const annotations: any[] = [];
+  each(groupBy(data, 'year'), (values, k) => {
+    const value = values.reduce((a: any, b: any) => a + b.value, 0);
+    annotations.push({
+      type: 'model',
+      position: [k, value],
+      content: `${value}`,
+      style: {
+        textAlign: 'center',
+        fontSize: 14,
+        fill: 'rgba(0,0,0,0.85)',
+      },
+      offsetY: -10,
+    });
+  });
   const config: ColumnConfig = {
-    data: data,
-    isGroup: true,
-    xField: '月份',
-    yField: '月均降雨量',
-    seriesField: 'name',
+    data: wholeData,
 
-    /** 设置颜色 */
-    //color: ['#1ca9e6', '#f88c24'],
+    xField: 'model',
+    yField: 'score',
+    seriesField: 'type',
+    autoFit: true,
+    appendPadding: 0,
+    isStack: true,
+    maxColumnWidth: 120,
 
-    /** 设置间距 */
-    // marginRatio: 0.1,
     label: {
-      // 可手动配置 label 数据标签位置
       position: 'middle',
-      // 'top', 'middle', 'bottom'
-      // 可配置附加的布局方法
       layout: [
-        // 柱形图数据标签位置自动调整
         {
           type: 'interval-adjust-position',
-        }, // 数据标签防遮挡
+        },
         {
           type: 'interval-hide-overlap',
-        }, // 数据标签文颜色自动调整
+        },
         {
           type: 'adjust-color',
         },
       ],
     },
+    legend: {
+      position: 'right-top',
+      padding: [30, 0, 0, -80],
+    },
+    annotations: annotations,
+  }
+
+  const radarConfig: any = {
+    data: radarData,
+    xField: 'type',
+    yField: 'score',
+    seriesField: 'model',
+    meta: {
+      score: {
+        alias: '分数',
+        min: 0,
+        max: 100,
+      },
+    },
+    xAxis: {
+      line: null,
+      tickLine: null,
+      grid: {
+        line: {
+          style: {
+            lineDash: null,
+          },
+        },
+      },
+    },
+    area: {},
+    point: {
+      size: 4,
+    },
+    legend: {
+      position: 'top',
+      padding: [0, 0, 40, 0],
+    }
   };
 
   useEffect(() => {
@@ -131,7 +125,13 @@ export default function MainTable() {
 
   return (
     <div className={Style.MainTable}>
-      <Column {...config}/>
+      <Radar className={Style.table} {...radarConfig} />
+      <Column className={Style.table} {...config}/>
     </div>
   )
 }
+
+export interface MainTableProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+  data?: any
+}
+
