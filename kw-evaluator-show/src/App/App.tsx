@@ -6,6 +6,7 @@ import Login from "./Login/Login";
 import {message, notification} from "antd";
 import {IconType, NotificationPlacement} from "antd/es/notification/interface";
 import {NoticeType} from "antd/es/message/interface";
+import Easy from "./Easy/Easy";
 
 export class AppTools {
   static notify = (
@@ -44,6 +45,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home/>} />
         <Route path="/login" element={<Login/>} />
+        <Route path="/easy" element={<Easy/>} />
       </Routes>
     </div>
   )

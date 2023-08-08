@@ -1,8 +1,9 @@
 import React, {useEffect, useRef} from 'react'
-import Style from './Home.module.scss'
+import Style from './Easy.module.scss'
 import { Chart } from '@antv/g2'
+import MainTable from "./MainTable/MainTable";
 
-function Home() {
+function Easy() {
   const tableContainerRef = useRef(null)
 
   useEffect(() => {
@@ -15,6 +16,7 @@ function Home() {
       <div className={Style.headlineHover}></div>
       <div className={Style.content}>
         <div className={Style.evaluator}>
+          <MainTable/>
         </div>
         <div className={Style.chat}></div>
       </div>
@@ -23,6 +25,6 @@ function Home() {
   )
 }
 
-export default Home
+export default Easy
 
 
