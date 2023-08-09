@@ -1,9 +1,7 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect} from 'react'
 import Style from './Home.module.scss'
-import { Chart } from '@antv/g2'
 
 function Home() {
-  const tableContainerRef = useRef(null)
 
   useEffect(() => {
 

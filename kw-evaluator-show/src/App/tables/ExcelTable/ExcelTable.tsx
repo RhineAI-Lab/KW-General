@@ -1,9 +1,5 @@
-import { Chart } from '@antv/g2'
-import React, {DetailedHTMLProps, HTMLAttributes, useEffect, useRef} from 'react'
+import React, {DetailedHTMLProps, HTMLAttributes, useEffect} from 'react'
 import Style from './ExcelTable.module.scss'
-import {Column} from "@ant-design/plots";
-import {ColumnConfig, Radar} from "@ant-design/charts";
-import { each, groupBy } from '@antv/util';
 import {SheetComponent} from "@antv/s2-react";
 
 export default function ExcelTable(props: ExcelTableProps) {

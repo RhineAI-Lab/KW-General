@@ -1,10 +1,8 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect} from 'react'
 import Style from './Easy.module.scss'
-import { Chart } from '@antv/g2'
 import MainTable from "../tables/MainTable/MainTable";
 
 function Easy() {
-  const tableContainerRef = useRef(null)
 
   useEffect(() => {
 

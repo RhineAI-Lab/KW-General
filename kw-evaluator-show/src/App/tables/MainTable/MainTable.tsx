@@ -1,8 +1,7 @@
-import { Chart } from '@antv/g2'
-import React, {DetailedHTMLProps, HTMLAttributes, useEffect, useRef} from 'react'
+import React, {DetailedHTMLProps, HTMLAttributes, useEffect} from 'react'
 import Style from './MainTable.module.scss'
 import {Column} from "@ant-design/plots";
-import {ColumnConfig, Radar} from "@ant-design/charts";
+import {ColumnConfig} from "@ant-design/charts";
 import {data} from "./Data";
 import { each, groupBy } from '@antv/util';
 
@@ -125,7 +124,7 @@ export default function MainTable(props: MainTableProps) {
 
   return (
     <div className={Style.MainTable}>
-      <Radar className={Style.table} {...radarConfig} />
+      {/*<Radar className={Style.table} {...radarConfig} />*/}
       <Column className={Style.table} {...config}/>
     </div>
   )
