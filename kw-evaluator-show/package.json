@@ -4,9 +4,9 @@
   "private": true,
   "main": "electron/main.js",
   "electron": "electron .",
-  "description": "React项目最佳模板",
+  "description": "KW实验室成果展示及使用网页",
   "author": {
-    "name": "Rhine-AI-Lab"
+    "name": "KW"
   },
   "scripts": {
     "install": "yarn install",
@@ -24,7 +24,8 @@
   },
   "dependencies": {
     "@ant-design/charts": "^1.4.2",
-    "@antv/g2": "^5.0.18",
+    "@antv/g2": "^4.2.10",
+    "@antv/s2-react": "^1.42.0",
     "@babel/core": "^7.16.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -34,7 +35,7 @@
     "@mui/styled-engine-sc": "^5.12.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@reduxjs/toolkit": "^1.9.5",
-    "@svgr/webpack": "^5.5.0",
+    "@svgr/webpack": "^8.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -87,7 +88,7 @@
     "react-redux": "^8.1.1",
     "react-refresh": "^0.11.0",
     "react-router-dom": "^6.14.1",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "^2.1.3",
     "resolve": "^1.20.0",
     "resolve-url-loader": "^4.0.0",
     "sass": "^1.63.6",
