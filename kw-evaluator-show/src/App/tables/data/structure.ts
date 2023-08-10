@@ -1,4 +1,4 @@
-export const structure = {
+export const structure: any = {
     "label": "Xiezhi All",
     "text": {
         "zh-cn": "\u736c\u8c78 \u5b8c\u6574",
