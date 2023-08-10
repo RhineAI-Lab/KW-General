@@ -149,7 +149,7 @@ export default function ExcelTable(props: ExcelTableProps) {
                 {
                   st.map(category => {
                     return <div className={Style.category} style={{
-                      width: bs * category.children.length
+                      width: bs * category.children.length - 1
                     }}>
                       <span>{category.text['zh-cn']}</span>
                     </div>
@@ -157,8 +157,18 @@ export default function ExcelTable(props: ExcelTableProps) {
                 }
               </div>
               <div className={Style.secondLine}>
-                <div className={Style.category}>
-                </div>
+                {
+                  st.map(category => {
+                    return category.children.map((info: any) => {
+                      return <div className={Style.category} style={{
+                        width: bs - 1,
+                        height: 100
+                      }}>
+                        <span>{info.text['zh-cn']}</span>
+                      </div>
+                    })
+                  })
+                }
               </div>
             </div>
           </div>

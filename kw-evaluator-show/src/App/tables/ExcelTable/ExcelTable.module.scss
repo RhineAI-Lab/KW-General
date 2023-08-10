@@ -91,12 +91,38 @@ $ls: 60px;
             display: flex;
 
             .category {
+              position: relative;
+              overflow: hidden;
 
+              span {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                font-weight: 600;
+              }
             }
           }
 
           .secondLine {
+            display: flex;
 
+            .category {
+              position: relative;
+              border-right: $bc1 1px solid;
+              overflow: hidden;
+
+              span {
+                color: #333333;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 82px;
+                overflow: hidden;
+                transform-origin: top left;
+                transform: rotateZ(-90deg) translate(-100px, 1px);
+              }
+            }
           }
         }
       }
