@@ -1,16 +1,5 @@
 
 .MainTable {
-  display: flex;
-  height: 700px;
-  position: relative;
-  top: 80px;
-  padding: 80px;
-
-  .table:nth-child(1) {
-    flex-grow: 3;
-  }
-  .table:nth-child(2) {
-    flex-grow: 6;
-    margin-left: 60px;
-  }
+  top: 60px;
+  padding: 50px;
 }
