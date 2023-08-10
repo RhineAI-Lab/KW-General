@@ -98,7 +98,7 @@ export default function ExcelTable(props: ExcelTableProps) {
   }, [])
 
   let bs = 30
-  let size = 0
+  let order: string[] = []
   const st = []
   for (const categoryKey in structure.children) {
     let category = structure.children[categoryKey]
@@ -110,8 +110,8 @@ export default function ExcelTable(props: ExcelTableProps) {
     for (const subCategoryKey in category.children) {
       // @ts-ignore
       ca.children.push(category.children[subCategoryKey])
+      order.push(subCategoryKey)
     }
-    size += ca.children.length
     st.push(ca)
   }
 
@@ -124,7 +124,9 @@ export default function ExcelTable(props: ExcelTableProps) {
           themeCfg={{name: 'default'}}
         />
       </div>
-      <div className={Style.canvas} ref={canvasRef}>
+      <div className={Style.canvas} style={{
+        height: result.length * 30 + 18 + 140
+      }} ref={canvasRef}>
         <div className={Style.left}>
           <div className={Style.headline}>
             <div className={Style.firstLine}>
@@ -139,10 +141,26 @@ export default function ExcelTable(props: ExcelTableProps) {
               </div>
             </div>
           </div>
+          <div className={Style.body}>
+            {
+              result.map((line, index) => {
+                return <div className={Style.index} style={{
+                  height: bs - 1,
+                }}>
+                  <div className={Style.box}>
+                    <span>{index}</span>
+                  </div>
+                  <div className={Style.box}>
+                    <span>{line.model}</span>
+                  </div>
+                </div>
+              })
+            }
+          </div>
         </div>
         <div className={Style.scroll}>
           <div className={Style.content} style={{
-            width: size * bs
+            width: order.length * bs
           }}>
             <div className={Style.headline}>
               <div className={Style.firstLine}>
@@ -170,6 +188,26 @@ export default function ExcelTable(props: ExcelTableProps) {
                   })
                 }
               </div>
+            </div>
+            <div className={Style.body}>
+              {
+                result.map((line, i) => {
+                  return <div className={Style.line} style={{height: 30}}>
+                    {
+                      order.map((item, j) => {
+                        // 13 26 52   255 255 255
+                        // @ts-ignore
+                        let score = line['score_level_2'][item] * 1.2 - 0.1
+                        return <div className={Style.item} style={{
+                          height: 30,
+                          width: 30,
+                          backgroundColor: `rgb(${255 - score * 242}, ${255 - score * 229}, ${255 - score * 203})`
+                        }}/>
+                      })
+                    }
+                  </div>
+                })
+              }
             </div>
           </div>
         </div>

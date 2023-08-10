@@ -54,3 +54,26 @@ code {
   background: #A5FF3D;
   color: #000;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 3px;
+  background: #ffffff00;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00000050;
+}
+
+::-webkit-scrollbar-track {
+  width: 8px;
+  border-radius: 4px;
+  margin: 8px 0;
+}
+
+::-ms-clear, ::-ms-reveal{display: none;}
