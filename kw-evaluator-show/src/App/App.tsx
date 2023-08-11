@@ -53,19 +53,15 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <SnackbarProvider maxSnack={5} Components={{
-        tip: TipSnackbar,
-      }}>
-        <div className={Style.App}>
-          <Routes>
-            <Route path="/" element={<Home/>} />
-            <Route path="/login" element={<Login/>} />
-            <Route path="/easy" element={<Easy/>} />
-            <Route path="/data" element={<Data/>} />
-            <Route path="/3d" element={<Stereoscopic/>} />
-          </Routes>
-        </div>
-      </SnackbarProvider>
+      <div className={Style.App}>
+        <Routes>
+          <Route path="/login" element={<Login/>} />
+          <Route path="/easy" element={<Easy/>} />
+          <Route path="/data" element={<Data/>} />
+          <Route path="/3d" element={<Stereoscopic/>} />
+          <Route path="/" element={<Home/>} />
+        </Routes>
+      </div>
     </ThemeProvider>
   )
 }
@@ -85,19 +81,7 @@ declare global {
 export const DUPLICATE_EFFECT_TIME = 300
 
 export const tip = (text: string, type = 'default') => {
-  const action = <React.Fragment>
-    <span className={Style.closeBtn}>
-      <Icon size='20px' onClick={e => closeSnackbar()}>close</Icon>
-    </span>
-  </React.Fragment>
-  // type = 'tip'
-  enqueueSnackbar(text, {
-    variant:type as any,
-    autoHideDuration: 1200,
-    anchorOrigin: { vertical: 'right', horizontal: 'bottom' },
-    TransitionComponent: (props: any) => <Slide {...props} direction="left" />,
-    action: action
-  })
+
 }
 
 declare module "notistack" {

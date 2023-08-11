@@ -14,19 +14,17 @@ import {
 import {GradientMaterial} from "@babylonjs/materials";
 import {result} from "../tables/data/result";
 import Graph from "../../SE/view/Graph/Graph";
-import {tip} from "../App";
+import {AppTools, DUPLICATE_EFFECT_TIME, tip} from "../App";
 
 let renderTime = 0
 function Stereoscopic() {
-  console.log('hello')
 
   useEffect(() => {
-    console.log('hello')
-    tip('Hello')
-
-    if (new Date().getTime() - renderTime < 200) return
+    if (new Date().getTime() - renderTime < DUPLICATE_EFFECT_TIME) return
     renderTime = new Date().getTime()
+  }, [])
 
+  const oth = () => {
     const canvas = document.getElementById("babylonCanvas") as HTMLCanvasElement
     const engine = new Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true })
     engine.setDepthFunction(10)
@@ -88,7 +86,7 @@ function Stereoscopic() {
       scene.render()
     })
     scene.debugLayer.show().then(r => {})
-  }, [])
+  }
 
   return (
     <div className={Style.Stereoscopic}>

@@ -5,6 +5,7 @@ export default class Loading {
   private static innerMode = false
   
   static show() {
+    return
     if (this.innerMode) {
       return this.getInner()
     } else {
@@ -13,6 +14,7 @@ export default class Loading {
   }
   
   static hide() {
+    return
     if (this.innerMode) {
       return this.hideInner()
     } else {

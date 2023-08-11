@@ -45,7 +45,6 @@ function Graph (): JSX.Element {
           <Button color='primary' variant='contained' onClick={e => { AnimationManager.play('RightStrafeWalk') }}>Play Right Walk</Button>
         </div>
       </div>
-      <LoadingPage/>
     </div>
   )
 }
