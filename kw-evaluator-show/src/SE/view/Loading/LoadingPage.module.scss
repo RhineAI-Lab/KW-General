@@ -1,0 +1,65 @@
+
+.LoadingPage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  transition: opacity 0.3s ease-in-out;
+  user-select: none;
+  z-index: 4;
+
+  .content {
+    position: absolute;
+    width: 360px;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    .title{
+      align-content: center;
+      text-align: center;
+      height: 52px;
+
+      img {
+        display: inline-block;
+        width:  50px;
+        height: 50px;
+        margin-right: 8px;
+        background: #d1c1ff;
+        border-radius: 8px;
+      }
+      span {
+        display: inline-block;
+        font-size: 24px;
+        font-weight: 500;
+        color: #2a213a;
+        transform: translateY(-14px);
+      }
+    }
+    .progressBar {
+      background: #d1c1ff;
+      height: 10px;
+      border-radius: 5px;
+      margin-top: 36px;
+
+      span {
+        display: block;
+        width: 20%;
+        height: 10px;
+        background: #6500ff;
+        border-radius: 5px;
+        transition: width 0.5s ease-in-out;
+      }
+    }
+    .message {
+      display: block;
+      text-align: center;
+      margin-top: 12px;
+      font-size: 22px;
+      font-weight: 500;
+      color: #594e5d;
+    }
+  }
+}
