@@ -11,13 +11,19 @@ import {
   Scene, StandardMaterial, Texture,
   Vector3
 } from "@babylonjs/core";
-import {GradientMaterial, GridMaterial} from "@babylonjs/materials";
+import {GradientMaterial} from "@babylonjs/materials";
 import {result} from "../tables/data/result";
+import Graph from "../../SE/view/Graph/Graph";
+import {tip} from "../App";
 
 let renderTime = 0
 function Stereoscopic() {
+  console.log('hello')
 
   useEffect(() => {
+    console.log('hello')
+    tip('Hello')
+
     if (new Date().getTime() - renderTime < 200) return
     renderTime = new Date().getTime()
 
@@ -86,7 +92,7 @@ function Stereoscopic() {
 
   return (
     <div className={Style.Stereoscopic}>
-      <canvas id='babylonCanvas'></canvas>
+      <Graph/>
     </div>
   )
 }

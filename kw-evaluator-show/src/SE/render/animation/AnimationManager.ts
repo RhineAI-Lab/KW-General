@@ -1,9 +1,6 @@
-import SE from "@/SE/SE";
+
 import {AbstractMesh, Animation, AnimationPropertiesOverride, Color3} from "@babylonjs/core";
-import StepClass from "@/App/Editor/StepsBar/Step.class";
-import MathUtils from "@/SE/utils/MathUtils";
-import GeneralUtils from "@/SE/utils/GeneralUtils";
-import InfoDrawerControl from "@/App/Editor/InfoDrawer/InfoDrawerControl.object";
+import SE from "../../SE";
 
 export default class AnimationManager {
   
@@ -64,36 +61,6 @@ export default class AnimationManager {
       }
     }
     SE.scene.beginDirectAnimation(mesh, as, 0, fr * 12, false)
-  }
-  
-  static startAnimationsBetweenSteps (start: StepClass, end: StepClass) {
-    for (const es of end.states) {
-      const ss = start.getState(es.uid)
-      const mesh = SE.scene.getMeshByUniqueId(es.uid)
-      if (!ss || !mesh) continue
-      const animations = []
-      if (ss.px !== es.px) animations.push({name: 'xSlide', property: 'position.x', start: ss.px, end: es.px})
-      if (ss.py !== es.py) animations.push({name: 'ySlide', property: 'position.y', start: ss.py, end: es.py})
-      if (ss.pz !== es.pz) animations.push({name: 'zSlide', property: 'position.z', start: ss.pz, end: es.pz})
-      if (ss.rx !== es.rx) animations.push({name: 'xRotate', property: 'rotation.x', start: MathUtils.toRadians(ss.rx), end: MathUtils.toRadians(es.rx)})
-      if (ss.ry !== es.ry) animations.push({name: 'yRotate', property: 'rotation.y', start: MathUtils.toRadians(ss.ry), end: MathUtils.toRadians(es.ry)})
-      if (ss.rz !== es.rz) animations.push({name: 'zRotate', property: 'rotation.z', start: MathUtils.toRadians(ss.rz), end: MathUtils.toRadians(es.rz)})
-      if (ss.sx !== es.sx) animations.push({name: 'xScale', property: 'scaling.x', start: ss.sx, end: es.sx})
-      if (ss.sy !== es.sy) animations.push({name: 'yScale', property: 'scaling.y', start: ss.sy, end: es.sy})
-      if (ss.sz !== es.sz) animations.push({name: 'zScale', property: 'scaling.z', start: ss.sz, end: es.sz})
-      if (ss.color.length > 0 && es.color.length > 0 && ss.color !== es.color) {
-        animations.push({name: 'color', property: 'material.diffuseColor', start: ss.color, end: es.color})
-      }
-      if (ss.opacity !== es.opacity) animations.push({name: 'opacity', property: 'material.alpha', start: ss.opacity, end: es.opacity})
-      if (es.uid === InfoDrawerControl.getTarget()?.uniqueId) {
-        GeneralUtils.setInterval(() => {
-          InfoDrawerControl.freshPosition(true, true, true)
-          InfoDrawerControl.freshScaling(true, true, true)
-          InfoDrawerControl.freshRotation(true, true, true)
-        }, 50, 12)
-      }
-      this.startAnimations(mesh, animations)
-    }
   }
   
   static makeEaseInOutQuad () { // LENGTH 13

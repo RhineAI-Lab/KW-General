@@ -11,10 +11,9 @@ import {
   Vector3
 } from "@babylonjs/core";
 import Loading from "./view/Loading/Loading";
-import {tip} from "@/App/App";
+import {tip} from "../App/App";
 import {closeSnackbar} from "notistack";
 import Selection from "./operate/selection/Selection";
-import StepManager from "@/App/Editor/StepsBar/StepManager";
 import Clipboard from "./operate/clipboard/Clipboard";
 import MaterialManager from "./render/material/MaterialManager";
 import GUI from "./render/gui/GUI";
@@ -81,11 +80,6 @@ export default class SE {
       if (meshes.length === 0) return
       // Add states message
       for (const mesh of meshes) {
-        for (const step of StepManager.data) {
-          if (!step.getState(mesh.uniqueId)) {
-            step.states.push(new MeshState(mesh))
-          }
-        }
       }
       if (meshes.length === 1 && path !== '/inner/') {
         meshes[0].position = new Vector3(0, 0, 0)

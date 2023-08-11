@@ -1,4 +1,4 @@
-import SE from "@/SE/SE"
+import SE from "../../SE"
 import {GridMaterial} from '@babylonjs/materials'
 import {
   AbstractMesh,
@@ -11,8 +11,8 @@ import {
   Scene, ShadowGenerator, SpotLight, StandardMaterial, Texture,
   Vector3, VertexData
 } from "@babylonjs/core"
-import TransformGround from "@/SE/render/environment/TransformGround";
-import GeometryUtils from "@/SE/utils/GeometryUtils";
+import TransformGround from "../environment/TransformGround";
+import GeometryUtils from "../../utils/GeometryUtils";
 
 export default class Environment {
   

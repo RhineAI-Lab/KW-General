@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {ReactNode} from 'react'
 import Style from './App.module.scss'
 import {Route, Routes} from "react-router-dom";
 import Home from "./Home/Home";
@@ -9,6 +9,11 @@ import {NoticeType} from "antd/es/message/interface";
 import Easy from "./Easy/Easy";
 import Data from "./Data/Data";
 import Stereoscopic from "./Stereoscopic/Stereoscopic";
+import {Slide, ThemeProvider} from "@mui/material";
+import {theme} from "./theme";
+import {closeSnackbar, enqueueSnackbar} from "notistack";
+import Icon from "./components/Icon/Icon";
+import {TipSnackbar} from "./components/TipSnackbar/TipSnackbar";
 
 export class AppTools {
   static notify = (
@@ -40,18 +45,28 @@ export class AppTools {
   }
 }
 
+function SnackbarProvider(props: { Components: { tip: any }, maxSnack: number, children: ReactNode }) {
+  return null;
+}
+
 function App() {
 
   return (
-    <div className={Style.App}>
-      <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/easy" element={<Easy/>} />
-        <Route path="/data" element={<Data/>} />
-        <Route path="/3d" element={<Stereoscopic/>} />
-      </Routes>
-    </div>
+    <ThemeProvider theme={theme}>
+      <SnackbarProvider maxSnack={5} Components={{
+        tip: TipSnackbar,
+      }}>
+        <div className={Style.App}>
+          <Routes>
+            <Route path="/" element={<Home/>} />
+            <Route path="/login" element={<Login/>} />
+            <Route path="/easy" element={<Easy/>} />
+            <Route path="/data" element={<Data/>} />
+            <Route path="/3d" element={<Stereoscopic/>} />
+          </Routes>
+        </div>
+      </SnackbarProvider>
+    </ThemeProvider>
   )
 }
 
@@ -64,5 +79,29 @@ declare global {
     interface IntrinsicElements {
       [tag: string]: any
     }
+  }
+}
+
+export const DUPLICATE_EFFECT_TIME = 300
+
+export const tip = (text: string, type = 'default') => {
+  const action = <React.Fragment>
+    <span className={Style.closeBtn}>
+      <Icon size='20px' onClick={e => closeSnackbar()}>close</Icon>
+    </span>
+  </React.Fragment>
+  // type = 'tip'
+  enqueueSnackbar(text, {
+    variant:type as any,
+    autoHideDuration: 1200,
+    anchorOrigin: { vertical: 'right', horizontal: 'bottom' },
+    TransitionComponent: (props: any) => <Slide {...props} direction="left" />,
+    action: action
+  })
+}
+
+declare module "notistack" {
+  interface VariantOverrides {
+    tip: true;
   }
 }

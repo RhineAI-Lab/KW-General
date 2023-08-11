@@ -1,5 +1,5 @@
 import {AbstractMesh} from "@babylonjs/core";
-import {Material} from "@/SE/render/material/MaterialManager";
+import { Material } from "./MaterialManager";
 
 
 export class MaterialInfoClass {

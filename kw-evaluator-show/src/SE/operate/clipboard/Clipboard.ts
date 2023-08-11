@@ -1,8 +1,7 @@
 import {AbstractMesh, Mesh} from "@babylonjs/core"
-import SE from "@/SE/SE"
-import Selection from "@/SE/operate/selection/Selection"
-import StepManager from "@/App/Editor/StepsBar/StepManager";
-import GUI from "@/SE/render/gui/GUI";
+import SE from "../../../SE/SE"
+import Selection from "../selection/Selection"
+import GUI from "../../../SE/render/gui/GUI";
 
 export default class Clipboard {
   
@@ -39,17 +38,6 @@ export default class Clipboard {
         }
         newMesh.parent = mesh.parent
         meshes.push(newMesh)
-        for (const step of StepManager.data) {
-          const state = step.getState(mesh.uniqueId)
-          if (!state) continue
-          const newState = state.clone()
-          newState.uid = newMesh.uniqueId
-          step.states.push(newState)
-        }
-        const state = StepManager.now().getState(newMesh.uniqueId)
-        if (state && state.label) {
-          GUI.setLabelText(newMesh, state.label)
-        }
       } catch (e) {
         console.warn('AbstractMesh Error', e)
       }

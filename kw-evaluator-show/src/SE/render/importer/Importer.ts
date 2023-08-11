@@ -1,5 +1,4 @@
-import UrlUtils from "@/SE/utils/UrlUtils"
-import SE from "@/SE/SE"
+
 import {
   AbstractMesh,
   IParticleSystem,
@@ -8,7 +7,9 @@ import {
   SceneLoader,
   Skeleton,
 } from "@babylonjs/core";
-import Loading from "@/SE/view/Loading/Loading";
+import SE from "../../SE";
+import Loading from "../../view/Loading/Loading";
+import UrlUtils from "../../utils/UrlUtils";
 
 export default class Importer {
   

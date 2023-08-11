@@ -1,10 +1,8 @@
-import {Project} from "@/SE/operate/manager/data/Project";
-import {tip} from "@/App/App";
-import InfoDrawerControl from "@/App/Editor/InfoDrawer/InfoDrawerControl.object";
+import {Project} from "./data/Project";
+import {tip} from "../../../App/App";
 import {closeSnackbar} from "notistack";
-import Api from "@/request/Api";
-import SE from "@/SE/SE";
-import StepsParser from "@/SE/operate/manager/StepsParser";
+import SE from "../../SE";
+import StepsParser from "../../operate/manager/StepsParser";
 
 export default class Manager {
   
@@ -32,14 +30,6 @@ export default class Manager {
     console.log('Save models:', this.project.models)
     console.log('Save steps:', this.project.steps)
     let dt = JSON.stringify(this.project)
-    Api.updateProject(this.project.pid, dt).then(r => {
-      closeSnackbar()
-      if (r.code === 200) {
-        tip('保存成功', 'success')
-      } else {
-        tip('保存失败', 'error')
-      }
-    })
   }
   
   static load(result: any) {
@@ -59,14 +49,6 @@ export default class Manager {
     tp.permission.write = dbp.writePermission
     tp.updateTime = Date.now()
     tp.pid = dbp.pid
-    
-    InfoDrawerControl.setTitle(tp.title)
-    InfoDrawerControl.setDescription(tp.description)
-    InfoDrawerControl.setTags(tp.tags.join(' '))
-    InfoDrawerControl.setLoop(tp.show.loop)
-    InfoDrawerControl.setAuto(tp.show.auto)
-    InfoDrawerControl.setInterval(tp.show.interval + '')
-    InfoDrawerControl.setReadPublic(tp.permission.read === 'PUBLIC')
   
     StepsParser.uidMapper = []
     Manager.loadedNum = 0

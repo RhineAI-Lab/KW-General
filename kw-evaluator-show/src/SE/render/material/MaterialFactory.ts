@@ -1,8 +1,8 @@
 import {AbstractMesh, Color3, PBRMaterial, PBRMetallicRoughnessMaterial, StandardMaterial} from "@babylonjs/core";
-import SE from "@/SE/SE";
-import MaterialManager, {Material} from "@/SE/render/material/MaterialManager";
-import StepManager from "@/App/Editor/StepsBar/StepManager";
-import {MaterialInfoClass} from "@/SE/render/material/MaterialInfo.class";
+import {MaterialInfoClass} from "./MaterialInfo.class";
+import MaterialManager, {Material} from "./MaterialManager";
+import SE from "../../SE";
+
 
 export default class MaterialFactory {
   
@@ -22,10 +22,6 @@ export default class MaterialFactory {
     if (info.color || info.opacity) {
       this.setColorAlpha(mesh, mesh.material as PBRMaterial, info.color, info.opacity)
     }
-    const state = StepManager.now().getState(mesh.uniqueId)
-    if (!state) return
-    MaterialManager.setColor(mesh, state.color)
-    MaterialManager.setOpacity(mesh, state.opacity)
   }
   
   static makeMaterial(id: number = 0, mesh: AbstractMesh): Material {
@@ -62,10 +58,6 @@ export default class MaterialFactory {
   static setColorAlpha(mesh: AbstractMesh, material: Material, color: string | null, alpha: number | null) {
     if (color && color.length == 0) color = null
     if (!color && alpha === null) return
-    const state = StepManager.now().getState(mesh.uniqueId)
-    if (!state) return
-    if (color) state.color = color
-    if (alpha !== null) state.opacity = alpha
   }
   
   static standard(name: string = '', mesh?: AbstractMesh): StandardMaterial {

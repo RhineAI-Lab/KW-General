@@ -7,13 +7,11 @@ import {
   Mesh, MultiPointerScaleBehavior, SixDofDragBehavior,
   UtilityLayerRenderer
 } from "@babylonjs/core";
-import SE from "@/SE/SE";
-import GeneralUtils from "@/SE/utils/GeneralUtils";
-import Environment from "@/SE/render/environment/Environment";
-import StepManager from "@/App/Editor/StepsBar/StepManager";
-import GUI from "@/SE/render/gui/GUI";
-import InfoDrawerControl from "@/App/Editor/InfoDrawer/InfoDrawerControl.object";
-import Manager from "@/SE/operate/manager/Manager";
+import SE from "../../SE";
+import GeneralUtils from "../../utils/GeneralUtils";
+import Environment from "../../render/environment/Environment";
+import GUI from "../../render/gui/GUI";
+import Manager from "../../operate/manager/Manager";
 
 export default class Selection {
   static highlightLayer: HighlightLayer | null = null
@@ -30,15 +28,6 @@ export default class Selection {
     if (this.selected.length > 0) {
       for (const mesh of this.selected) {
         GUI.removeLabel(mesh)
-        for (const step of StepManager.data) {
-          for (const si in step.states) {
-            const state = step.states[si]
-            if (state.uid === mesh.uniqueId) {
-              step.states.splice(parseInt(si), 1)
-              break
-            }
-          }
-        }
         for (const model of Manager.project.models) {
           for (const ii in model.instances) {
             const instance = model.instances[ii]
@@ -78,25 +67,19 @@ export default class Selection {
       if (!this.moveGizmo.gizmos.positionGizmo!) return
       if (this.moveGizmo.gizmos.positionGizmo.xGizmo.dragBehavior.onDragObservable.observers.length > 2) return
       this.moveGizmo.gizmos.positionGizmo.xGizmo.dragBehavior.onDragObservable.add(() => {
-        InfoDrawerControl.freshPosition(true, false, false)
       })
       this.moveGizmo.gizmos.positionGizmo.yGizmo.dragBehavior.onDragObservable.add(() => {
-        InfoDrawerControl.freshPosition(false, true, false)
       })
       this.moveGizmo.gizmos.positionGizmo.zGizmo.dragBehavior.onDragObservable.add(() => {
-        InfoDrawerControl.freshPosition(false, false, true)
       })
   
       if (!this.moveGizmo.gizmos.rotationGizmo!) return
       this.moveGizmo.gizmos.rotationGizmo.updateGizmoRotationToMatchAttachedMesh = false
       this.moveGizmo.gizmos.rotationGizmo.xGizmo.dragBehavior.onDragObservable.add(() => {
-        InfoDrawerControl.freshRotation(true, false, false)
       })
       this.moveGizmo.gizmos.rotationGizmo.yGizmo.dragBehavior.onDragObservable.add(() => {
-        InfoDrawerControl.freshRotation(false, true, false)
       })
       this.moveGizmo.gizmos.rotationGizmo.zGizmo.dragBehavior.onDragObservable.add(() => {
-        InfoDrawerControl.freshRotation(false, false, true)
       })
     }
   }
@@ -117,13 +100,10 @@ export default class Selection {
       if (!this.moveGizmo.gizmos.scaleGizmo!) return
       if (this.moveGizmo.gizmos.scaleGizmo.xGizmo.dragBehavior.onDragObservable.observers.length > 2) return
       this.moveGizmo.gizmos.scaleGizmo.xGizmo.dragBehavior.onDragObservable.add(() => {
-        InfoDrawerControl.freshScaling(true, false, false)
       })
       this.moveGizmo.gizmos.scaleGizmo.yGizmo.dragBehavior.onDragObservable.add(() => {
-        InfoDrawerControl.freshScaling(false, true, false)
       })
       this.moveGizmo.gizmos.scaleGizmo.zGizmo.dragBehavior.onDragObservable.add(() => {
-        InfoDrawerControl.freshScaling(false, false, true)
       })
     }
     // this.scaleGizmo.attachedMesh = this.lastSelected

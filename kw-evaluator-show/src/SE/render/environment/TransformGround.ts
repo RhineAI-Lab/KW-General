@@ -1,16 +1,11 @@
 import {
-  ArcRotateCamera,
   Color3, CreateGround,
-  Material,
   Mesh,
-  PBRMaterial,
-  Scene,
   StandardMaterial,
   VertexData
 } from "@babylonjs/core";
-import SE from "@/SE/SE";
-import {maxProcesses} from "concurrently/dist/src/defaults";
-import Environment from "@/SE/render/environment/Environment";
+import SE from "../../SE";
+import Environment from "./Environment";
 
 export default class TransformGround {
   

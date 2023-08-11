@@ -1,7 +1,5 @@
 import {AbstractMesh, Animatable, Animation} from "@babylonjs/core";
-import StepManager from "@/App/Editor/StepsBar/StepManager";
-import SE from "@/SE/SE";
-import MathUtils from "@/SE/utils/MathUtils";
+import SE from "../../SE";
 
 export default class LoopAnimation {
   
@@ -9,55 +7,10 @@ export default class LoopAnimation {
   
   static freshAnimation(mesh: AbstractMesh) {
     const uid = mesh.uniqueId
-    const state = StepManager.now().getState(uid)
-    if (!state) return
-    this.stopAnimation(mesh)
-  
-    const name = StepManager.now().id + '-' + uid + '-animation'
-    const fr = 10
-    const animations: Animation[] = []
-    
-    if (state.spinX != 0) {
-      animations.push(this.makeSpinAnimation(state.spinX, name, 'x', fr))
-    }
-    if (state.spinY != 0) {
-      animations.push(this.makeSpinAnimation(state.spinY, name, 'y', fr))
-    }
-    if (state.spinZ != 0) {
-      animations.push(this.makeSpinAnimation(state.spinZ, name, 'z', fr))
-    }
-    if (state.tripDisX != 0 && state.tripSpeedX != 0) {
-      animations.push(this.makeTripAnimation(state.tripDisX, state.tripSpeedX, name, 'x', fr))
-    }
-    if (state.tripDisY != 0 && state.tripSpeedY != 0) {
-      animations.push(this.makeTripAnimation(state.tripDisY, state.tripSpeedY, name, 'y', fr))
-    }
-    if (state.tripDisZ != 0 && state.tripSpeedZ != 0) {
-      animations.push(this.makeTripAnimation(state.tripDisZ, state.tripSpeedZ, name, 'z', fr))
-    }
-    
-    if (animations.length == 0) return
-    const animation = SE.scene.beginDirectAnimation(mesh, animations, 0, 4 * fr, true)
-    this.animationMap.set(uid, animation)
   }
   
   static stopAnimation(mesh: AbstractMesh) {
     const uid = mesh.uniqueId
-    const state = StepManager.now().getState(uid)
-    if (!state) return
-    if (this.animationMap.has(uid)) {
-      this.animationMap.get(uid)?.stop()
-      this.animationMap.delete(uid)
-    }
-    mesh.position.x = state.px
-    mesh.position.y = state.py
-    mesh.position.z = state.pz
-    mesh.rotation.x = MathUtils.toRadians(state.rx)
-    mesh.rotation.y = MathUtils.toRadians(state.ry)
-    mesh.rotation.z = MathUtils.toRadians(state.rz)
-    mesh.scaling.x = state.sx
-    mesh.scaling.y = state.sy
-    mesh.scaling.z = state.sz
   }
   
   static freshAllAnimation() {

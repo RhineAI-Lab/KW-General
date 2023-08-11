@@ -78,6 +78,7 @@
     "meshwriter": "^1.3.2",
     "mini-css-extract-plugin": "^2.4.5",
     "node-notifier": "^10.0.1",
+    "notistack": "^3.0.1",
     "postcss": "^8.4.4",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-loader": "^6.2.1",

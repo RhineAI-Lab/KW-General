@@ -8,7 +8,7 @@ export default class Loading {
     if (this.innerMode) {
       return this.getInner()
     } else {
-      this._w.showLoading()
+      // this._w.showLoading()
     }
   }
   
@@ -16,13 +16,13 @@ export default class Loading {
     if (this.innerMode) {
       return this.hideInner()
     } else {
-      this._w.hideLoading()
+      // this._w.hideLoading()
     }
   }
   
   static toInner() {
     this.innerMode = true
-    this._w.hideLoading()
+    // this._w.hideLoading()
   }
   
   static set(progress: number, msg: string) {
@@ -31,9 +31,9 @@ export default class Loading {
         this.setInner(progress, msg)
       }
     } else {
-      if (progress > this._w.getLoadingProgress()) {
-        this._w.setLoadingProgress(progress, msg)
-      }
+      // if (progress > this._w.getLoadingProgress()) {
+      //   this._w.setLoadingProgress(progress, msg)
+      // }
     }
   }
   
@@ -41,7 +41,7 @@ export default class Loading {
     if (this.innerMode) {
       return this.getInner()
     } else {
-      return this._w.getLoadingProgress()
+      // return this._w.getLoadingProgress()
     }
   }
   
