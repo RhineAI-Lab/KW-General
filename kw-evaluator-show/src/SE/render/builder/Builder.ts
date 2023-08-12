@@ -1,5 +1,5 @@
 import {GradientMaterial} from "@babylonjs/materials";
-import {Color3, CreateBox, Mesh, StandardMaterial, Vector3} from "@babylonjs/core";
+import {Color3, CreateBox, Material, Mesh, StandardMaterial, Vector3} from "@babylonjs/core";
 import SE from "../../SE";
 import {result} from "../../../App/tables/data/result";
 import Writer from "./Writer";
@@ -53,7 +53,11 @@ export default class Builder {
       })!
       const bound = mesh.getBoundingInfo().boundingBox;
       const width = bound.maximumWorld.x - bound.minimumWorld.x
-      mesh.position = new Vector3(this.w + width / 2 + 0.14, -0.12,  0.03 + j * this.GRID_SIZE)
+      mesh.position = new Vector3(
+        this.w + width / 2 + 0.14,
+        -0.12,
+        0.03 + j * this.GRID_SIZE
+      )
       mesh.rotation = new Vector3(Math.PI / 2, 0, 0)
       mesh.material = material
       j++
@@ -67,27 +71,34 @@ export default class Builder {
       })!
       const bound = mesh.getBoundingInfo().boundingBox;
       const width = bound.maximumWorld.x - bound.minimumWorld.x
-      mesh.position = new Vector3(0.03 + i * this.GRID_SIZE + Builder.COLUMN_SIZE * 0.8, -0.12,  -width / 2 - 0.14)
+      mesh.position = new Vector3(
+        0.03 + i * this.GRID_SIZE + Builder.COLUMN_SIZE * 0.8,
+        -0.12,
+        -width / 2 - 0.14
+      )
       mesh.rotation = new Vector3(Math.PI / 2, 0, Math.PI / 2)
       mesh.material = material
       mesh.parent = YAxisGroup
     })
   }
 
-  static addData (name: string, x: number, y: number, h: number): Mesh {
+  static addData(name: string, x: number, y: number, h: number): Mesh {
     const material = new GradientMaterial("material_" + name + y, SE.scene)
-    material.topColor = this.gray(0.99)
-    material.bottomColor = this.gray(0.35)
-    material.offset = 0.6
+    material.topColor = this.gray(0.5)
+    material.bottomColor = this.gray(0.3)
 
-    const box = CreateBox(name)
-    box.material = material
-    box.scaling = new Vector3(Builder.COLUMN_SIZE, h * Builder.DATA_SH, Builder.COLUMN_SIZE)
+    const box = CreateBox(name, {
+      width: Builder.COLUMN_SIZE,
+      height: 0.1,
+      depth: Builder.COLUMN_SIZE,
+    }, SE.scene)
+    box.scaling = new Vector3(1, h * Builder.DATA_SH, 1)
     box.position = new Vector3(
       x * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
       h / 2 * Builder.DATA_SH,
       y * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
     )
+    box.material = material
     return box
   }
 
