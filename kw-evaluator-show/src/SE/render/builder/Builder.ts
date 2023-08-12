@@ -37,6 +37,9 @@ export default class Builder {
   }
 
   static async buildLabel() {
+    const XAxisGroup = new TransformNode('XAxisGroup')
+    const YAxisGroup = new TransformNode('YAxisGroup')
+
     const material = new StandardMaterial("material_label", SE.scene)
     material.diffuseColor = this.gray(0.1)
 
@@ -54,6 +57,7 @@ export default class Builder {
       mesh.rotation = new Vector3(Math.PI / 2, 0, 0)
       mesh.material = material
       j++
+      mesh.parent = XAxisGroup
     }
     result.map((line, i) => {
       let mesh: Mesh = Writer.write(line.model, {
@@ -66,6 +70,7 @@ export default class Builder {
       mesh.position = new Vector3(0.03 + i * this.GRID_SIZE + Builder.COLUMN_SIZE * 0.8, -0.12,  -width / 2 - 0.14)
       mesh.rotation = new Vector3(Math.PI / 2, 0, Math.PI / 2)
       mesh.material = material
+      mesh.parent = YAxisGroup
     })
   }
 
