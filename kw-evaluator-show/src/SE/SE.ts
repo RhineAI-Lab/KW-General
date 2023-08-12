@@ -26,6 +26,8 @@ import {Light} from "@babylonjs/core/Lights/light";
 import Model from "./operate/manager/data/Model";
 import Manager from "./operate/manager/Manager";
 import StepsParser from "./operate/manager/StepsParser";
+import Builder from "./render/builder/Builder";
+import Writer from "./render/builder/Writer";
 
 export default class SE {
   static rendering = false
@@ -47,11 +49,13 @@ export default class SE {
     
     MaterialManager.init()
     Environment.init()
-    Environment.setCube(cube)
+    // Environment.setCube(cube)
     Selection.init()
     Clipboard.init()
     Manager.init()
     GUI.init()
+
+    Builder.build()
   
     // Importer.importScene('/3d/models/', 'factory.babylon')
     // Importer.import('factory.glb')

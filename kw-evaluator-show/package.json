@@ -61,6 +61,7 @@
     "customize-cra": "^1.0.0",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
+    "earcut": "^2.2.4",
     "electron-is-dev": "^2.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-updater": "^6.1.1",

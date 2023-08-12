@@ -2,14 +2,8 @@ import React, {useEffect} from 'react'
 import Style from './Stereoscopic.module.scss'
 import "@babylonjs/inspector";
 import {
-  ArcRotateCamera, BackgroundMaterial, Color3, Color4, CreateBox,
-  CreateGround,
-  CreateSphere, CreateText,
-  Engine,
-  FreeCamera,
-  HemisphericLight, MirrorTexture, PBRMaterial, Plane,
-  Scene, StandardMaterial, Texture,
-  Vector3
+  ArcRotateCamera, Color3, Color4, CreateBox,
+  Engine, HemisphericLight, Scene, Vector3
 } from "@babylonjs/core";
 import {GradientMaterial} from "@babylonjs/materials";
 import {result} from "../tables/data/result";

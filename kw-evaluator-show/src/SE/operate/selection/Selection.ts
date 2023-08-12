@@ -15,7 +15,7 @@ import Manager from "../../operate/manager/Manager";
 
 export default class Selection {
   static highlightLayer: HighlightLayer | null = null
-  static highlightColor = new Color3(0, 1, 1)
+  static highlightColor = new Color3(0, 0, 0)
   
   static utilLayer: UtilityLayerRenderer | null = null
   static moveGizmo: GizmoManager | null = null
@@ -125,6 +125,9 @@ export default class Selection {
   
   static init() {
     this.highlightLayer = new HighlightLayer("hl1", SE.scene)
+    this.highlightLayer.blurHorizontalSize = 0
+    this.highlightLayer.blurVerticalSize = 0
+
     this.utilLayer = new UtilityLayerRenderer(SE.scene)
     this.utilLayer.utilityLayerScene.autoClearDepthAndStencil = false
     this.moveGizmo = new GizmoManager(SE.scene)
@@ -178,19 +181,19 @@ export default class Selection {
     }
     for (const mesh of meshes) {
       this.selected.push(mesh)
-      this.highlightLayer?.addMesh(mesh, this.highlightColor)
+      // this.highlightLayer?.addMesh(mesh, this.highlightColor)
     }
     if (meshes.length > 0) {
       this.lastSelected = meshes[meshes.length - 1]
     }
   }
-  
+
   static clear(remove = false) {
     for (const mesh of this.selected) {
       // mesh.behaviors.map(behavior => {
       //   mesh.removeBehavior(behavior)
       // })
-      this.highlightLayer?.removeMesh(mesh)
+      // this.highlightLayer?.removeMesh(mesh)
     }
     this.selected = []
     this.unUseAll()

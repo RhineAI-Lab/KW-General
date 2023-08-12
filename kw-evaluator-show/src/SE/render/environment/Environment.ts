@@ -25,7 +25,8 @@ export default class Environment {
   
   static init() {
     // 设置环境背景色
-    this.setBackgroundColor(new Color3(1, 1, 1))
+    let gray = 0.9
+    this.setBackgroundColor(new Color3(gray, gray, gray))
     
     // 设置背景方块
     const scene = SE.scene
@@ -37,8 +38,8 @@ export default class Environment {
     //   '/3d/textures/white.jpg',
     //   '/3d/textures/white.jpg',
     // ], scene)
-    this.environmentTexture = CubeTexture.CreateFromPrefilteredData('/3d/textures/temp.env', scene)
-    SE.scene.environmentTexture = this.environmentTexture
+    // this.environmentTexture = CubeTexture.CreateFromPrefilteredData('/3d/textures/temp.env', scene)
+    // SE.scene.environmentTexture = this.environmentTexture
     // const hdrSkybox = Mesh.CreateBox("HDR Sky Box", 500, scene, false, Constants.MATERIAL_CounterClockWiseSideOrientation);
     // const hdrSkyboxMaterial = new PBRMaterial("pbr-sky-box-material", SE.scene);
     // hdrSkyboxMaterial.backFaceCulling = false;
@@ -58,7 +59,7 @@ export default class Environment {
     // 创建全方位光源
     this.initLight()
     // 创建地面网格
-    TransformGround.createGround()
+    // TransformGround.createGround()
   }
   
   static adjustCamera(models: AbstractMesh[] | AbstractMesh) {
@@ -93,41 +94,47 @@ export default class Environment {
   }
   
   static initLight() {
-    const light1 = new HemisphericLight(
-      "Hemispheric Light",
-      new Vector3(-40, -80, -4),
-      SE.scene
-    )
-    light1.intensity = 0.55
-    light1.groundColor = new Color3(1, 1, 1)
+    // const light1 = new HemisphericLight(
+    //   "Hemispheric Light",
+    //   new Vector3(-40, -80, -4),
+    //   SE.scene
+    // )
+    // light1.intensity = 0.55
+    // light1.groundColor = new Color3(1, 1, 1)
+    //
+    // const light2 = new DirectionalLight(
+    //   "Directional Light Main",
+    //   new Vector3(24, 32, 12),
+    //   SE.scene
+    // )
+    // light2.intensity = 0.3
+    // light2.shadowMinZ = 1
+    // light2.shadowMaxZ = 200
+    //
+    // const light3 = new DirectionalLight(
+    //   "Directional Light Sub",
+    //   new Vector3(-30, -45, 30),
+    //   SE.scene
+    // )
+    // light3.intensity = 0.2
+
+    const light = new HemisphericLight("light1", new Vector3(12, 16, 6), SE.scene)
+    light.intensity = 1.0
+    light.groundColor = new Color3(0.8, 0.8, 0.8)
+    light.diffuse = new Color3(0.97, 0.97, 0.97)
   
-    const light2 = new DirectionalLight(
-      "Directional Light Main",
-      new Vector3(30, -40, -30),
-      SE.scene
-    )
-    light2.intensity = 0.3
-    light2.shadowMinZ = 1
-    light2.shadowMaxZ = 200
-  
-    const light3 = new DirectionalLight(
-      "Directional Light Sub",
-      new Vector3(-30, -45, 30),
-      SE.scene
-    )
-    light3.intensity = 0.2
-  
-    const shadow = new ShadowGenerator(1024, light2)
-    shadow.setDarkness(0.1)
-    shadow.useBlurExponentialShadowMap = true;
-    // shadow.usePercentageCloserFiltering = true;
-    shadow.blurBoxOffset = 3;
-    // shadow.usePoissonSampling = true;
-    shadow.enableSoftTransparentShadow = false;
-    shadow.transparencyShadow = true;
-    
-    this.lights.push(light1, light2, light3)
-    this.shadow = shadow
+    // const shadow = new ShadowGenerator(1024, light)
+    // shadow.setDarkness(0.1)
+    // shadow.useBlurExponentialShadowMap = true;
+    // // shadow.usePercentageCloserFiltering = true;
+    // shadow.blurBoxOffset = 3;
+    // // shadow.usePoissonSampling = true;
+    // shadow.enableSoftTransparentShadow = false;
+    // shadow.transparencyShadow = true;
+
+    // this.lights.push(light1, light2, light3)
+    this.lights.push(light)
+    // this.shadow = shadow
   }
   
   static defaultEnvironment() {
@@ -194,7 +201,7 @@ export default class Environment {
   
   static setBackgroundColor(color: Color3) {
     SE.scene.clearColor = Color4.FromColor3(color, 1.0)
-    SE.scene.fogColor = color
+    // SE.scene.fogColor = color
   }
   
   static setCube(name: string) {
