@@ -1,7 +1,7 @@
 import {GradientMaterial} from "@babylonjs/materials";
 import {Color3, CreateBox, Material, Mesh, StandardMaterial, Vector3} from "@babylonjs/core";
 import SE from "../../SE";
-import {result} from "../../../App/tables/data/result";
+import {result} from "@/App/tables/data/result";
 import Writer from "./Writer";
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode";
 
@@ -84,12 +84,13 @@ export default class Builder {
 
   static addData(name: string, x: number, y: number, h: number): Mesh {
     const material = new GradientMaterial("material_" + name + y, SE.scene)
-    material.topColor = this.gray(0.5)
-    material.bottomColor = this.gray(0.3)
+    material.topColor = this.gray(0.99)
+    material.bottomColor = this.gray(0.35)
+    material.offset = 0.6
 
     const box = CreateBox(name, {
       width: Builder.COLUMN_SIZE,
-      height: 0.1,
+      height: 1,
       depth: Builder.COLUMN_SIZE,
     }, SE.scene)
     box.scaling = new Vector3(1, h * Builder.DATA_SH, 1)

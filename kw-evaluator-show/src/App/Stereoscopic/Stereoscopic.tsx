@@ -16,9 +16,11 @@ function Stereoscopic() {
   useEffect(() => {
     if (new Date().getTime() - renderTime < DUPLICATE_EFFECT_TIME) return
     renderTime = new Date().getTime()
+
+    console.log('aa')
   }, [])
 
-  const oth = () => {
+  const other = () => {
     const canvas = document.getElementById("babylonCanvas") as HTMLCanvasElement
     const engine = new Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true })
     engine.setDepthFunction(10)

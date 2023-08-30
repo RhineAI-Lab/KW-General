@@ -44,7 +44,7 @@ export default class SE {
     SE.scene = new Scene(SE.engine)
   }
   
-  static render(canvas: HTMLCanvasElement, model: string, cube: string = ''): void {
+  static render(canvas: HTMLCanvasElement, model: string = '', cube: string = ''): void {
     this.initEngine(canvas)
     
     MaterialManager.init()
@@ -56,14 +56,8 @@ export default class SE {
     GUI.init()
 
     Builder.build()
-  
-    // Importer.importScene('/3d/models/', 'factory.babylon')
-    // Importer.import('factory.glb')
     
     Importer.onSuccess = (meshes, particleSystems, skeletons) => {
-      if (model === 'dummy3.babylon') {
-        AnimationManager.dummy3AnimationInit(meshes, particleSystems, skeletons)
-      }
     }
     Importer.innerOnSuccess()
     

@@ -150,10 +150,10 @@ export default class Environment {
   static initCamera() {
     const camera = new ArcRotateCamera(
       "Main Camera",
-      Math.PI / 4,
-      Math.PI / 2.5,
-      7,
-      new Vector3(0, 0.6, 0),
+      -0.8,
+      1.15,
+      40,
+      new Vector3(6.7, 2.5, 14.3),
       SE.scene
     )
     camera.attachControl(SE.canvas, true);

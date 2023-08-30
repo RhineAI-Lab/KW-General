@@ -13,9 +13,6 @@ let lastInitTime = 0
 function Graph (): JSX.Element {
   const canvas = useRef<HTMLCanvasElement | null>(null)
 
-  const cube = UrlUtils.getParam('cube')
-  let model = UrlUtils.getParam('model')
-
   useEffect(() => {
     if (Date.now() - lastInitTime < DUPLICATE_EFFECT_TIME) {
       console.warn('Ignore duplicate init')
@@ -23,7 +20,7 @@ function Graph (): JSX.Element {
     }
     lastInitTime = Date.now()
     if (canvas.current) {
-      SE.render(canvas.current, model, cube)
+      SE.render(canvas.current)
     }
   }, [])
   
@@ -34,16 +31,6 @@ function Graph (): JSX.Element {
     <div className={Style.Graph}>
       <div className={Style.canvasHolder}>
         <canvas ref={canvas}/>
-      </div>
-      {/*临时显示动作切换按钮*/}
-      <div className={Style.hover} style={{ display: model === 'dummy3' ? 'block' : 'none' }}>
-        <div className={Style.content}>
-          <Button color='primary' variant='contained' onClick={e => { AnimationManager.play('Idle') }}>Play Idle</Button>
-          <Button color='primary' variant='contained' onClick={e => { AnimationManager.play('Walk') }}>Play Walk</Button>
-          <Button color='primary' variant='contained' onClick={e => { AnimationManager.play('Run') }}>Play Run</Button>
-          <Button color='primary' variant='contained' onClick={e => { AnimationManager.play('LeftStrafeWalk') }}>Play Left Walk</Button>
-          <Button color='primary' variant='contained' onClick={e => { AnimationManager.play('RightStrafeWalk') }}>Play Right Walk</Button>
-        </div>
       </div>
     </div>
   )
