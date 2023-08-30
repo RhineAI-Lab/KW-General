@@ -16,8 +16,6 @@ function Stereoscopic() {
   useEffect(() => {
     if (new Date().getTime() - renderTime < DUPLICATE_EFFECT_TIME) return
     renderTime = new Date().getTime()
-
-    console.log('aa')
   }, [])
 
   const other = () => {

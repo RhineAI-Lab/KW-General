@@ -188,6 +188,7 @@ export default class SE {
     SE._scene = scene
     this.engine.runRenderLoop(function () {
       if (SE.rendering) scene.render()
+      console.log('rendering')
     })
   }
   
