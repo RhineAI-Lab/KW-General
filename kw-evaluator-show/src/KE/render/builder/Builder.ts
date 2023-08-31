@@ -3,7 +3,7 @@ import {Color3, CreateBox, Material, Mesh, StandardMaterial, Vector3} from "@bab
 import KE from "../../KE";
 import {result} from "@/App/tables/data/result";
 import Writer from "./Writer";
-import {TransformNode} from "@babylonjs/core/Meshes/transformNode";
+import {TransformNode} from "@babylonjs/core";
 
 
 // 搭建具体场景内容
@@ -20,7 +20,6 @@ export default class Builder {
   static build() {
     this.buildScore()
     this.buildLabel().then(r => {})
-    KE.scene.debugLayer.show().then(r => {})
   }
 
   static buildScore() {

@@ -106,7 +106,7 @@ export default class Environment {
     const camera = new ArcRotateCamera(
       "Main Camera",
       -0.8,
-      1.15,
+      1.05,
       40,
       new Vector3(6.7, 2.5, 14.3),
       KE.scene
