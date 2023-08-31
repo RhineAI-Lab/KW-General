@@ -1,7 +1,6 @@
 import AnimationManager from "./render/animation/AnimationManager";
 import Environment from "./render/environment/Environment";
 import Importer from "./render/importer/Importer";
-import "@babylonjs/inspector";
 import {
   AbstractMesh,
   CreateBox, CreateSphere,
@@ -11,7 +10,7 @@ import {
   Vector3
 } from "@babylonjs/core";
 import Loading from "./view/Loading/Loading";
-import {tip} from "../App/App";
+import {tip} from "@/App/App";
 import {closeSnackbar} from "notistack";
 import Selection from "./operate/selection/Selection";
 import Clipboard from "./operate/clipboard/Clipboard";

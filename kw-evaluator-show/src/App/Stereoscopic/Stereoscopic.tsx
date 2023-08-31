@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react'
 import Style from './Stereoscopic.module.scss'
-import "@babylonjs/inspector";
 import {
   ArcRotateCamera, Color3, Color4, CreateBox,
   Engine, HemisphericLight, Scene, Vector3
