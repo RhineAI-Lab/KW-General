@@ -1,10 +1,13 @@
 import React, {useEffect} from 'react'
 import Style from './Home.module.scss'
+import {useNavigate} from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate()
 
   useEffect(() => {
-
+    // 跳转至当前默认开发页面
+    navigate('/3d')
   }, [])
 
   return (
