@@ -5,6 +5,7 @@ const {
   addWebpackExternals,
   adjustStyleLoaders,
 } = require('customize-cra')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path')
 const paths = require("./paths")
 const fs = require("fs")
@@ -41,14 +42,27 @@ module.exports = override(
       //   '@babylonjs/core': path.resolve(__dirname, 'node_modules/@babylonjs/core'),
       // };
     } else {
-      // 排除@babylonjs/core模块，使用外部脚本引入
       config.externals = {
         '@babylonjs/core': 'BABYLON',
         '@babylonjs/material': 'BABYLON',
+        '@babylonjs/inspector': 'BABYLON',
       };
       config.output.filename = 'static/js/[name].[fullhash].js';
       config.output.chunkFilename = 'static/js/[name].[fullhash].chunk.js';
     }
+
+    config.plugins = config.plugins.map(plugin => {
+      if (plugin instanceof HtmlWebpackPlugin) {
+        return new HtmlWebpackPlugin({
+          ...plugin.options,
+          template: 'public/index.html', // 使用自定义模板
+          inject: 'body', // 或根据需求设置为 'head'
+          chunks: ['main'], // 根据实际配置修改
+        });
+      }
+      return plugin;
+    });
+
     return config
   },
   addWebpackExternals({

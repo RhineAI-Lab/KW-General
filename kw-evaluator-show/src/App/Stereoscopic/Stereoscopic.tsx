@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react'
 import Style from './Stereoscopic.module.scss'
+import '@babylonjs/inspector';
 import {
   ArcRotateCamera, Color3, Color4, CreateBox,
   Engine, HemisphericLight, Scene, Vector3
@@ -7,14 +8,15 @@ import {
 import {GradientMaterial} from "@babylonjs/materials";
 import {result} from "../tables/data/result";
 import Graph from "../../SE/view/Graph/Graph";
-import {AppTools, DUPLICATE_EFFECT_TIME, tip} from "../App";
+import {DUPLICATE_EFFECT_TIME, tip} from "../App";
 
 let renderTime = 0
+
 function Stereoscopic() {
 
   const other = () => {
     const canvas = document.getElementById("babylonCanvas") as HTMLCanvasElement
-    const engine = new Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true })
+    const engine = new Engine(canvas, true, {preserveDrawingBuffer: true, stencil: true})
     engine.setDepthFunction(10)
     const scene = new Scene(engine)
     scene.clearColor = new Color4(0.9, 0.9, 0.9, 1)
@@ -61,7 +63,7 @@ function Stereoscopic() {
 
     result.map((line, i) => {
       let j = 0
-      for(const k in line.score_level_2) {
+      for (const k in line.score_level_2) {
         // @ts-ignore
         let v = line.score_level_2[k] * 1.2 - 0.1
         addData(i, j, v)
@@ -73,7 +75,8 @@ function Stereoscopic() {
     engine.runRenderLoop(() => {
       scene.render()
     })
-    scene.debugLayer.show().then(r => {})
+    scene.debugLayer.show().then(r => {
+    })
   }
 
   useEffect(() => {
@@ -86,7 +89,6 @@ function Stereoscopic() {
   return (
     <div className={Style.Stereoscopic}>
       <canvas id='babylonCanvas'/>
-      {/*<Graph/>*/}
     </div>
   )
 }
