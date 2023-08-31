@@ -32,8 +32,23 @@ dotenvFiles.forEach(dotenvFile => {
 });
 
 module.exports = override(
-  (config) => {
+  (config, env) => {
     config.devtool = config.mode === 'development' ? 'cheap-module-source-map' : false
+    if (env === 'development') {
+      // 映射别名 当前可省略
+      // config.resolve.alias = {
+      //   ...config.resolve.alias,
+      //   '@babylonjs/core': path.resolve(__dirname, 'node_modules/@babylonjs/core'),
+      // };
+    } else {
+      // 排除@babylonjs/core模块，使用外部脚本引入
+      config.externals = {
+        '@babylonjs/core': 'BABYLON',
+        '@babylonjs/material': 'BABYLON',
+      };
+      config.output.filename = 'static/js/[name].[fullhash].js';
+      config.output.chunkFilename = 'static/js/[name].[fullhash].chunk.js';
+    }
     return config
   },
   addWebpackExternals({
@@ -41,7 +56,7 @@ module.exports = override(
   }),
   // @别名
   addWebpackAlias({
-    '@': path.resolve('./src')
+    '@': path.resolve('../src')
   }),
   // css编译流程 类名别名
   addWebpackModuleRule({

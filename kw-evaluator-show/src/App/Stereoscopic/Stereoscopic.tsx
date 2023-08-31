@@ -4,18 +4,13 @@ import {
   ArcRotateCamera, Color3, Color4, CreateBox,
   Engine, HemisphericLight, Scene, Vector3
 } from "@babylonjs/core";
-// import {GradientMaterial} from "@babylonjs/materials";
+import {GradientMaterial} from "@babylonjs/materials";
 import {result} from "../tables/data/result";
 import Graph from "../../SE/view/Graph/Graph";
 import {AppTools, DUPLICATE_EFFECT_TIME, tip} from "../App";
 
 let renderTime = 0
 function Stereoscopic() {
-
-  useEffect(() => {
-    if (new Date().getTime() - renderTime < DUPLICATE_EFFECT_TIME) return
-    renderTime = new Date().getTime()
-  }, [])
 
   const other = () => {
     const canvas = document.getElementById("babylonCanvas") as HTMLCanvasElement
@@ -53,13 +48,13 @@ function Stereoscopic() {
       const size = 0.6
       const sh = 2
 
-      // const material = new GradientMaterial("grad", scene);
-      // material.topColor = new Color3(1.0, 1.0, 1.0); // Set the gradient top color
-      // material.bottomColor = new Color3(0.4, 0.4, 0.4); // Set the gradient bottom color
-      // material.offset = 0.6;
+      const material = new GradientMaterial("grad", scene);
+      material.topColor = new Color3(1.0, 1.0, 1.0); // Set the gradient top color
+      material.bottomColor = new Color3(0.4, 0.4, 0.4); // Set the gradient bottom color
+      material.offset = 0.6;
 
       const box = CreateBox('box1')
-      // box.material = material
+      box.material = material
       box.scaling = new Vector3(size * scale, h * sh, size * scale)
       box.position = new Vector3(x * scale, h / 2 * sh, y * scale)
     }
@@ -81,9 +76,17 @@ function Stereoscopic() {
     scene.debugLayer.show().then(r => {})
   }
 
+  useEffect(() => {
+    if (new Date().getTime() - renderTime < DUPLICATE_EFFECT_TIME) return
+    renderTime = new Date().getTime()
+
+    other()
+  }, [])
+
   return (
     <div className={Style.Stereoscopic}>
-      <Graph/>
+      <canvas id='babylonCanvas'/>
+      {/*<Graph/>*/}
     </div>
   )
 }

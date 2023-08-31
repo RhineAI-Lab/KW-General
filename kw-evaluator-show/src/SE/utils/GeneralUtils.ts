@@ -1,7 +1,7 @@
 import {MouseEventHandler} from "react";
 
 export default class GeneralUtils {
-  static getUniqueID(): string {
+  static randomStringId(): string {
     return Math.random().toString(36).substr(2, 9);
   }
   
