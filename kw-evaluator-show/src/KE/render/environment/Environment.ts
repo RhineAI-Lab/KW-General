@@ -20,36 +20,11 @@ export default class Environment {
 
     // 设置背景方块
     const scene = KE.scene
-    // this.environmentTexture = CubeTexture.CreateFromImages([
-    //   '/3d/textures/white.jpg',
-    //   '/3d/textures/white.jpg',
-    //   '/3d/textures/white.jpg',
-    //   '/3d/textures/white.jpg',
-    //   '/3d/textures/white.jpg',
-    //   '/3d/textures/white.jpg',
-    // ], scene)
-    // this.environmentTexture = CubeTexture.CreateFromPrefilteredData('/3d/textures/temp.env', scene)
-    // KE.scene.environmentTexture = this.environmentTexture
-    // const hdrSkybox = Mesh.CreateBox("HDR Sky Box", 500, scene, false, Constants.MATERIAL_CounterClockWiseSideOrientation);
-    // const hdrSkyboxMaterial = new PBRMaterial("pbr-sky-box-material", KE.scene);
-    // hdrSkyboxMaterial.backFaceCulling = false;
-    // hdrSkyboxMaterial.reflectionTexture = KE.scene.environmentTexture!.clone();
-    // if (hdrSkyboxMaterial.reflectionTexture) {
-    //   hdrSkyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-    // }
-    // hdrSkyboxMaterial.microSurface = 0.7;
-    // hdrSkyboxMaterial.disableLighting = true;
-    // hdrSkyboxMaterial.twoSidedLighting = true;
-    // hdrSkybox.infiniteDistance = true;
-    // hdrSkybox.material = hdrSkyboxMaterial;
-    // hdrSkybox.applyFog = false
 
     // 创建相机
     this.initCamera()
     // 创建全方位光源
     this.initLight()
-    // 创建地面网格
-    // TransformGround.createGround()
   }
 
   static adjustCamera(models: AbstractMesh[] | AbstractMesh) {

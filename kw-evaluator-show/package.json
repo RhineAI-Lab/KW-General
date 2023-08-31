@@ -28,8 +28,9 @@
     "@antv/s2": "^1.49.1",
     "@antv/s2-react": "^1.42.0",
     "@babel/core": "^7.16.0",
-    "@babylonjs/inspector": "^6.18.0",
-    "@babylonjs/materials": "^6.18.0",
+    "@babylonjs/core": "^6.19.0",
+    "@babylonjs/inspector": "^6.19.0",
+    "@babylonjs/materials": "^6.19.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@material/web": "^1.0.0-pre.12",
@@ -139,7 +140,6 @@
     ]
   },
   "devDependencies": {
-    "@babylonjs/core": "^6.1.0",
     "@electron-forge/cli": "^6.2.1",
     "@electron-forge/maker-deb": "^6.2.1",
     "@electron-forge/maker-rpm": "^6.2.1",
