@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react'
 import Style from './Stereoscopic.module.scss'
-import "@babylonjs/inspector";
 import {
   ArcRotateCamera, Color3, Color4, CreateBox,
   Engine, HemisphericLight, Scene, Vector3
@@ -12,11 +11,6 @@ import {AppTools, DUPLICATE_EFFECT_TIME, tip} from "../App";
 
 let renderTime = 0
 function Stereoscopic() {
-
-  useEffect(() => {
-    if (new Date().getTime() - renderTime < DUPLICATE_EFFECT_TIME) return
-    renderTime = new Date().getTime()
-  }, [])
 
   const other = () => {
     const canvas = document.getElementById("babylonCanvas") as HTMLCanvasElement
@@ -82,9 +76,17 @@ function Stereoscopic() {
     scene.debugLayer.show().then(r => {})
   }
 
+  useEffect(() => {
+    if (new Date().getTime() - renderTime < DUPLICATE_EFFECT_TIME) return
+    renderTime = new Date().getTime()
+
+    other()
+  }, [])
+
   return (
     <div className={Style.Stereoscopic}>
-      <Graph/>
+      <canvas id='babylonCanvas'/>
+      {/*<Graph/>*/}
     </div>
   )
 }

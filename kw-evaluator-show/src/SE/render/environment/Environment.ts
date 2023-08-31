@@ -1,5 +1,5 @@
 import SE from "../../SE"
-import {GridMaterial} from '@babylonjs/materials'
+// import {GridMaterial} from '@babylonjs/materials'
 import {
   AbstractMesh,
   ArcRotateCamera,
@@ -177,16 +177,16 @@ export default class Environment {
   
   static initGroundEasy() {
     // 创建网状线地面材质
-    const material = new GridMaterial("groundMaterial", SE.scene)
-    material.majorUnitFrequency = 10
-    material.minorUnitVisibility = 0.3
-    material.gridRatio = 1
-    material.opacity = 0.3
-    material.useMaxLine = true
-    material.lineColor = Color3.Gray()
-  
-    const ground = CreateGround("ground", {width: 3200, height: 3200})
-    ground.material = material
+    // const material = new GridMaterial("groundMaterial", SE.scene)
+    // material.majorUnitFrequency = 10
+    // material.minorUnitVisibility = 0.3
+    // material.gridRatio = 1
+    // material.opacity = 0.3
+    // material.useMaxLine = true
+    // material.lineColor = Color3.Gray()
+    //
+    // const ground = CreateGround("ground", {width: 3200, height: 3200})
+    // ground.material = material
   }
   
   static setCameraDistance(distance: number) {
