@@ -1,35 +1,25 @@
-import SE from "../../SE"
-// import {GridMaterial} from '@babylonjs/materials'
+import KE from "../../KE"
 import {
-  AbstractMesh,
-  ArcRotateCamera,
-  Color3,
-  Color4, Constants,
-  CreateGround,
-  CubeTexture, DirectionalLight,
-  HemisphericLight, ImageProcessingConfiguration, Light, Mesh, PBRMaterial, PointerEventTypes,
-  Scene, ShadowGenerator, SpotLight, StandardMaterial, Texture,
-  Vector3, VertexData
+  AbstractMesh, ArcRotateCamera, Color3, Color4, HemisphericLight,
+  CreateGround, CubeTexture, Light, Mesh, VertexData,
+  PointerEventTypes, Scene, ShadowGenerator, Vector3
 } from "@babylonjs/core"
-import TransformGround from "../environment/TransformGround";
 import GeometryUtils from "../../utils/GeometryUtils";
 
 export default class Environment {
-  
+
   static camera: ArcRotateCamera
   static lights: Light[] = []
   static shadow: ShadowGenerator
   static environmentTexture: CubeTexture
-  
-  static StandardMode = false
-  
+
   static init() {
     // 设置环境背景色
     let gray = 0.9
     this.setBackgroundColor(new Color3(gray, gray, gray))
-    
+
     // 设置背景方块
-    const scene = SE.scene
+    const scene = KE.scene
     // this.environmentTexture = CubeTexture.CreateFromImages([
     //   '/3d/textures/white.jpg',
     //   '/3d/textures/white.jpg',
@@ -39,11 +29,11 @@ export default class Environment {
     //   '/3d/textures/white.jpg',
     // ], scene)
     // this.environmentTexture = CubeTexture.CreateFromPrefilteredData('/3d/textures/temp.env', scene)
-    // SE.scene.environmentTexture = this.environmentTexture
+    // KE.scene.environmentTexture = this.environmentTexture
     // const hdrSkybox = Mesh.CreateBox("HDR Sky Box", 500, scene, false, Constants.MATERIAL_CounterClockWiseSideOrientation);
-    // const hdrSkyboxMaterial = new PBRMaterial("pbr-sky-box-material", SE.scene);
+    // const hdrSkyboxMaterial = new PBRMaterial("pbr-sky-box-material", KE.scene);
     // hdrSkyboxMaterial.backFaceCulling = false;
-    // hdrSkyboxMaterial.reflectionTexture = SE.scene.environmentTexture!.clone();
+    // hdrSkyboxMaterial.reflectionTexture = KE.scene.environmentTexture!.clone();
     // if (hdrSkyboxMaterial.reflectionTexture) {
     //   hdrSkyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
     // }
@@ -53,7 +43,7 @@ export default class Environment {
     // hdrSkybox.infiniteDistance = true;
     // hdrSkybox.material = hdrSkyboxMaterial;
     // hdrSkybox.applyFog = false
-    
+
     // 创建相机
     this.initCamera()
     // 创建全方位光源
@@ -61,7 +51,7 @@ export default class Environment {
     // 创建地面网格
     // TransformGround.createGround()
   }
-  
+
   static adjustCamera(models: AbstractMesh[] | AbstractMesh) {
     if (Array.isArray(models) && models.length === 0) return
     if (!Array.isArray(models)) models = [models]
@@ -82,7 +72,7 @@ export default class Environment {
     this.camera.beta = Math.PI / 2.5
     this.camera.radius = GeometryUtils.getPointDistance(min, max) / 2 * 3
   }
-  
+
   static addShadows(meshes: AbstractMesh[] | AbstractMesh) {
     if (Array.isArray(meshes)) {
       for (const mesh of meshes) {
@@ -92,12 +82,12 @@ export default class Environment {
       this.shadow.addShadowCaster(meshes)
     }
   }
-  
+
   static initLight() {
     // const light1 = new HemisphericLight(
     //   "Hemispheric Light",
     //   new Vector3(-40, -80, -4),
-    //   SE.scene
+    //   KE.scene
     // )
     // light1.intensity = 0.55
     // light1.groundColor = new Color3(1, 1, 1)
@@ -105,7 +95,7 @@ export default class Environment {
     // const light2 = new DirectionalLight(
     //   "Directional Light Main",
     //   new Vector3(24, 32, 12),
-    //   SE.scene
+    //   KE.scene
     // )
     // light2.intensity = 0.3
     // light2.shadowMinZ = 1
@@ -114,15 +104,15 @@ export default class Environment {
     // const light3 = new DirectionalLight(
     //   "Directional Light Sub",
     //   new Vector3(-30, -45, 30),
-    //   SE.scene
+    //   KE.scene
     // )
     // light3.intensity = 0.2
 
-    const light = new HemisphericLight("light1", new Vector3(12, 16, 6), SE.scene)
+    const light = new HemisphericLight("light1", new Vector3(12, 16, 6), KE.scene)
     light.intensity = 1.0
     light.groundColor = new Color3(0.8, 0.8, 0.8)
     light.diffuse = new Color3(0.97, 0.97, 0.97)
-  
+
     // const shadow = new ShadowGenerator(1024, light)
     // shadow.setDarkness(0.1)
     // shadow.useBlurExponentialShadowMap = true;
@@ -136,17 +126,7 @@ export default class Environment {
     this.lights.push(light)
     // this.shadow = shadow
   }
-  
-  static defaultEnvironment() {
-    // 内置快捷环境创建
-    let environment = SE.scene.createDefaultEnvironment({
-      createGround: false,
-      skyboxSize: 6400,
-    })
-    if (!environment) return
-    environment.setMainColor(new Color3(4, 4, 4))
-  }
-  
+
   static initCamera() {
     const camera = new ArcRotateCamera(
       "Main Camera",
@@ -154,90 +134,22 @@ export default class Environment {
       1.15,
       40,
       new Vector3(6.7, 2.5, 14.3),
-      SE.scene
+      KE.scene
     )
-    camera.attachControl(SE.canvas, true);
-    if (this.StandardMode) {
-      camera.lowerRadiusLimit = 0.05
-      camera.upperRadiusLimit = 30
-      camera.lowerBetaLimit = 0.2
-      camera.upperBetaLimit = 3.13
-    } else {
-      camera.lowerRadiusLimit = 0.005
-      camera.upperRadiusLimit = 200
-      camera.lowerBetaLimit = 0.2
-      camera.upperBetaLimit = 3.13
-    }
+    camera.attachControl(KE.canvas, true);
+    camera.lowerRadiusLimit = 0.005
+    camera.upperRadiusLimit = 200
+    camera.lowerBetaLimit = 0.2
+    camera.upperBetaLimit = 3.13
     // camera.wheelDeltaPercentage = 0.5
     camera.pinchDeltaPercentage = 0.02
     camera.useBouncingBehavior = true
     camera.useNaturalPinchZoom = true
     this.camera = camera
   }
-  
-  static initGroundEasy() {
-    // 创建网状线地面材质
-    // const material = new GridMaterial("groundMaterial", SE.scene)
-    // material.majorUnitFrequency = 10
-    // material.minorUnitVisibility = 0.3
-    // material.gridRatio = 1
-    // material.opacity = 0.3
-    // material.useMaxLine = true
-    // material.lineColor = Color3.Gray()
-    //
-    // const ground = CreateGround("ground", {width: 3200, height: 3200})
-    // ground.material = material
-  }
-  
-  static setCameraDistance(distance: number) {
-    if (!this.StandardMode) return
-    this.camera.minZ = 0.1
-    this.camera.maxZ = distance
-    SE.scene.fogMode = Scene.FOGMODE_LINEAR
-    SE.scene.fogStart = distance * 0.8
-    SE.scene.fogEnd = distance
-    SE.scene.fogDensity = 0.1
-  }
-  
+
   static setBackgroundColor(color: Color3) {
-    SE.scene.clearColor = Color4.FromColor3(color, 1.0)
-    // SE.scene.fogColor = color
-  }
-  
-  static setCube(name: string) {
-    if (name !== '') {
-      console.log('Use cube: ', name)
-      const hdrTexture = CubeTexture.CreateFromPrefilteredData("./3d/textures/" + name, SE.scene)
-      const currentSkybox = SE.scene.createDefaultSkybox(hdrTexture, true);
-    }
-  }
-  
-  static makeTransformGround() {
-    // 创建白色透明材质
-    const materialWhite = new StandardMaterial("groundMaterialWhite", SE.scene)
-    materialWhite.diffuseColor = new Color3(1, 1, 1)
-    
-    // 创建灰色透明材质
-    const materialGray = new StandardMaterial("groundMaterialGray", SE.scene)
-    materialGray.diffuseColor = new Color3(0.7, 0.7, 0.7)
-    
-    // 创建地面
-    const size = 200
-    const thickness = 0.03
-    const ground = CreateGround("ground", {width: size, height: size}, SE.scene)
-    ground.material = materialWhite;
-    ground.position.y = -0.01
-    
-    for (let i = -size/2; i < size/2; i+=1) {
-      const ground = CreateGround("ground", {width: thickness, height: size}, SE.scene)
-      ground.material = materialGray;
-      ground.position.x = i
-    }
-    for (let i = -size/2; i < size/2; i+=1) {
-      const ground = CreateGround("ground", {width: size, height: thickness}, SE.scene)
-      ground.material = materialGray;
-      ground.position.z = i
-    }
-    
+    KE.scene.clearColor = Color4.FromColor3(color, 1.0)
+    // KE.scene.fogColor = color
   }
 }

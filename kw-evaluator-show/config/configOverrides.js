@@ -70,7 +70,7 @@ module.exports = override(
   }),
   // @别名
   addWebpackAlias({
-    '@': path.resolve('../src')
+    '@': path.resolve('./src')
   }),
   // css编译流程 类名别名
   addWebpackModuleRule({

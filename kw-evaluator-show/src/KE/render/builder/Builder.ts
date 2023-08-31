@@ -1,11 +1,12 @@
-// import {GradientMaterial} from "@babylonjs/materials";
+import {GradientMaterial} from "@babylonjs/materials";
 import {Color3, CreateBox, Material, Mesh, StandardMaterial, Vector3} from "@babylonjs/core";
-import SE from "../../SE";
+import KE from "../../KE";
 import {result} from "@/App/tables/data/result";
 import Writer from "./Writer";
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode";
 
 
+// 搭建具体场景内容
 export default class Builder {
 
   static COLUMN_SIZE = 0.3  // 柱子宽高
@@ -19,7 +20,7 @@ export default class Builder {
   static build() {
     this.buildScore()
     this.buildLabel().then(r => {})
-    // SE.scene.debugLayer.show().then(r => {})
+    KE.scene.debugLayer.show().then(r => {})
   }
 
   static buildScore() {
@@ -40,7 +41,7 @@ export default class Builder {
     const XAxisGroup = new TransformNode('XAxisGroup')
     const YAxisGroup = new TransformNode('YAxisGroup')
 
-    const material = new StandardMaterial("material_label", SE.scene)
+    const material = new StandardMaterial("material_label", KE.scene)
     material.diffuseColor = this.gray(0.1)
 
     await Writer.init()
@@ -83,23 +84,23 @@ export default class Builder {
   }
 
   static addData(name: string, x: number, y: number, h: number): Mesh {
-    // const material = new GradientMaterial("material_" + name + y, SE.scene)
-    // material.topColor = this.gray(0.99)
-    // material.bottomColor = this.gray(0.35)
-    // material.offset = 0.6
+    const material = new GradientMaterial("material_" + name + y, KE.scene)
+    material.topColor = this.gray(0.99)
+    material.bottomColor = this.gray(0.35)
+    material.offset = 0.6
 
     const box = CreateBox(name, {
       width: Builder.COLUMN_SIZE,
       height: 1,
       depth: Builder.COLUMN_SIZE,
-    }, SE.scene)
+    }, KE.scene)
     box.scaling = new Vector3(1, h * Builder.DATA_SH, 1)
     box.position = new Vector3(
       x * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
       h / 2 * Builder.DATA_SH,
       y * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
     )
-    // box.material = material
+    box.material = material
     return box
   }
 

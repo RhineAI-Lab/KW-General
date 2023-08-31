@@ -1,22 +1,19 @@
-import SE from "../../SE";
+import "@babylonjs/inspector"
+import KE from "@/KE/KE";
 import {AbstractMesh, Mesh} from "@babylonjs/core";
-import Selection from "../selection/Selection";
 
 export default class Debugger {
-  static USE_DEBUG = this.isDevelopmentEnv() && false
+  static UKE_DEBUG = this.isDevelopmentEnv() && false
   static DEBUG_TOOL_INDEX = -1
   
   static startDebug() {
-    if (!this.USE_DEBUG) return
+    if (!this.UKE_DEBUG) return
     this.setDebugLayerVisible(true)
-    // SE.loadModel('/inner/', 'box')
   }
   
   static selectMesh(mesh: AbstractMesh) {
-    SE.scene.debugLayer.select(mesh)
-    if (!this.USE_DEBUG) return
-    Selection.add(mesh as Mesh, true)
-    SE.setToolIndex(this.DEBUG_TOOL_INDEX)
+    KE.scene.debugLayer.select(mesh)
+    if (!this.UKE_DEBUG) return
   }
   
   static isDevelopmentEnv() {
@@ -35,7 +32,7 @@ export default class Debugger {
   
   static isDebugLayerVisible() {
     try {
-      return SE.scene.debugLayer.isVisible()
+      return KE.scene.debugLayer.isVisible()
     } catch (e) {
       return false
     }
