@@ -1,7 +1,9 @@
 const {
   override,
   addWebpackAlias,
-  addWebpackModuleRule
+  addWebpackModuleRule,
+  addWebpackExternals,
+  adjustStyleLoaders,
 } = require('customize-cra')
 const path = require('path')
 const paths = require("./paths")
@@ -34,17 +36,31 @@ module.exports = override(
     config.devtool = config.mode === 'development' ? 'cheap-module-source-map' : false
     return config
   },
+  addWebpackExternals({
+    babylonjs: 'BABYLON', // 将 Babylon.js 声明为外部库
+  }),
   // @别名
   addWebpackAlias({
     '@': path.resolve('./src')
   }),
-  // scss全局变量
+  // css编译流程 类名别名
   addWebpackModuleRule({
     test: /\.scss$/,
     use: [
       'style-loader',
-      'css-loader',
-      'sass-loader',
+      {
+        loader: 'css-loader',
+        options: {
+          modules: {
+            localIdentName: "[name]_[local]_[hash:base64:8]",
+          },
+        }
+      },
+      {
+        loader: 'sass-loader',
+        options: {
+        }
+      },
       {
         loader: 'sass-resources-loader',
         options: {
@@ -52,5 +68,16 @@ module.exports = override(
         }
       }
     ]
+  }),
+  // scss全局变量
+  adjustStyleLoaders(rule => {
+    if (rule.test.toString().includes('scss')) {
+      rule.use.push({
+        loader: require.resolve('sass-resources-loader'),
+        options: {
+          resources: ['./src/assets/scss/variable.scss']
+        }
+      })
+    }
   })
 )

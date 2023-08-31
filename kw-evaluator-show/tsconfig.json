@@ -23,9 +23,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": [
-      "babylonjs",
-    ]
+    "types": []
   },
   "include": [
     "src"

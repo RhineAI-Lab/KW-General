@@ -1,4 +1,4 @@
-import {GradientMaterial} from "@babylonjs/materials";
+// import {GradientMaterial} from "@babylonjs/materials";
 import {Color3, CreateBox, Material, Mesh, StandardMaterial, Vector3} from "@babylonjs/core";
 import SE from "../../SE";
 import {result} from "@/App/tables/data/result";
@@ -19,7 +19,7 @@ export default class Builder {
   static build() {
     this.buildScore()
     this.buildLabel().then(r => {})
-    SE.scene.debugLayer.show().then(r => {})
+    // SE.scene.debugLayer.show().then(r => {})
   }
 
   static buildScore() {
@@ -83,10 +83,10 @@ export default class Builder {
   }
 
   static addData(name: string, x: number, y: number, h: number): Mesh {
-    const material = new GradientMaterial("material_" + name + y, SE.scene)
-    material.topColor = this.gray(0.99)
-    material.bottomColor = this.gray(0.35)
-    material.offset = 0.6
+    // const material = new GradientMaterial("material_" + name + y, SE.scene)
+    // material.topColor = this.gray(0.99)
+    // material.bottomColor = this.gray(0.35)
+    // material.offset = 0.6
 
     const box = CreateBox(name, {
       width: Builder.COLUMN_SIZE,
@@ -99,7 +99,7 @@ export default class Builder {
       h / 2 * Builder.DATA_SH,
       y * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
     )
-    box.material = material
+    // box.material = material
     return box
   }
 
