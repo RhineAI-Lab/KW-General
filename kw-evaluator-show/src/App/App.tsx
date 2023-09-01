@@ -11,9 +11,6 @@ import Data from "./Data/Data";
 import Stereoscopic from "./Stereoscopic/Stereoscopic";
 import {Slide, ThemeProvider} from "@mui/material";
 import {theme} from "./theme";
-import {closeSnackbar, enqueueSnackbar} from "notistack";
-import Icon from "./components/Icon/Icon";
-import {TipSnackbar} from "./components/TipSnackbar/TipSnackbar";
 
 export class AppTools {
   static notify = (
@@ -53,14 +50,16 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={Style.App}>
-        <Routes>
-          <Route path="/login" element={<Login/>} />
-          <Route path="/easy" element={<Easy/>} />
-          <Route path="/data" element={<Data/>} />
-          <Route path="/3d" element={<Stereoscopic/>} />
-          <Route path="/" element={<Home/>} />
-        </Routes>
+      <div className={Style.scale}>
+        <div className={Style.App}>
+          <Routes>
+            <Route path="/login" element={<Login/>} />
+            <Route path="/easy" element={<Easy/>} />
+            <Route path="/data" element={<Data/>} />
+            <Route path="/3d" element={<Stereoscopic/>} />
+            <Route path="/" element={<Home/>} />
+          </Routes>
+        </div>
       </div>
     </ThemeProvider>
   )

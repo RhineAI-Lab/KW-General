@@ -124,7 +124,7 @@ export default class Environment {
 
     let previousRadius = camera.radius
     KE.scene.onBeforeRenderObservable.add(() => {
-      if (camera.radius != previousRadius) {
+      if (Math.abs(camera.radius - previousRadius) > 2) {
         previousRadius = camera.radius
         camera.panningSensibility = (500 - camera.radius * 3.6) / KE.DPR
         // console.log('On camera.radius changed:', camera.radius, camera.panningSensibility)
