@@ -1,11 +1,8 @@
 import {
-  Engine, ArcRotateCamera, Color3, Color4, CreateBox,
-  HemisphericLight, Scene, Vector3, Database,
+  Engine, Scene, Database,
   SceneOptimizerOptions, SceneOptimizer
 } from "@babylonjs/core";
 import Environment from "@/KE/render/environment/Environment";
-import {GradientMaterial} from "@babylonjs/materials";
-import {result} from "@/App/tables/data/result";
 import GUI from "@/KE/render/gui/GUI";
 import Builder from "@/KE/render/builder/Builder";
 import Debugger from "@/KE/render/debugger/Debugger";
@@ -17,25 +14,29 @@ export default class KE {
   static canvas: HTMLCanvasElement
 
   static initEngine(canvas: HTMLCanvasElement) {
+    // 构造基本核心组件
     this.canvas = canvas
     const engine = new Engine(canvas, true, {preserveDrawingBuffer: true, stencil: true})
-    engine.setDepthFunction(10)
     const scene = new Scene(KE.engine)
+    // 储存至全局
+    KE.engine = engine
+    KE.scene = scene
 
+    // 循环渲染即大小变化更新
     engine.runRenderLoop(function () {
       scene.render()
     })
     window.addEventListener('resize', e => engine.resize())
 
+    // 设置完整性能释放
+    engine.setDepthFunction(10)
     engine.doNotHandleContextLost = false
     engine.enableOfflineSupport = true
     Database.IDBStorageEnabled = true
-
-    KE.engine = engine
-    KE.scene = scene
   }
 
-  static render(canvas: HTMLCanvasElement): void {
+  static async render(canvas: HTMLCanvasElement) {
+    // await this.waitBabylonLoaded()
     this.initEngine(canvas)
 
     Environment.init()
@@ -46,17 +47,22 @@ export default class KE {
     Debugger.startDebug()
 
     setTimeout(() => {
-      console.log('Start run Scene optimizer')
-      SceneOptimizer.OptimizeAsync(
-        KE.scene,
-        new SceneOptimizerOptions(50, 2000),
-        function() {
-          console.log('FPS target reached successfully')
-        }, function() {
-          console.log('FPS target not reached')
-        }
-      )
+      this.startOptimizer()
     }, 2000)
+  }
+
+  static startOptimizer() {
+    // 分级降低画质自动优化性能
+    console.log('Start run Scene optimizer')
+    SceneOptimizer.OptimizeAsync(
+      KE.scene,
+      new SceneOptimizerOptions(45, 2000),
+      function() {
+        console.log('FPS target reached successfully')
+      }, function() {
+        console.log('FPS target not reached')
+      }
+    )
   }
 
   // 刷新引擎渲染尺寸
@@ -73,5 +79,23 @@ export default class KE {
         }
       }, 10)
     }
+  }
+
+  static async waitBabylonLoaded() {
+    // TODO: 页面BABYLON区异步加载
+    return new Promise<void>((resolve, reject) => {
+      if (Debugger.isDevelopmentEnv()) {
+        resolve()
+      } else {
+        const w = window as any
+        if (w.isBabylonLoaded) {
+          resolve()
+        } else {
+          w.onBabylonLoaded = () => {
+            resolve()
+          }
+        }
+      }
+    })
   }
 }

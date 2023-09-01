@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react'
-import "@babylonjs/inspector"
 import Style from './Graph.module.scss'
 import {DUPLICATE_EFFECT_TIME} from "@/App/App";
 import KE from "@/KE/KE";
@@ -17,7 +16,7 @@ function Graph (): JSX.Element {
     }
     lastInitTime = Date.now()
 
-    KE.render(canvasRef.current)
+    KE.render(canvasRef.current).then(r => {})
   }, [])
 
   return (
