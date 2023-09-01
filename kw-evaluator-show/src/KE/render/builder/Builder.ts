@@ -19,66 +19,67 @@ export default class Builder {
 
   static build() {
     this.buildScore()
-    this.buildLabel().then(r => {})
+    this.buildLabel()
   }
 
   static buildScore() {
     const columnGroup = new TransformNode('ColumnGroup')
     result.map((line, i) => {
       let j = 0
-      for(const k in line.score_level_2) {
+      for (const k in line.score_level_2) {
         // @ts-ignore
         let v = line.score_level_2[k] * 1.2 - 0.1
         let mesh = Builder.addData('column_' + i + '_' + j, i, j, v)
         j++
-        mesh.parent = columnGroup
+        // mesh.parent = columnGroup
       }
     })
   }
 
-  static async buildLabel() {
+  static buildLabel() {
     const XAxisGroup = new TransformNode('XAxisGroup')
     const YAxisGroup = new TransformNode('YAxisGroup')
 
     const material = new StandardMaterial("material_label", KE.scene)
     material.diffuseColor = this.gray(0.1)
 
-    await Writer.init()
-    let j = 0
-    for(const k in result[0].score_level_2) {
-      let mesh: Mesh = Writer.write(k, {
-        size: Builder.COLUMN_SIZE * 0.8,
-        resolution: 2,
-        depth: 0.01,
-      })!
-      const bound = mesh.getBoundingInfo().boundingBox;
-      const width = bound.maximumWorld.x - bound.minimumWorld.x
-      mesh.position = new Vector3(
-        this.w + width / 2 + 0.14,
-        -0.12,
-        0.03 + j * this.GRID_SIZE
-      )
-      mesh.rotation = new Vector3(Math.PI / 2, 0, 0)
-      mesh.material = material
-      j++
-      mesh.parent = XAxisGroup
-    }
-    result.map((line, i) => {
-      let mesh: Mesh = Writer.write(line.model, {
-        size: Builder.COLUMN_SIZE * 0.8,
-        resolution: 2,
-        depth: 0.01,
-      })!
-      const bound = mesh.getBoundingInfo().boundingBox;
-      const width = bound.maximumWorld.x - bound.minimumWorld.x
-      mesh.position = new Vector3(
-        0.03 + i * this.GRID_SIZE + Builder.COLUMN_SIZE * 0.8,
-        -0.12,
-        -width / 2 - 0.14
-      )
-      mesh.rotation = new Vector3(Math.PI / 2, 0, Math.PI / 2)
-      mesh.material = material
-      mesh.parent = YAxisGroup
+    Writer.init().then(() => {
+      let j = 0
+      for(const k in result[0].score_level_2) {
+        let mesh: Mesh = Writer.write(k, {
+          size: Builder.COLUMN_SIZE * 0.8,
+          resolution: 2,
+          depth: 0.01,
+        })!
+        const bound = mesh.getBoundingInfo().boundingBox;
+        const width = bound.maximumWorld.x - bound.minimumWorld.x
+        mesh.position = new Vector3(
+          this.w + width / 2 + 0.14,
+          -0.12,
+          0.03 + j * this.GRID_SIZE
+        )
+        mesh.rotation = new Vector3(Math.PI / 2, 0, 0)
+        mesh.material = material
+        j++
+        mesh.parent = XAxisGroup
+      }
+      result.map((line, i) => {
+        let mesh: Mesh = Writer.write(line.model, {
+          size: Builder.COLUMN_SIZE * 0.8,
+          resolution: 2,
+          depth: 0.01,
+        })!
+        const bound = mesh.getBoundingInfo().boundingBox;
+        const width = bound.maximumWorld.x - bound.minimumWorld.x
+        mesh.position = new Vector3(
+          0.03 + i * this.GRID_SIZE + Builder.COLUMN_SIZE * 0.8,
+          -0.12,
+          -width / 2 - 0.14
+        )
+        mesh.rotation = new Vector3(Math.PI / 2, 0, Math.PI / 2)
+        mesh.material = material
+        mesh.parent = YAxisGroup
+      })
     })
   }
 

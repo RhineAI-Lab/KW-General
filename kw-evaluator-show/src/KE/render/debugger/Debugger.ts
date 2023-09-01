@@ -3,17 +3,18 @@ import KE from "@/KE/KE";
 import {AbstractMesh, Mesh} from "@babylonjs/core";
 
 export default class Debugger {
-  static UKE_DEBUG = this.isDevelopmentEnv() && false
+  // static USE_DEBUG = this.isDevelopmentEnv() && false
+  static USE_DEBUG = true
   static DEBUG_TOOL_INDEX = -1
   
   static startDebug() {
-    if (!this.UKE_DEBUG) return
+    if (!this.USE_DEBUG) return
     this.setDebugLayerVisible(true)
   }
   
   static selectMesh(mesh: AbstractMesh) {
+    if (!this.USE_DEBUG) return
     KE.scene.debugLayer.select(mesh)
-    if (!this.UKE_DEBUG) return
   }
   
   static isDevelopmentEnv() {
@@ -38,6 +39,12 @@ export default class Debugger {
     }
   }
   
-  static setDebugLayerVisible = (visible: boolean) => {}
+  static setDebugLayerVisible = (visible: boolean) => {
+    if (visible) {
+      KE.scene.debugLayer.show()
+    } else {
+      KE.scene.debugLayer.hide()
+    }
+  }
   
 }

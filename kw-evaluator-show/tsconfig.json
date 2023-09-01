@@ -4,7 +4,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "target": "esnext",
+    "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
@@ -22,10 +22,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "types": []
+    "jsx": "react-jsx"
   },
   "include": [
     "src"
   ]
 }
+

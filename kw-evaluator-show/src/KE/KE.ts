@@ -1,6 +1,7 @@
 import {
   Engine, ArcRotateCamera, Color3, Color4, CreateBox,
-  HemisphericLight, Scene, Vector3
+  HemisphericLight, Scene, Vector3, Database,
+  SceneOptimizerOptions, SceneOptimizer
 } from "@babylonjs/core";
 import Environment from "@/KE/render/environment/Environment";
 import {GradientMaterial} from "@babylonjs/materials";
@@ -11,16 +12,27 @@ import Debugger from "@/KE/render/debugger/Debugger";
 
 export default class KE {
   static rendering = true
-  static _engine: Engine
-  static _scene: Scene
+  static engine: Engine
+  static scene: Scene
   static canvas: HTMLCanvasElement
 
   static initEngine(canvas: HTMLCanvasElement) {
     this.canvas = canvas
-    KE.engine = new Engine(canvas, true, {preserveDrawingBuffer: true, stencil: true})
-    KE.engine.setDepthFunction(10)
-    KE.engine.enableOfflineSupport = false
-    KE.scene = new Scene(KE.engine)
+    const engine = new Engine(canvas, true, {preserveDrawingBuffer: true, stencil: true})
+    engine.setDepthFunction(10)
+    const scene = new Scene(KE.engine)
+
+    engine.runRenderLoop(function () {
+      scene.render()
+    })
+    window.addEventListener('resize', e => engine.resize())
+
+    engine.doNotHandleContextLost = false
+    engine.enableOfflineSupport = true
+    Database.IDBStorageEnabled = true
+
+    KE.engine = engine
+    KE.scene = scene
   }
 
   static render(canvas: HTMLCanvasElement): void {
@@ -32,23 +44,19 @@ export default class KE {
     Builder.build()
 
     Debugger.startDebug()
-  }
 
-  static get engine () {
-    return KE._engine
-  }
-  static set engine (engine: Engine) {
-    KE._engine = engine
-    window.addEventListener('resize', e => this.resize())
-  }
-  static get scene () {
-    return KE._scene
-  }
-  static set scene (scene: Scene) {
-    KE._scene = scene
-    this.engine.runRenderLoop(function () {
-      if (KE.rendering) scene.render()
-    })
+    setTimeout(() => {
+      console.log('Start run Scene optimizer')
+      SceneOptimizer.OptimizeAsync(
+        KE.scene,
+        new SceneOptimizerOptions(50, 2000),
+        function() {
+          console.log('FPS target reached successfully')
+        }, function() {
+          console.log('FPS target not reached')
+        }
+      )
+    }, 2000)
   }
 
   // 刷新引擎渲染尺寸
