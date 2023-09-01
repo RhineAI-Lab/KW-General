@@ -1,6 +1,18 @@
 import {
-  Engine, Scene, Database,
-  SceneOptimizerOptions, SceneOptimizer, Viewport
+  Engine,
+  Scene,
+  Database,
+  SceneOptimizerOptions,
+  SceneOptimizer,
+  Viewport,
+  ShadowsOptimization,
+  MergeMeshesOptimization,
+  LensFlaresOptimization,
+  PostProcessesOptimization,
+  TextureOptimization,
+  HardwareScalingOptimization,
+  ParticlesOptimization,
+  RenderTargetsOptimization
 } from "@babylonjs/core";
 import Environment from "@/KE/render/environment/Environment";
 import GUI from "@/KE/render/gui/GUI";
@@ -31,7 +43,7 @@ export default class KE {
     // 适应多设备分辨率
     this.DPR = window.devicePixelRatio || 1
     console.log('Device pixel ratio:', this.DPR)
-    engine.setViewport(new Viewport(0, 0, 1, 1))
+    // engine.setViewport(new Viewport(0, 0, 1, 1))
 
     // 循环渲染即大小变化更新
     engine.runRenderLoop(function () {
@@ -44,6 +56,8 @@ export default class KE {
     engine.doNotHandleContextLost = false
     engine.enableOfflineSupport = true
     Database.IDBStorageEnabled = true
+    // 全面优化
+    this.optimizeAll()
   }
 
   static async render(canvas: HTMLCanvasElement) {
@@ -63,7 +77,7 @@ export default class KE {
 
     await sleep(500)
     LoadingPage.setProgress(94, 'Final Optimize...')
-    this.startOptimizer()
+    // this.startOptimizer()
 
     await sleep(400)
     LoadingPage.setProgress(100, 'Finished.')
@@ -76,13 +90,25 @@ export default class KE {
     console.log('Start run Scene optimizer')
     SceneOptimizer.OptimizeAsync(
       KE.scene,
-      new SceneOptimizerOptions(45, 2000),
+      new SceneOptimizerOptions(60, 2000),
       function() {
         console.log('FPS target reached successfully')
       }, function() {
         console.log('FPS target not reached')
       }
     )
+  }
+
+  static optimizeAll() {
+    let optimizer = new SceneOptimizer(KE.scene)
+    new ShadowsOptimization(0).apply(KE.scene, optimizer)
+    new MergeMeshesOptimization(0).apply(KE.scene, optimizer)
+    new LensFlaresOptimization(0).apply(KE.scene, optimizer)
+    new PostProcessesOptimization(0).apply(KE.scene, optimizer)
+    new TextureOptimization(0).apply(KE.scene, optimizer)
+    // new HardwareScalingOptimization(0).apply(KE.scene, optimizer)
+    new ParticlesOptimization(0).apply(KE.scene, optimizer)
+    new RenderTargetsOptimization(0).apply(KE.scene, optimizer)
   }
 
   // 刷新引擎渲染尺寸
