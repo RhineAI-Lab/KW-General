@@ -116,11 +116,20 @@ export default class Environment {
     camera.upperRadiusLimit = 200
     camera.lowerBetaLimit = 0.2
     camera.upperBetaLimit = 3.13
-    // camera.wheelDeltaPercentage = 0.5
+    camera.wheelDeltaPercentage = 0.05
     camera.pinchDeltaPercentage = 0.02
-    camera.panningSensibility = 700
+    camera.panningSensibility = 400
     camera.useBouncingBehavior = true
     camera.useNaturalPinchZoom = true
+
+    let previousRadius = camera.radius
+    KE.scene.onBeforeRenderObservable.add(() => {
+      if (camera.radius != previousRadius) {
+        previousRadius = camera.radius
+        camera.panningSensibility = (500 - camera.radius * 3.6) / KE.DPR
+        // console.log('On camera.radius changed:', camera.radius, camera.panningSensibility)
+      }
+    })
     this.camera = camera
   }
 

@@ -1,6 +1,6 @@
 import {
   Engine, Scene, Database,
-  SceneOptimizerOptions, SceneOptimizer
+  SceneOptimizerOptions, SceneOptimizer, Viewport
 } from "@babylonjs/core";
 import Environment from "@/KE/render/environment/Environment";
 import GUI from "@/KE/render/gui/GUI";
@@ -12,15 +12,25 @@ export default class KE {
   static engine: Engine
   static scene: Scene
   static canvas: HTMLCanvasElement
+  static DPR = 1
 
   static initEngine(canvas: HTMLCanvasElement) {
     // 构造基本核心组件
     this.canvas = canvas
-    const engine = new Engine(canvas, true, {preserveDrawingBuffer: true, stencil: true})
+    const engine = new Engine(canvas, true, {
+      preserveDrawingBuffer: true,
+      stencil: true,
+      adaptToDeviceRatio: true,
+    })
     const scene = new Scene(KE.engine)
     // 储存至全局
     KE.engine = engine
     KE.scene = scene
+
+    // 适应多设备分辨率
+    this.DPR = window.devicePixelRatio || 1
+    console.log('Device pixel ratio:', this.DPR)
+    engine.setViewport(new Viewport(0, 0, 1, 1))
 
     // 循环渲染即大小变化更新
     engine.runRenderLoop(function () {
