@@ -1,4 +1,5 @@
 import {MouseEventHandler} from "react";
+import resolve from "resolve";
 
 export default class GeneralUtils {
   static randomStringId(): string {
@@ -42,4 +43,12 @@ export default class GeneralUtils {
     }, delay)
     return interval
   }
+}
+
+export async function sleep(time: number = 0) {
+  return new Promise<void>((resolve, reject) => {
+    setTimeout(() => {
+      resolve()
+    }, time)
+  })
 }

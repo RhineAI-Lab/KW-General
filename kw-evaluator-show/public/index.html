@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=0.75, minimum-scale=0.75, maximum-scale=0.75, user-scalable=no"/>
   <meta name="theme-color" content="#000000" />
   <meta name="description" content="Research Achievement Exhibition Platform from KW Lab, Fudan University"/>
 
@@ -31,6 +31,7 @@
     }
 
     #loading {
+      display: none;
       position: absolute;
       top: 0;
       left: 0;
@@ -39,6 +40,8 @@
       background: #fff;
       user-select: none;
       z-index: 5;
+      opacity: 1;
+      transition: opacity 0.5s ease-in-out;
     }
     .loading-content {
       position: absolute;
@@ -103,15 +106,18 @@
       transition: width 0.5s ease-in-out;
     }
     .loading-text-line {
+      position: absolute;
+      right: -1px;
       display: block;
       text-align: right;
-      margin-right: -1px;
+      white-space: nowrap;
     }
     #loading-text {
       display: inline-block;
       font-size: 22px;
       font-weight: 400;
       color: #000000;
+      margin-right: 2px;
     }
     #loading-percent {
       display: inline-block;
@@ -146,23 +152,28 @@
   </style>
 
   <script type="text/javascript">
-    window.setLoadingProgress = function(progress, msg) {
+    const LoadingPage = {}
+    LoadingPage.setProgress = (progress, msg) => {
       document.getElementById("loading-progress-bar-inner").style.width = progress + "%";
       document.getElementById("loading-text").innerHTML = msg;
       document.getElementById("loading-percent-inner").innerHTML = progress + "%";
     }
-    window.showLoading = function() {
+    LoadingPage.show = () => {
       document.getElementById("loading").style.display = "block";
+      document.getElementById("loading").style.opacity = "1";
     }
-    window.hideLoading = function() {
-      document.getElementById("loading").style.display = "none";
+    LoadingPage.hide = () => {
+      document.getElementById("loading").style.opacity = "0";
+      setTimeout(() => {
+        document.getElementById("loading").style.display = "none";
+      }, 500)
     }
-    window.getLoadingProgress = function() {
+    LoadingPage.getProgress = () => {
       const w = document.getElementById("loading-progress-bar-inner").style.width;
       return parseInt(w.substring(0, w.length - 1));
     }
     setTimeout(()=>{
-      window.setLoadingProgress(10, "Initializing Web Page...")
+      LoadingPage.setProgress(10, "Initializing Web Page...")
     }, 300)
   </script>
 
@@ -176,7 +187,6 @@
   <script src="/javascript/babylon/babylon.min.js"></script>
   <script src="/javascript/babylon/babylonjs.materials.min.js"></script>
   <% } %>
-
 
 </head>
 <body>
@@ -204,6 +214,12 @@
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
 </body>
+
+<script type="text/javascript" defer>
+  if (['/3d'].indexOf(window.location.pathname) > -1) {
+    document.getElementById("loading").style.display = "block";
+  }
+</script>
 
 <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIconsOutlined-Regular.woff2" id="material-font-1"/>
 <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIconsRound-Regular.woff2" id="material-font-2"/>

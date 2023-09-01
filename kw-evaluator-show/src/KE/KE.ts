@@ -6,6 +6,7 @@ import Environment from "@/KE/render/environment/Environment";
 import GUI from "@/KE/render/gui/GUI";
 import Builder from "@/KE/render/builder/Builder";
 import Debugger from "@/KE/render/debugger/Debugger";
+import {sleep} from "@/KE/utils/GeneralUtils";
 
 export default class KE {
   static rendering = true
@@ -46,19 +47,28 @@ export default class KE {
   }
 
   static async render(canvas: HTMLCanvasElement) {
+    LoadingPage.setProgress(25, 'Loading Babylon Engine...')
+
     // await this.waitBabylonLoaded()
+    LoadingPage.setProgress(30, 'Initializing 3D Scene...')
     this.initEngine(canvas)
 
     Environment.init()
     GUI.init()
 
-    Builder.build()
+    await Builder.build()
 
+    LoadingPage.setProgress(90, 'Verification Resources...')
     Debugger.startDebug()
 
-    setTimeout(() => {
-      this.startOptimizer()
-    }, 2000)
+    await sleep(500)
+    LoadingPage.setProgress(94, 'Final Optimize...')
+    this.startOptimizer()
+
+    await sleep(400)
+    LoadingPage.setProgress(100, 'Finished.')
+    await sleep(200)
+    LoadingPage.hide()
   }
 
   static startOptimizer() {

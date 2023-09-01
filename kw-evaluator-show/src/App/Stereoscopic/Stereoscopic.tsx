@@ -21,4 +21,5 @@ function Stereoscopic() {
 
 export default Stereoscopic
 
+LoadingPage.setProgress(20, 'Creating Page Components...')
 
