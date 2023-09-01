@@ -2,21 +2,20 @@ import React, { useEffect, useRef } from 'react'
 import Style from './Graph.module.scss'
 import {DUPLICATE_EFFECT_TIME} from "@/App/App";
 import KE from "@/KE/KE";
+import Debugger from "@/KE/render/debugger/Debugger";
 
-let lastInitTime = 0
+let effectTimes = 0
 
 function Graph (): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
+    effectTimes += 1
+    if (Debugger.isDevelopmentEnv() && effectTimes % 2 == 0) return;
     if (!canvasRef.current) return;
-    if (Date.now() - lastInitTime < DUPLICATE_EFFECT_TIME) {
-      console.warn('Ignore duplicate init')
-      return
-    }
-    lastInitTime = Date.now()
 
-    KE.render(canvasRef.current).then(r => {})
+    console.log('useEffect', effectTimes)
+    KE.render(canvasRef.current)
   }, [])
 
   return (

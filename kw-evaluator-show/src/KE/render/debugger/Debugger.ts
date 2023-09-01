@@ -3,8 +3,7 @@ import KE from "@/KE/KE";
 import {AbstractMesh, Mesh} from "@babylonjs/core";
 
 export default class Debugger {
-  // static USE_DEBUG = this.isDevelopmentEnv() && false
-  static USE_DEBUG = true
+  static USE_DEBUG = this.isDevelopmentEnv()
   static DEBUG_TOOL_INDEX = -1
   
   static startDebug() {

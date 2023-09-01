@@ -118,6 +118,7 @@ export default class Environment {
     camera.upperBetaLimit = 3.13
     // camera.wheelDeltaPercentage = 0.5
     camera.pinchDeltaPercentage = 0.02
+    camera.panningSensibility = 700
     camera.useBouncingBehavior = true
     camera.useNaturalPinchZoom = true
     this.camera = camera
