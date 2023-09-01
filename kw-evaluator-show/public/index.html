@@ -115,35 +115,27 @@
     }
     #loading-percent {
       display: inline-block;
+      background: #000000;
+      padding: 4px 6px;
+    }
+    #loading-percent-inner {
       font-size: 26px;
       font-weight: 500;
       color: #ffffff;
-      background: #000000;
-      padding: 2px 5px 2px 5px;
-      line-height: 26px;
-      height: 26px;
-      text-align: center;
     }
-    @media (max-width: 768px) {
-      #loading-percent {
-        padding: 2px 5px 3px 5px;
-      }
-    }
+
     .scroll::-webkit-scrollbar {
       width: 8px;
       border-radius: 3px;
       background: #ffffff00;
     }
-
     .scroll::-webkit-scrollbar-thumb {
       border-radius: 10px;
       background: #00000044;
     }
-
     .scroll::-webkit-scrollbar-thumb:hover {
       background: #00000050;
     }
-
     .scroll::-webkit-scrollbar-track {
       width: 8px;
       border-radius: 4px;
@@ -157,7 +149,7 @@
     window.setLoadingProgress = function(progress, msg) {
       document.getElementById("loading-progress-bar-inner").style.width = progress + "%";
       document.getElementById("loading-text").innerHTML = msg;
-      document.getElementById("loading-percent").innerHTML = progress + "%";
+      document.getElementById("loading-percent-inner").innerHTML = progress + "%";
     }
     window.showLoading = function() {
       document.getElementById("loading").style.display = "block";
@@ -170,7 +162,7 @@
       return parseInt(w.substring(0, w.length - 1));
     }
     setTimeout(()=>{
-      window.setLoadingProgress(30, "Initializing Web Page...")
+      window.setLoadingProgress(10, "Initializing Web Page...")
     }, 300)
   </script>
 
@@ -203,7 +195,9 @@
       </div>
       <p class="loading-text-line">
         <span id="loading-text">Initializing...</span>
-        <span id="loading-percent">0%</span>
+        <span id="loading-percent">
+          <span id="loading-percent-inner">0%</span>
+        </span>
       </p>
     </div>
   </div>
