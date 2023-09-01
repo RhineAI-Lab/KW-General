@@ -8,25 +8,212 @@
 
   <title>KW Frontend</title>
 
+  <style type="text/css">
+    * {
+      touch-action: pan-y;
+    }
+    html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font: inherit;
+      font-size: 100%;
+      vertical-align: baseline
+    }
+    article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+      display: block
+    }
+    body {
+      font-family: 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1;
+    }
+
+    #loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      user-select: none;
+      z-index: 5;
+    }
+    .loading-content {
+      position: absolute;
+      width: 400px;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    @media (max-width: 768px) {
+      .loading-content {
+        transform: translate(-50%, -50%) scale(90%);
+      }
+    }
+    @media (max-width: 460px) {
+      .loading-content {
+        transform: translate(-50%, -50%) scale(72%);
+      }
+    }
+    .loading-title {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      height: 32px;
+      margin-left: -8px;
+    }
+    .loading-title-icon {
+      width:  64px;
+      height: 32px;
+      margin-right: 6px;
+      background: #8c8c8c;
+      border-radius: 12px;
+    }
+    .loading-title-text {
+      font-size: 30px;
+      font-weight: 500;
+      color: #000000;
+    }
+    .loading-progress-bar-container {
+      position: relative;
+      height: 16px;
+      margin-top: 40px;
+      margin-bottom: 30px;
+    }
+    .loading-progress-box {
+      position: absolute;
+      background: #000000;
+      height: 100%;
+      width: 16px;
+    }
+    .loading-progress-bar {
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      background: #c3ff7d;
+      height: 100%;
+    }
+    #loading-progress-bar-inner {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: #000000;
+      transition: width 0.5s ease-in-out;
+    }
+    .loading-text-line {
+      display: block;
+      text-align: right;
+      margin-right: -1px;
+    }
+    #loading-text {
+      display: inline-block;
+      font-size: 22px;
+      font-weight: 400;
+      color: #000000;
+    }
+    #loading-percent {
+      display: inline-block;
+      font-size: 26px;
+      font-weight: 500;
+      color: #ffffff;
+      background: #000000;
+      padding: 2px 5px 2px 5px;
+      line-height: 26px;
+      height: 26px;
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      #loading-percent {
+        padding: 2px 5px 3px 5px;
+      }
+    }
+    .scroll::-webkit-scrollbar {
+      width: 8px;
+      border-radius: 3px;
+      background: #ffffff00;
+    }
+
+    .scroll::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: #00000044;
+    }
+
+    .scroll::-webkit-scrollbar-thumb:hover {
+      background: #00000050;
+    }
+
+    .scroll::-webkit-scrollbar-track {
+      width: 8px;
+      border-radius: 4px;
+      margin: 8px 0;
+    }
+
+    ::-ms-clear, ::-ms-reveal{display: none;}
+  </style>
+
+  <script type="text/javascript">
+    window.setLoadingProgress = function(progress, msg) {
+      document.getElementById("loading-progress-bar-inner").style.width = progress + "%";
+      document.getElementById("loading-text").innerHTML = msg;
+      document.getElementById("loading-percent").innerHTML = progress + "%";
+    }
+    window.showLoading = function() {
+      document.getElementById("loading").style.display = "block";
+    }
+    window.hideLoading = function() {
+      document.getElementById("loading").style.display = "none";
+    }
+    window.getLoadingProgress = function() {
+      const w = document.getElementById("loading-progress-bar-inner").style.width;
+      return parseInt(w.substring(0, w.length - 1));
+    }
+    setTimeout(()=>{
+      window.setLoadingProgress(30, "Initializing Web Page...")
+    }, 300)
+  </script>
+
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo.png" />
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
   <link rel="stylesheet" href="%PUBLIC_URL%/icons/material-icons/material-icons.css" />
-
-  <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIconsOutlined-Regular.woff2" id="material-font-1"/>
-  <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIconsRound-Regular.woff2" id="material-font-2"/>
-  <!--  <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIcons-Regular.woff2"/>-->
-  <!--  <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIcons-Regular.eot"/>-->
-  <!--  <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIcons-Regular.ttf"/>-->
 
   <script src="/javascript/earcut.min.js"></script>
   <% if (process.env.NODE_ENV === 'production') { %>
   <script src="/javascript/babylon/babylon.min.js"></script>
   <script src="/javascript/babylon/babylonjs.materials.min.js"></script>
   <% } %>
+
+
 </head>
 <body>
-<noscript>You need to enable JavaScript to run this app.</noscript>
-<div id="root"></div>
+  <div id="loading">
+    <div class="loading-content">
+      <p class="loading-title">
+        <img class="loading-title-icon" alt="" src="/logo-easy.png" onload="this.style.background = '#ffffff00'"></img>
+        <span class="loading-title-text">KW Frontend</span>
+      </p>
+      <div class="loading-progress-bar-container">
+        <div class="loading-progress-box" style="left: 0;"></div>
+        <div class="loading-progress-bar">
+          <span id="loading-progress-bar-inner"></span>
+        </div>
+        <div class="loading-progress-box" style="right: 0;"></div>
+      </div>
+      <p class="loading-text-line">
+        <span id="loading-text">Initializing...</span>
+        <span id="loading-percent">0%</span>
+      </p>
+    </div>
+  </div>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
 </body>
+
+<link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIconsOutlined-Regular.woff2" id="material-font-1"/>
+<link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIconsRound-Regular.woff2" id="material-font-2"/>
+<!--  <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIcons-Regular.woff2"/>-->
+<!--  <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIcons-Regular.eot"/>-->
+<!--  <link rel="prefetch" href="%PUBLIC_URL%/icons/material-icons/MaterialIcons-Regular.ttf"/>-->
 </html>
