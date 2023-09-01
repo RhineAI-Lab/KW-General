@@ -112,8 +112,8 @@ export default class Environment {
       KE.scene
     )
     camera.attachControl(KE.canvas, true);
-    camera.lowerRadiusLimit = 0.005
-    camera.upperRadiusLimit = 200
+    camera.lowerRadiusLimit = 0.01
+    camera.upperRadiusLimit = 100
     camera.lowerBetaLimit = 0.2
     camera.upperBetaLimit = 3.13
     camera.wheelDeltaPercentage = 0.05
@@ -126,7 +126,8 @@ export default class Environment {
     KE.scene.onBeforeRenderObservable.add(() => {
       if (Math.abs(camera.radius - previousRadius) > 2) {
         previousRadius = camera.radius
-        camera.panningSensibility = (500 - camera.radius * 3.6) / KE.DPR
+        let cp = (440 - camera.radius * 3.2) / KE.DPR
+        camera.panningSensibility = cp
         // console.log('On camera.radius changed:', camera.radius, camera.panningSensibility)
       }
     })
