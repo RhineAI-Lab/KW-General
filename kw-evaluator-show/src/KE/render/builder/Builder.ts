@@ -28,16 +28,39 @@ export default class Builder {
     const meshList: Mesh[] = []
     const materialList: GradientMaterial[] = []
 
+    let hList: any[] = []
+    result.map((line, i) => {
+      let j = 0
+      for (const k in line.score_level_2) {
+        // @ts-ignore
+        hList.push(line.score_level_2[k] * 1.2 - 0.1)
+      }
+    })
+    let min = Math.min.apply(Math, hList)
+    let max = Math.max.apply(Math, hList)
+    let num = 60
+    let step = (max - min) / num
+    for (let i = 0; i < num; i++) {
+      let v = min + step * i - step / 2
+      let th = v * this.DATA_SH
+      const material = new GradientMaterial("material_" + i, KE.scene)
+      material.topColor = this.gray(1.04)
+      material.bottomColor = this.gray(0.4)
+      material.scale = 1 / th
+      materialList.push(material)
+    }
+
     result.map((line, i) => {
       let j = 0
       for (const k in line.score_level_2) {
         // @ts-ignore
         let v = line.score_level_2[k] * 1.2 - 0.1
-        let {mesh, material} = Builder.addData('column_' + i + '_' + j, i, j, v)
+        let mesh = Builder.addData('column_' + i + '_' + j, i, j, v)
         j++
         // mesh.parent = columnGroup
+        let mi = Math.floor((v - min) / step)
+        mesh.material = materialList[mi]
         meshList.push(mesh)
-        materialList.push(material)
       }
     })
 
@@ -97,26 +120,19 @@ export default class Builder {
     })
   }
 
-  static addData(name: string, x: number, y: number, h: number): {mesh: Mesh, material: GradientMaterial} {
+  static addData(name: string, x: number, y: number, h: number): Mesh {
     let th = h * Builder.DATA_SH
-
-    const material = new GradientMaterial("material_" + name + y, KE.scene)
-    material.topColor = this.gray(1.06)
-    material.bottomColor = this.gray(0.4)
-    material.scale = 1 / th
-
     const mesh = CreateBox(name, {
       width: Builder.COLUMN_SIZE,
       height: th,
       depth: Builder.COLUMN_SIZE,
     }, KE.scene)
-    mesh.material = material
     mesh.position = new Vector3(
       x * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
       th / 2,
       y * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
     )
-    return {mesh, material}
+    return mesh
   }
 
   static gray(num: number = 0): Color3 {
