@@ -25,22 +25,34 @@ export default class Builder {
   }
 
   static buildScore() {
-    const columnGroup = new TransformNode('ColumnGroup')
+    const meshList: Mesh[] = []
+    const materialList: GradientMaterial[] = []
+
     result.map((line, i) => {
       let j = 0
       for (const k in line.score_level_2) {
         // @ts-ignore
         let v = line.score_level_2[k] * 1.2 - 0.1
-        let mesh = Builder.addData('column_' + i + '_' + j, i, j, v)
+        let {mesh, material} = Builder.addData('column_' + i + '_' + j, i, j, v)
         j++
         // mesh.parent = columnGroup
+        meshList.push(mesh)
+        materialList.push(material)
       }
     })
+
+    let scoresMesh = Mesh.MergeMeshes(meshList, true, true, undefined, false, true)
+    if (!scoresMesh) return
+    scoresMesh.name = 'Scores data mesh'
+
+    for (const gradient of materialList) {
+      gradient.dispose()
+    }
   }
 
   static async buildLabel() {
-    const XAxisGroup = new TransformNode('XAxisGroup')
-    const YAxisGroup = new TransformNode('YAxisGroup')
+    const XAxisGroup = new TransformNode('X Axis Group')
+    const YAxisGroup = new TransformNode('Y Axis Group')
 
     const material = new StandardMaterial("material_label", KE.scene)
     material.diffuseColor = this.gray(0.1)
@@ -80,30 +92,31 @@ export default class Builder {
         -width / 2 - 0.14
       )
       mesh.rotation = new Vector3(Math.PI / 2, 0, Math.PI / 2)
-      mesh.material = material
       mesh.parent = YAxisGroup
+      mesh.material = material
     })
   }
 
-  static addData(name: string, x: number, y: number, h: number): Mesh {
-    const material = new GradientMaterial("material_" + name + y, KE.scene)
-    material.topColor = this.gray(0.99)
-    material.bottomColor = this.gray(0.35)
-    material.offset = 0.6
+  static addData(name: string, x: number, y: number, h: number): {mesh: Mesh, material: GradientMaterial} {
+    let th = h * Builder.DATA_SH
 
-    const box = CreateBox(name, {
+    const material = new GradientMaterial("material_" + name + y, KE.scene)
+    material.topColor = this.gray(1.06)
+    material.bottomColor = this.gray(0.4)
+    material.scale = 1 / th
+
+    const mesh = CreateBox(name, {
       width: Builder.COLUMN_SIZE,
-      height: 1,
+      height: th,
       depth: Builder.COLUMN_SIZE,
     }, KE.scene)
-    box.scaling = new Vector3(1, h * Builder.DATA_SH, 1)
-    box.position = new Vector3(
+    mesh.material = material
+    mesh.position = new Vector3(
       x * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
-      h / 2 * Builder.DATA_SH,
+      th / 2,
       y * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
     )
-    box.material = material
-    return box
+    return {mesh, material}
   }
 
   static gray(num: number = 0): Color3 {

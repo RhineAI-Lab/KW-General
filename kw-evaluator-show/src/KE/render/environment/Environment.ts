@@ -83,7 +83,7 @@ export default class Environment {
     // )
     // light3.intensity = 0.2
 
-    const light = new HemisphericLight("light1", new Vector3(12, 16, 6), KE.scene)
+    const light = new HemisphericLight("Light 1", new Vector3(12, 16, 6), KE.scene)
     light.intensity = 1.0
     light.groundColor = new Color3(0.8, 0.8, 0.8)
     light.diffuse = new Color3(0.97, 0.97, 0.97)

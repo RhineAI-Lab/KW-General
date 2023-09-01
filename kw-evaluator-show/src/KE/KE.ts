@@ -57,7 +57,7 @@ export default class KE {
     engine.enableOfflineSupport = true
     Database.IDBStorageEnabled = true
     // 全面优化
-    this.optimizeAll()
+    // this.optimizeAll()
   }
 
   static async render(canvas: HTMLCanvasElement) {
@@ -77,7 +77,7 @@ export default class KE {
 
     await sleep(500)
     LoadingPage.setProgress(94, 'Final Optimize...')
-    // this.startOptimizer()
+    this.startOptimizer()
 
     await sleep(400)
     LoadingPage.setProgress(100, 'Finished.')
