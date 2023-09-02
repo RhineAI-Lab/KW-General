@@ -95,7 +95,8 @@
     }
     .loading-progress-bar {
       position: absolute;
-      left: 32px;
+      /*left: 32px;*/
+      left: 0;
       right: 32px;
       background: #c3ff7d;
       height: 100%;
@@ -199,7 +200,7 @@
         <span class="loading-title-text">KW Frontend</span>
       </p>
       <div class="loading-progress-bar-container">
-        <div class="loading-progress-box" style="left: 0;"></div>
+<!--        <div class="loading-progress-box" style="left: 0;"></div>-->
         <div class="loading-progress-bar">
           <span id="loading-progress-bar-inner"></span>
         </div>
@@ -218,7 +219,8 @@
 </body>
 
 <script type="text/javascript" defer>
-  if (['/3d'].indexOf(window.location.pathname) > -1) {
+  console.debug('Window Location pathname', window.location.pathname)
+  if (['/3d', '/'].indexOf(window.location.pathname) > -1) {
     document.getElementById("loading").style.display = "block";
   }
 </script>
