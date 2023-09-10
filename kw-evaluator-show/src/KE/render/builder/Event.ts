@@ -19,6 +19,8 @@ export default class Event {
         // console.log(position.x, position.y, position.z, mesh)
 
         if (mesh.name == Builder.SCORES_MESH_NAME) {
+          KE.canvas.style.cursor = 'pointer'
+
           let x = Math.floor(position.x / Builder.GRID_SIZE)
           let z = Math.floor(position.z / Builder.GRID_SIZE)
           let column = Builder.getColumn(x, z)
@@ -27,8 +29,12 @@ export default class Event {
 
             this.hoverColumnListeners.forEach(l => l(column, e))
           }
+        } else {
+          KE.canvas.style.cursor = 'default'
         }
 
+      } else {
+        KE.canvas.style.cursor = 'default'
       }
     })
 
