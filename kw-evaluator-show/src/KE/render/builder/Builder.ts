@@ -4,6 +4,9 @@ import KE from "../../KE";
 import {result} from "@/App/tables/data/result";
 import Writer from "./Writer";
 import {TransformNode} from "@babylonjs/core";
+import Event from "./Event";
+import Column from "@/KE/render/builder/Column.class";
+import AxisHighLight from "@/KE/render/builder/AxisHighLight";
 
 
 // 搭建具体场景内容
@@ -17,11 +20,23 @@ export default class Builder {
   static w = result.length * this.GRID_SIZE - Builder.COLUMN_MARGIN
   static h = Object.keys(result[0].score_level_2).length * this.GRID_SIZE - Builder.COLUMN_MARGIN
 
+  static SCORES_MESH_NAME = 'Scores data mesh'
+
+  static columns: Column[][] = []
+
+  static xAxisMeshes: Mesh[] = []
+  static yAxisMeshes: Mesh[] = []
+
   static async build() {
+    AxisHighLight.init()
+
     LoadingPage.setProgress(40, 'Create Cubes for Model Metric...')
     this.buildScore()
     LoadingPage.setProgress(60, 'Create Labels of Metric...')
     await this.buildLabel()
+
+    Event.init()
+    Event.buildEvent()
   }
 
   static buildScore() {
@@ -30,11 +45,28 @@ export default class Builder {
 
     let hList: any[] = []
     result.map((line, i) => {
+      let cil: Column[] = []
       let j = 0
       for (const k in line.score_level_2) {
-        // @ts-ignore
-        hList.push(line.score_level_2[k] * 1.2 - 0.1)
+        let column = new Column()
+        column.x = i
+        column.z = j
+        column.value = (line.score_level_2 as any)[k] as number
+        column.model = line.model
+        column.label = k
+
+        column.range.minY = 0
+        column.range.maxY = (column.value * 1.2 - 0.1) * this.DATA_SH
+        column.range.minX = i * this.GRID_SIZE
+        column.range.minZ = j * this.GRID_SIZE
+        column.range.maxX = i * this.GRID_SIZE + this.COLUMN_SIZE
+        column.range.maxZ = j * this.GRID_SIZE + this.COLUMN_SIZE
+
+        cil.push(column)
+        hList.push(column.value * 1.2 - 0.1)
+        j++
       }
+      this.columns.push(cil)
     })
     let min = Math.min.apply(Math, hList)
     let max = Math.max.apply(Math, hList)
@@ -44,29 +76,24 @@ export default class Builder {
       let v = min + step * i - step / 2
       let th = v * this.DATA_SH
       const material = new GradientMaterial("material_" + i, KE.scene)
-      material.topColor = this.gray(1.04)
-      material.bottomColor = this.gray(0.4)
+      material.topColor = this.gray(1.01)
+      material.bottomColor = this.gray(0.36)
       material.scale = 1 / th
       materialList.push(material)
     }
 
-    result.map((line, i) => {
-      let j = 0
-      for (const k in line.score_level_2) {
-        // @ts-ignore
-        let v = line.score_level_2[k] * 1.2 - 0.1
-        let mesh = Builder.addData('column_' + i + '_' + j, i, j, v)
-        j++
-        // mesh.parent = columnGroup
-        let mi = Math.floor((v - min) / step)
+    this.columns.map(cil => {
+      cil.map(column => {
+        let mesh = Builder.addData(column)
+        let mi = Math.floor((column.value - min) / step)
         mesh.material = materialList[mi]
         meshList.push(mesh)
-      }
+      })
     })
 
     let scoresMesh = Mesh.MergeMeshes(meshList, true, true, undefined, false, true)
     if (!scoresMesh) return
-    scoresMesh.name = 'Scores data mesh'
+    scoresMesh.name = this.SCORES_MESH_NAME
 
     for (const gradient of materialList) {
       gradient.dispose()
@@ -77,7 +104,7 @@ export default class Builder {
     const XAxisGroup = new TransformNode('X Axis Group')
     const YAxisGroup = new TransformNode('Y Axis Group')
 
-    const material = new StandardMaterial("material_label", KE.scene)
+    const material = new StandardMaterial("Axis Label Text Material", KE.scene)
     material.diffuseColor = this.gray(0.1)
 
     await Writer.init()
@@ -99,7 +126,8 @@ export default class Builder {
       mesh.rotation = new Vector3(Math.PI / 2, 0, 0)
       mesh.material = material
       j++
-      mesh.parent = XAxisGroup
+      mesh.parent = YAxisGroup
+      this.yAxisMeshes.push(mesh)
     }
     result.map((line, i) => {
       let mesh: Mesh = Writer.write(line.model, {
@@ -115,27 +143,27 @@ export default class Builder {
         -width / 2 - 0.14
       )
       mesh.rotation = new Vector3(Math.PI / 2, 0, Math.PI / 2)
-      mesh.parent = YAxisGroup
+      mesh.parent = XAxisGroup
       mesh.material = material
+      this.xAxisMeshes.push(mesh)
     })
   }
 
-  static addData(name: string, x: number, y: number, h: number): Mesh {
-    let th = h * Builder.DATA_SH
-    const mesh = CreateBox(name, {
+  static addData(column: Column): Mesh {
+    const mesh = CreateBox('column_' + column.x + '_' + column.z, {
       width: Builder.COLUMN_SIZE,
-      height: th,
+      height: column.range.maxY,
       depth: Builder.COLUMN_SIZE,
     }, KE.scene)
-    mesh.position = new Vector3(
-      x * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
-      th / 2,
-      y * Builder.GRID_SIZE + this.COLUMN_SIZE / 2,
-    )
+    mesh.position = column.center()
     return mesh
   }
 
   static gray(num: number = 0): Color3 {
     return new Color3(num, num, num)
+  }
+
+  static getColumn(x: number, z: number) {
+    return this.columns[x][z]
   }
 }
