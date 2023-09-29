@@ -1,0 +1,3 @@
+cd /data/heqianyu/ghr_src/test/
+
+/data/heqianyu/.local/bin/uvicorn server:app_fast --host 10.176.40.138 --port 23490 --log-level warning
