@@ -1,6 +1,7 @@
 import time
 
 
+print('aaa')
 def gen():
     for i in range(5):
         time.sleep(1)

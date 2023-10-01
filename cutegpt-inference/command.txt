@@ -1,9 +1,11 @@
 
-cd /data/heqianyu/ghr_src/test/
+cd /data/heqianyu/ghr_src/
 /data/heqianyu/.local/bin/uvicorn server:app_fast --host 10.176.40.138 --port 23490 --log-level warning
 /data/heqianyu/.local/bin/uvicorn server_easy:flask
 
-/usr/local/anaconda3/bin/python /data/heqianyu/ghr_src/test/server_easy.py
+cd /data/heqianyu/ghr_src/
+nohup /usr/local/anaconda3/bin/python /data/heqianyu/ghr_src/sync/deploy/server_easy.py >/data/heqianyu/ghr_src/log/nohup.out 2>&1 &
+tail -f /data/heqianyu/ghr_src/log/nohup.out
 
 ps aux | grep python
 nvidia-smi

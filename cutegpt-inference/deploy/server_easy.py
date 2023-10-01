@@ -1,13 +1,11 @@
+from threading import Thread
+
 import torch
 import requests
 import json
 import datetime
 import time
 import os
-
-import pdb
-import re
-from flask import Flask, request, jsonify, Response, stream_with_context
 
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '3,5'
@@ -24,11 +22,21 @@ model_name = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_13b_1
 # LORA_WEIGHTS = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_lora_615v1_epoch2"
 
 
+import pdb
+import re
+import copy
+import warnings
+
+from typing import Optional, List, Callable, Tuple
+from fastchat.model.model_chatglm import InvalidScoreLogitsProcessor
+from flask import Flask, request, jsonify, Response, stream_with_context
+
 import torch.nn as nn
 from peft import PeftModel
 
-from transformers import AutoModelWithLMHead, AutoTokenizer, GenerationConfig, AutoModelForCausalLM
-from transformers.generation.utils import LogitsProcessorList
+from transformers import AutoModelWithLMHead, AutoTokenizer, GenerationConfig, AutoModelForCausalLM, \
+    StoppingCriteriaList, TextStreamer, TextIteratorStreamer
+from transformers.generation.utils import LogitsProcessorList, logger
 from transformers.generation.logits_process import NoBadWordsLogitsProcessor
 from transformers import AutoModelWithLMHead, T5Tokenizer, AutoTokenizer, LlamaForCausalLM, LlamaTokenizer
 
@@ -115,7 +123,8 @@ def normal_chat(model, tokenizer, query, history=None, max_length=1024, min_leng
         max_new_tokens=512,
     )
 
-    outputs = model.generate(
+    streamer = TextIteratorStreamer(tokenizer)
+    generation_kwargs = dict(
         input_ids=input_ids,
         generation_config=generation_config,
         return_dict_in_generate=True,
@@ -125,18 +134,16 @@ def normal_chat(model, tokenizer, query, history=None, max_length=1024, min_leng
         # eos_token_id = 250680,
         pad_token_id=tokenizer.eos_token_id,
         min_length=input_ids.shape[1] + 1,
-        assistant_model=assistant_model
+        assistant_model=assistant_model,
         # logits_processor=logits_processor
+        streamer=streamer
     )
+    thread = Thread(target=model.generate, kwargs=generation_kwargs)
+    thread.start()
 
-    s = outputs.sequences[0][input_ids.shape[1]:]
-    # pdb.set_trace()
-    response = tokenizer.decode(s)
-    # pdb.set_trace()
-    response = response.strip()
-    response = response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
-    new_history = history + [(query, response)]
-    yield response, new_history
+    for i, response in enumerate(streamer):
+        response = response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
+        yield response
 
 
 def normal_chat_wrapper(query, styled_history, history, memory_limit=3):
@@ -153,22 +160,21 @@ def normal_chat_wrapper(query, styled_history, history, memory_limit=3):
         return
     query = query.strip()
     styled_history.append(('', ''))
-    for resp, newhist in normal_chat(model, tokenizer, query, history, memory_limit=memory_limit):
+    for resp in normal_chat(model, tokenizer, query, history, memory_limit=memory_limit):
         # 如果normal_chat写得是return这里会只有response？？amazing
         styled_history[-1] = (parse_text(query), parse_text(resp))
-        yield styled_history, newhist
+        yield styled_history, []
 
 
-def test():
+def chat_local_test():
     history = []
     for i in range(999):
         print(f'\n[Round {i}]')
         message = input('In: ')
         print('Out: ', end='')
-        for j, (resp, new_history) in enumerate(normal_chat(model, tokenizer, message, history, memory_limit=4)):
-            history = new_history
+        for j, resp in enumerate(normal_chat(model, tokenizer, message, history, memory_limit=4)):
             print('Box', j)
-            print(resp, new_history)
+            print(resp)
 
 
 app = Flask(__name__)
@@ -192,9 +198,9 @@ def chat_full_stream():
     def generate():
         try:
             yield make_sse({'code': 0, 'message': 'success', 'type': 'START'})
-            for i, (response, new_history) in enumerate(normal_chat(model, tokenizer, query, history, memory_limit=4)):
-                print(f'Box {i}:')
-                print(response)
+            all_response = ''
+            for i, response in enumerate(normal_chat(model, tokenizer, query, history, memory_limit=4)):
+                print(f'Batch {i}: {response}')
                 yield make_sse({
                     'code': 0,
                     'message': 'success',
@@ -203,7 +209,11 @@ def chat_full_stream():
                     'index': i,
                     'content': response
                 })
-            yield make_sse({'code': 0, 'message': 'success', 'type': 'END'})
+                all_response += response
+            all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
+            print('\n\nAll Response:')
+            print(all_response)
+            yield make_sse({'code': 0, 'message': 'success', 'type': 'END', 'content': all_response})
         except Exception as e:
             print(repr(e))
             yield make_sse({
@@ -216,7 +226,7 @@ def chat_full_stream():
 
 
 @app.route('/test/stream', methods=['POST'])
-def test_stream():
+def stream_test():
     def generate():
         for i in range(5):  # 作为示例，我们只循环5次
             yield f"data: 这是第 {i} 条测试消息\n\n"  # 使用 Server-Sent Events (SSE) 格式
