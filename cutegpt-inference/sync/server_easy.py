@@ -2,6 +2,7 @@ import torch
 import requests
 import json
 import datetime
+import time
 import os
 
 import pdb
@@ -10,6 +11,18 @@ from flask import Flask, request, jsonify, Response, stream_with_context
 
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '3,5'
+
+host = '10.176.40.138'
+port = 23496
+
+overall_instruction = "你是复旦大学知识工场实验室训练出来的语言模型CuteGPT。给定任务描述，请给出对应请求的回答。\n"
+
+# model_name = "/mnt/data122/datasets/LLaMA/llama_13b_112_sft_v1_16bit"
+model_name = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_13b_112_sft_v1"
+# LORA_WEIGHTS = "/data/heqianyu/big_model/instruction/ckp/bloom-alpaca-ch-10w_500"
+# LORA_WEIGHTS = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_lora_623v1/llama_lora_623v1_epoch3"
+# LORA_WEIGHTS = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_lora_615v1_epoch2"
+
 
 import torch.nn as nn
 from peft import PeftModel
@@ -20,13 +33,6 @@ from transformers.generation.logits_process import NoBadWordsLogitsProcessor
 from transformers import AutoModelWithLMHead, T5Tokenizer, AutoTokenizer, LlamaForCausalLM, LlamaTokenizer
 
 
-overall_instruction = "你是复旦大学知识工场实验室训练出来的语言模型CuteGPT。给定任务描述，请给出对应请求的回答。\n"
-
-# LORA_WEIGHTS = "/data/heqianyu/big_model/instruction/ckp/bloom-alpaca-ch-10w_500"
-# LORA_WEIGHTS = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_lora_623v1/llama_lora_623v1_epoch3"
-# LORA_WEIGHTS = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_lora_615v1_epoch2"
-# model_name = "/mnt/data122/datasets/LLaMA/llama_13b_112_sft_v1_16bit"
-model_name = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_13b_112_sft_v1"
 
 tokenizer = LlamaTokenizer.from_pretrained(model_name)
 print(tokenizer.additional_special_tokens)
@@ -122,12 +128,10 @@ def normal_chat(model, tokenizer, query, history=None, max_length=1024, min_leng
         assistant_model=assistant_model
         # logits_processor=logits_processor
     )
-    print(outputs)
 
     s = outputs.sequences[0][input_ids.shape[1]:]
     # pdb.set_trace()
     response = tokenizer.decode(s)
-    print(response)
     # pdb.set_trace()
     response = response.strip()
     response = response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
@@ -222,7 +226,7 @@ def test_stream():
 
 def flask():
     print('Start server...')
-    app.run(app.run(debug=False, host='10.176.40.138', port=23496, processes=1))
+    app.run(app.run(debug=False, host=host, port=port, processes=1))
 
 
 if __name__ == '__main__':

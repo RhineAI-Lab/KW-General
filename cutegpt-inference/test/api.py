@@ -8,8 +8,7 @@ url = 'http://10.176.40.138:23490/ddemos/cutegpt_normal'
 def clean_dialogue_cache():
     # 清空历史对话，开启新的对话
     requests.post(url + "/run/delete", json={
-        "data": [
-        ]
+        "data": []
     }).json()
 
 
