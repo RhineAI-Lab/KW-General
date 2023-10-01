@@ -1,17 +1,21 @@
 import requests
 import pdb
 
+# url = 'http://10.176.40.138:23489/ddemos/cutegpt_normal'
+url = 'http://10.176.40.138:23490/ddemos/cutegpt_normal'
+
 
 def clean_dialogue_cache():
     # 清空历史对话，开启新的对话
-    requests.post("http://10.176.40.138:23489/ddemos/cutegpt_normal/run/delete", json={
+    requests.post(url + "/run/delete", json={
         "data": [
         ]
     }).json()
 
+
 def get_ans(query):
     # 根据历史对话，cutegpt得到答案
-    response = requests.post("http://10.176.40.138:23489/ddemos/cutegpt_normal/run/submit", json={
+    response = requests.post(url + "/run/submit", json={
         "data": [
             query,
             [],
@@ -20,6 +24,7 @@ def get_ans(query):
     }).json()
     return response["data"][0][0][1]
 
+
 def print_histories(histories):
     rnd = 0
     for query, ans in histories:
@@ -27,9 +32,7 @@ def print_histories(histories):
         print('Human:', query)
         print('CuteGPT:', ans)
         rnd += 1
-
     print()
-
 
 
 queries = [['你好'], ['请推荐五本中国古典小说，包含其作品名以及作者名，以表格的形式给出','再在表格中加一列作品的时间呢？']]
