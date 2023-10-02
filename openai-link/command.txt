@@ -1,0 +1,10 @@
+
+nginx -t
+sudo service nginx restart
+
+cd /root/openai-link/
+nohup python main.py &
+
+netstat -tunlp | grep 26660
+kill -9 xxxx
+
