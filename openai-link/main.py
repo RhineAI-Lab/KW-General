@@ -56,9 +56,8 @@ def chat_full_direct():
         return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
 
 
-@app.route('/chat', methods=['GET'])
-def chat_easy_get():
-    query = request.args["q"]
+@app.route('/<query>', methods=['GET'])
+def chat_easy_get(query):
     model = "gpt-3.5-turbo"
 
     try:
@@ -66,7 +65,8 @@ def chat_easy_get():
         response, answer = chat(query, model)
         print(response)
         response.choices[0].message.content = 'HAD MOVE TO <CONTENT> COLUMN'
-        return jsonify({'code': 0, 'message': 'success', 'type': 'FINISH', 'content': answer, 'response': response})
+        # return jsonify({'code': 0, 'message': 'success', 'type': 'FINISH', 'content': answer, 'response': response})
+        return answer
     except Exception as e:
         return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
 
@@ -78,6 +78,4 @@ if __name__ == '__main__':
     # print('\nTest finished.\n')
     print('Start server...')
     app.run(app.run(debug=False, host='127.0.0.1', port=26660, processes=1))
-
-
 
