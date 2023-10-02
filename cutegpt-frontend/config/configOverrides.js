@@ -48,7 +48,7 @@ module.exports = override(
       {
         loader: 'sass-resources-loader',
         options: {
-          resources: ['./src/assets/scss/variable.scss']
+          resources: ['./src/assets/scss/variable.scss', './src/assets/scss/colors.scss']
         }
       }
     ]
