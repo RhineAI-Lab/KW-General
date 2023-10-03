@@ -224,6 +224,61 @@ def chat_full_stream():
 
     return Response(generate(), content_type='text/event-stream')
 
+
+@app.route('/chat/stream/<query>', methods=['GET'])
+def chat_easy_stream(query = ''):
+    history = []
+    try:
+        history = request.json['task']['history']
+    except:
+        pass
+
+    def generate():
+        try:
+            print('Query:', query)
+            yield make_sse('Thinking...\n\n')
+            all_response = ''
+            for i, response in enumerate(normal_chat(model, tokenizer, query, history, memory_limit=4)):
+                print(f'Batch {i}: {response}')
+                yield make_sse(response)
+                all_response += response
+            all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
+            print('\n\nAll Response:')
+            print(all_response)
+            yield make_sse('Answer finished.')
+        except Exception as e:
+            print(repr(e))
+            yield make_sse({
+                'code': 10000,
+                'message': 'unknown error: \n ' + repr(e),
+                'type': 'ERROR',
+            })
+
+    return Response(generate(), content_type='text/event-stream')
+
+
+@app.route('/chat/<query>', methods=['GET'])
+def chat_easy(query = ''):
+    history = []
+    try:
+        history = request.json['task']['history']
+    except:
+        pass
+
+    try:
+        print('Query:', query)
+        all_response = ''
+        for i, response in enumerate(normal_chat(model, tokenizer, query, history, memory_limit=4)):
+            # print(f'Batch {i}: {response}')
+            all_response += response
+        all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
+        print('\n\nAll Response:')
+        print(all_response)
+        return all_response
+    except Exception as e:
+        return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
+
+
 @app.route('/chat/full/direct', methods=['POST'])
 def chat_full_direct():
     history = []
@@ -235,6 +290,7 @@ def chat_full_direct():
         pass
 
     try:
+        print('Query:', query)
         all_response = ''
         for i, response in enumerate(normal_chat(model, tokenizer, query, history, memory_limit=4)):
             # print(f'Batch {i}: {response}')
@@ -242,10 +298,9 @@ def chat_full_direct():
         all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
         print('\n\nAll Response:')
         print(all_response)
-        return jsonify({'code': 0, 'message': 'success', 'type': 'END', 'content': all_response})
+        return jsonify({'code': 0, 'message': 'success', 'type': 'FINISHED', 'content': all_response})
     except Exception as e:
         return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
-
 
 
 @app.route('/test/stream', methods=['POST'])
