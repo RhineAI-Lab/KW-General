@@ -1,4 +1,3 @@
-#!/usr/local/bin/python3.8
 # -*- coding: utf8 -*-
 
 import os
@@ -10,18 +9,33 @@ from flask import Flask, request, jsonify, Response, stream_with_context
 
 
 def get_model_list():
-    models= openai.Model.list()
-    print(models)
+    models = openai.Model.list()
+    print('Support models:', models)
 
-def chat(question, model="gpt-3.5-turbo"):
+
+def chat(user, system='', model='gpt-3.5-turbo'):
+    messages = [{"role": "user", "content": user}]
+    if len(system) > 0:
+        messages.insert(0, {"role": "system", "content": system})
     response = openai.ChatCompletion.create(
         model=model,
-        messages=[
-            {"role": "user", "content": question}
-        ]
+        messages=messages,
     )
     answer = response.choices[0].message.content
     return response, answer
+
+
+def chat_stream(user, system='', model='gpt-3.5-turbo'):
+    messages = [{"role": "user", "content": user}]
+    if len(system) > 0:
+        messages.insert(0, {"role": "system", "content": system})
+    completion = openai.ChatCompletion.create(
+        model=model,
+        messages=messages,
+        stream=True,
+    )
+    for chunk in completion:
+        yield chunk.choices[0].delta
 
 
 def api_test():
@@ -35,6 +49,28 @@ app = Flask(__name__)
 app.env = 'development'
 
 @app.route('/chat/full/direct', methods=['POST'])
+def chat_full_direct():
+    history = []
+    query = ''
+    model = "gpt-3.5-turbo"
+    try:
+        query = request.json['task']['query'] or query
+        history = request.json['task']['history'] or history
+        model = request.json['task']['model'] or model
+    except Exception as e:
+        pass
+
+    try:
+        print(query)
+        response, answer = chat(query, model)
+        print(response)
+        response.choices[0].message.content = 'HAD MOVE TO <CONTENT> COLUMN'
+        return jsonify({'code': 0, 'message': 'success', 'type': 'FINISH', 'content': answer, 'response': response})
+    except Exception as e:
+        return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
+
+
+@app.route('/chat/full/stream', methods=['POST'])
 def chat_full_direct():
     history = []
     query = ''
