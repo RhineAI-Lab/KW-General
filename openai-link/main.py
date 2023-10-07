@@ -1,52 +1,14 @@
 # -*- coding: utf8 -*-
 
 import os
-import openai
 import json
-openai.api_key = "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"
 
 from flask import Flask, request, jsonify, Response, stream_with_context
-
-
-def get_model_list():
-    models = openai.Model.list()
-    print('Support models:', models)
-
-
-def chat(user, system='', model='gpt-3.5-turbo'):
-    messages = [{"role": "user", "content": user}]
-    if len(system) > 0:
-        messages.insert(0, {"role": "system", "content": system})
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=messages,
-    )
-    answer = response.choices[0].message.content
-    return response, answer
-
-
-def chat_stream(user, system='', model='gpt-3.5-turbo'):
-    messages = [{"role": "user", "content": user}]
-    if len(system) > 0:
-        messages.insert(0, {"role": "system", "content": system})
-    completion = openai.ChatCompletion.create(
-        model=model,
-        messages=messages,
-        stream=True,
-    )
-    for chunk in completion:
-        yield chunk.choices[0].delta
-
-
-def api_test():
-    question = '写一篇英语学习建议的小作文'
-    print(question)
-    response, answer = chat(question)
-    print(response, answer)
-
+from call import chat, chat_stream, chat_stream_full, get_model_list, api_test
 
 app = Flask(__name__)
 app.env = 'development'
+
 
 @app.route('/chat/full/direct', methods=['POST'])
 def chat_full_direct():
@@ -62,7 +24,7 @@ def chat_full_direct():
 
     try:
         print(query)
-        response, answer = chat(query, model)
+        response, answer = chat(query, '', model)
         print(response)
         response.choices[0].message.content = 'HAD MOVE TO <CONTENT> COLUMN'
         return jsonify({'code': 0, 'message': 'success', 'type': 'FINISH', 'content': answer, 'response': response})
@@ -70,26 +32,57 @@ def chat_full_direct():
         return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
 
 
+def make_sse(obj):
+    return f"data: {json.dumps(obj)}\n\n"
+
+
+# Complete
 @app.route('/chat/full/stream', methods=['POST'])
-def chat_full_direct():
-    history = []
-    query = ''
+def chat_full_stream():
+    messages = []
     model = "gpt-3.5-turbo"
     try:
-        query = request.json['task']['query'] or query
-        history = request.json['task']['history'] or history
+        messages = request.json['task']['messages'] or messages
         model = request.json['task']['model'] or model
     except Exception as e:
         pass
 
-    try:
-        print(query)
-        response, answer = chat(query, model)
-        print(response)
-        response.choices[0].message.content = 'HAD MOVE TO <CONTENT> COLUMN'
-        return jsonify({'code': 0, 'message': 'success', 'type': 'FINISH', 'content': answer, 'response': response})
-    except Exception as e:
-        return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
+    def generate():
+        try:
+            yield make_sse({'code': 0, 'message': 'success', 'type': 'START'})
+            all_response = ''
+            for i, response in enumerate(chat_stream_full(messages, model)):
+                print(f'Batch {i}: {response}')
+                delta = response.delta
+                if 'finish_reason' in response and response['finish_reason'] is not None:
+                    print('\n\nAll Response:')
+                    print(all_response)
+                    yield make_sse({
+                        'code': 0,
+                        'message': 'success',
+                        'type': 'END',
+                        'content': all_response,
+                        'finish_reason': response['finish_reason']
+                    })
+                if 'content' in delta:
+                    yield make_sse({
+                        'code': 0,
+                        'message': 'success',
+                        'type': 'BODY',
+                        'index': i,
+                        'content': delta.content
+                    })
+                    all_response += delta.content
+        except Exception as e:
+            print(repr(e))
+            yield make_sse({
+                'code': 10000,
+                'message': 'unknown error: \n ' + repr(e),
+                'type': 'ERROR',
+                'finish_reason': 'error in link server',
+            })
+
+    return Response(generate(), content_type='text/event-stream')
 
 
 @app.route('/<query>', methods=['GET'])
@@ -98,7 +91,7 @@ def chat_easy_get(query):
 
     try:
         print(query)
-        response, answer = chat(query, model)
+        response, answer = chat(query, '', model)
         print(response)
         response.choices[0].message.content = 'HAD MOVE TO <CONTENT> COLUMN'
         # return jsonify({'code': 0, 'message': 'success', 'type': 'FINISH', 'content': answer, 'response': response})
@@ -113,5 +106,7 @@ if __name__ == '__main__':
     # api_test()
     # print('\nTest finished.\n')
     print('Start server...')
-    app.run(app.run(debug=False, host='127.0.0.1', port=26660, processes=1))
+    port = 26660
+    app.run(app.run(debug=False, host='127.0.0.1', port=port, processes=1))
+    print('Server started on ' + str(port))
 
