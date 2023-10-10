@@ -3,13 +3,15 @@ import Style from './App.module.scss'
 import M3Style from './theme/material3-theme.module.scss'
 import {Route, Routes} from "react-router-dom";
 import Home from "./Home/Home";
+import Chat from "./Chat/Chat";
 
 function App() {
   return (
     <div className={Style.App}>
       <div className={M3Style.MaterialYou + ' ' + M3Style.Green}>
         <Routes>
-          <Route path="/" element={<Home/>} />
+          <Route path="/home" element={<Home/>} />
+          <Route path="/" element={<Chat/>} />
         </Routes>
       </div>
     </div>

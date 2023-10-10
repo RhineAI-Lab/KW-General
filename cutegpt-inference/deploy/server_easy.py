@@ -226,7 +226,7 @@ def chat_full_stream():
 
 
 @app.route('/chat/stream/<query>', methods=['GET'])
-def chat_easy_stream(query = ''):
+def chat_easy_stream(query=''):
     history = []
     try:
         history = request.json['task']['history']

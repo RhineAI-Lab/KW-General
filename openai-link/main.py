@@ -4,10 +4,12 @@ import os
 import json
 
 from flask import Flask, request, jsonify, Response, stream_with_context
+from flask_cors import CORS, cross_origin
 from call import chat, chat_stream, chat_stream_full, get_model_list, api_test
 
 app = Flask(__name__)
 app.env = 'development'
+CORS(app)
 
 
 @app.route('/chat/full/direct', methods=['POST'])
@@ -82,7 +84,9 @@ def chat_full_stream():
                 'finish_reason': 'error in link server',
             })
 
-    return Response(generate(), content_type='text/event-stream')
+    response = Response(generate(), content_type='text/event-stream')
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
 
 
 @app.route('/<query>', methods=['GET'])
