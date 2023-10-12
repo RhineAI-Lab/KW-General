@@ -6,7 +6,7 @@ import Inference, {Chunk} from "@/App/Chat/AiDialog/Inference";
 import {tip} from "@/App/App";
 import {Pagination} from "@mui/material";
 
-export class ScrollState{
+export class ScrollState {
   static leftAtBottom = true
   static rightAtBottom = true
 
@@ -16,7 +16,7 @@ export class ScrollState{
       let height1 = scrollContainer.clientHeight
       let height2 = scrollContainer.scrollTop
       let height3 = scrollContainer.scrollHeight
-      return  height1 + height2 + 20 > height3;
+      return height1 + height2 + 20 > height3;
     }
     return false
   }
@@ -39,8 +39,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   let [maxMessageWidth, setMaxMessageWidth] = useState(0)
   let [generating, setGenerating] = useState(false)
 
-  let [tables, setTables] = useState<string[]>([
-  ])
+  let [tables, setTables] = useState<string[]>([])
   let [tableIndex, setTableIndex] = useState(-1)
 
   let clickable = question.trim().length > 0
@@ -168,6 +167,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     function last() {
       return Inference.messages[Inference.messages.length - 1]
     }
+
     if (Inference.generating) {
       Inference.stop()
     } else {
@@ -228,8 +228,8 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         } else {
           introduces.push('')
         }
-        if (items.length > ii+1) {
-          let tip = items[ii+1].trim()
+        if (items.length > ii + 1) {
+          let tip = items[ii + 1].trim()
           tips.push(tip.trim())
         } else {
           tips.push('')
@@ -262,7 +262,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   let showExamples = messages.length <= 1
 
   // 通过幽灵元素进行过渡动画
-  const ghostRef = useRef<HTMLDivElement|null>(null)
+  const ghostRef = useRef<HTMLDivElement | null>(null)
   const [widths, setWidths] = useState<number[]>([])
   const [heights, setHeights] = useState<number[]>([])
 
@@ -277,11 +277,23 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     }
   }
 
+  const resizeTextarea = () => {
+    const textarea = inputRef.current
+    if (!textarea) return
+    let sourceHeight = textarea.style.height
+    textarea.style.height = 'auto'
+    // textarea.style.height = sourceHeight
+    // textarea.style.height = textarea.scrollHeight + 'px'
+    setBottomHeight(textarea.scrollHeight)
+    textarea.style.height = '100%'
+  }
+
   if (lastWindowResizeListener) {
     window.removeEventListener('resize', lastWindowResizeListener)
   }
   lastWindowResizeListener = (e: any) => {
     freshMessagesSize()
+    resizeTextarea()
   }
   window.addEventListener('resize', lastWindowResizeListener)
 
@@ -291,14 +303,6 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
 
   const [bottomHeight, setBottomHeight] = useState(0)
-
-  const resizeTextarea = () => {
-    const textarea = inputRef.current
-    if (!textarea) return
-    textarea.style.height = 'auto'
-    textarea.style.height = `${textarea.scrollHeight}px`
-    setBottomHeight(textarea.scrollHeight)
-  }
 
   useEffect(() => {
     resizeTextarea()
@@ -313,90 +317,87 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   }
 
   return <div
-      className={Style.AiDialog + ' ' + (hadTable ? '' : Style.hadTable + ' ' + props.className)}
-      {...props}
+    className={Style.AiDialog + ' ' + (hadTable ? '' : Style.hadTable + ' ' + props.className)}
+    {...props}
+  >
+    <div
+      ref={leftScrollRef}
+      className={Style.messagesHolder + ' scroll ' + Style.scroll}
+      onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
+      style={{bottom: hadTable ? '84px' : bottomHeight + 86 + 'px'}}
     >
-      <div
-        ref={leftScrollRef}
-        className={Style.messagesHolder + ' scroll ' + Style.scroll}
-        onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
-        style={{bottom: hadTable ? '84px' : bottomHeight + 86 + 'px'}}
-      >
-        <div className={Style.messages}>
-          {
-            messages.map((v, i) => {
-              let [role, content] = [v.role, v.content]
-              let icon = '/chat/' + (role === 'assistant' ? 'ai-easy' : 'user') + '-head-icon.png'
-              return <div
-                className={Style.message + ' ' + rolesStyle[v.role]}
-                key={i}
-                ref={i === messages.length - 1 ? lastMessageRef : null}
+      <div className={Style.messages}>
+        {
+          messages.map((v, i) => {
+            let [role, content] = [v.role, v.content]
+            let icon = '/chat/' + (role === 'assistant' ? 'ai-easy' : 'user') + '-head-icon.png'
+            return <div
+              className={Style.message + ' ' + rolesStyle[v.role]}
+              key={i}
+              ref={i === messages.length - 1 ? lastMessageRef : null}
+            >
+              <div className={Style.avatar}>
+                <img src={icon} alt='head-icon'/>
+              </div>
+              <div
+                className={Style.content + ' ' + Style.contentTruth}
+                style={{
+                  width: widths[i],
+                  height: heights[i]
+                }}
               >
-                <div className={Style.avatar}>
-                  <img src={icon} alt='head-icon'/>
-                </div>
                 <div
-                  className={Style.content + ' ' + Style.contentTruth}
+                  className={Style.truthSize}
                   style={{
                     width: widths[i],
                     height: heights[i]
                   }}
-                >
-                  <div
-                    className={Style.truthSize}
-                    style={{
-                      width: widths[i],
-                      height: heights[i]
-                    }}
-                  >
-                    <AiMarkdown>
-                      {v.content}
-                    </AiMarkdown>
-                  </div>
-                </div>
-              </div>
-            })
-          }
-        </div>
-      </div>
-      <div
-        className={Style.messagesHolder + ' scroll ' + Style.scroll + ' ' + Style.messagesHolderGhost}
-        onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
-      >
-        <div className={Style.messages} onResize={freshMessagesSize} ref={ghostRef}>
-          {
-            messages.map((v, i) => {
-              let [role, content] = [v.role, v.content]
-              let icon = '/editor/' + (role === 'assistant' ? 'ai' : 'user') + '-head-icon.png'
-              return <div
-                className={Style.message + ' ' + rolesStyle[v.role] + ' '}
-                key={i}
-              >
-                <div className={Style.avatar}>
-                  <img src={icon} alt='head-icon'/>
-                </div>
-                <div
-                  className={Style.content}
                 >
                   <AiMarkdown>
                     {v.content}
                   </AiMarkdown>
                 </div>
               </div>
-            })
-          }
-        </div>
+            </div>
+          })
+        }
       </div>
-      <div className={Style.shadow} style={{top: '30px', display: hadTable ? 'block' : 'none'}}>
-        <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
+    </div>
+    <div
+      className={Style.messagesHolder + ' scroll ' + Style.scroll + ' ' + Style.messagesHolderGhost}
+      onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
+    >
+      <div className={Style.messages} onResize={freshMessagesSize} ref={ghostRef}>
+        {
+          messages.map((v, i) => {
+            let [role, content] = [v.role, v.content]
+            let icon = '/editor/' + (role === 'assistant' ? 'ai' : 'user') + '-head-icon.png'
+            return <div
+              className={Style.message + ' ' + rolesStyle[v.role] + ' '}
+              key={i}
+            >
+              <div className={Style.avatar}>
+                <img src={icon} alt='head-icon'/>
+              </div>
+              <div
+                className={Style.content}
+              >
+                <AiMarkdown>
+                  {v.content}
+                </AiMarkdown>
+              </div>
+            </div>
+          })
+        }
       </div>
-      <div className={Style.shadow} style={{bottom: '84px', display: hadTable ? 'block' : 'none'}}>
-        <div style={{boxShadow: '0 0 10px 10px #fff', bottom: 0}}></div>
-      </div>
+    </div>
+    <div className={Style.inputHolder} style={{
+      height: bottomHeight
+    }}>
       <textarea
         rows={1}
         className={Style.input}
-        placeholder=" 让AI帮您设计 或向他询问问题"
+        placeholder="让AI帮你解答问题或和他聊天"
         value={question}
         onChange={e => {
           setQuestion(e.target.value)
@@ -411,120 +412,130 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         }}
         ref={inputRef}
       />
-      <div className={Style.sendHolder}>
-        <div
-          className={Style.send + (clickable ? ' ' + Style.sendClickable : '')}
-          onClick={e => sendFromInput()}
-        >
-          <Icon color={clickable ? '#ffffff' : '#888888'} size='24px'>round_send</Icon>
-        </div>
-      </div>
-      <div className={Style.mode}></div>
-      <div className={Style.suggestion} style={{
-        opacity: showExamples ? 1 : 0,
-        pointerEvents: showExamples ? 'auto' : 'none',
-      }}>
-        <div className={Style.title}>Example & Suggestion</div>
-        <div className={Style.line}>
-          <div className={Style.cardHolder}>
-            <div className={Style.card} onClick={e => send(examples[0])}>
-              {examples[0]}
-              <Icon size='32px' className={Style.send}>send</Icon>
-            </div>
-          </div>
-          <div className={Style.cardHolder}>
-            <div className={Style.card} onClick={e => send(examples[1])}>
-              {examples[1]}
-              <Icon size='32px' className={Style.send}>send</Icon>
-            </div>
-          </div>
-        </div>
-        <div className={Style.line}>
-          <div className={Style.cardHolder}>
-            <div className={Style.card} onClick={e => send(examples[2])}>
-              {examples[2]}
-              <Icon size='32px' className={Style.send}>send</Icon>
-            </div>
-          </div>
-          <div className={Style.cardHolder}>
-            <div className={Style.card} onClick={e => send(examples[3])}>
-              {examples[3]}
-              <Icon size='32px' className={Style.send}>send</Icon>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className={Style.title}>
-        CuteGPT
-        <Icon size='48px'>round_insights</Icon>
-      </div>
+    </div>
+    <div className={Style.sendHolder}>
       <div
-        ref={rightScrollRef}
-        className={Style.tableHolder + ' scroll ' + Style.scroll}
-        onScroll={e => ScrollState.rightAtBottom = ScrollState.checkAtBottom(rightScrollRef)}
-        style={{
-          opacity: hadTable ? 1 : 0,
-          bottom: tables.length > 1 ? '124px' : '84px',
-          pointerEvents: tables.length > 1 ? 'auto' : 'none',
-        }}
+        className={Style.send + (clickable ? ' ' + Style.sendClickable : '')}
+        onClick={e => sendFromInput()}
       >
-        <div className={Style.table}>
-          <AiMarkdown>
-            {tables[tableIndex]}
-          </AiMarkdown>
+        <Icon color={clickable ? '#ffffff' : '#888888'} size='24px'>round_send</Icon>
+      </div>
+    </div>
+    <div className={Style.mode}></div>
+    <div className={Style.suggestion} style={{
+      opacity: showExamples ? 1 : 0,
+      pointerEvents: showExamples ? 'auto' : 'none',
+    }}>
+      <div className={Style.suggestionTitle}>Example & Suggestion</div>
+      <div className={Style.line}>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[0])}>
+            {examples[0]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+          </div>
+        </div>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[1])}>
+            {examples[1]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+          </div>
         </div>
       </div>
-      <div className={Style.pagination} style={{
-        opacity: tables.length > 1 ? 1 : 0,
-        pointerEvents: tables.length > 1 ? 'auto' : 'none',
-        bottom: tables.length > 1 ? '88px' : '60px'
-      }}>
-        <Pagination
-          count={tables.length}
-          page={tableIndex + 1}
-          color={'secondary'}
-          onChange={(e, v) => setTableIndex(v - 1)}
-          showFirstButton
-          showLastButton
-        />
-      </div>
-      <div className={Style.buttons} style={{
-        bottom: hadTable ? '24px' : bottomHeight + 36 + 'px'
-      }}>
-        <div className={Style.button + ' ' + Style.secondary} onClick={e => clear()}>
-          <Icon>delete_outline</Icon>
-          <span className={Style.text}>重置</span>
+      <div className={Style.line}>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[2])}>
+            {examples[2]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+          </div>
         </div>
-        <div className={Style.button + ' ' + Style.secondary} onClick={e => regenerate()}>
-          <Icon>{generating ? 'outlined_stop' : 'round_refresh'}</Icon>
-          <span className={Style.text}>{generating ? '停止生成' : '重新生成'}</span>
-        </div>
-        <div className={Style.space}></div>
-        <div className={Style.button + ' ' + Style.main} onClick={e => use()}>
-          <Icon size='26px'>round_done</Icon>
-          <span className={Style.text}>{hadTable ? '应用文本' : '结束对话'}</span>
-        </div>
-        <div
-          className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
-          onClick={e => {}}
-          style={{
-            marginRight: '-4px',
-            display: 'none',
-          }}
-        >
-          <Icon size='24px'>round_arrow_back_ios</Icon>
-        </div>
-        <div
-          className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
-          onClick={e => {}}
-          style={{
-            display: 'none',
-          }}
-        >
-          <Icon size='24px'>round_arrow_forward_ios</Icon>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[3])}>
+            {examples[3]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+          </div>
         </div>
       </div>
     </div>
+    <div className={Style.title}>
+      CuteGPT
+      <Icon size='48px'>round_insights</Icon>
+    </div>
+    <div
+      ref={rightScrollRef}
+      className={Style.tableHolder + ' scroll ' + Style.scroll}
+      onScroll={e => ScrollState.rightAtBottom = ScrollState.checkAtBottom(rightScrollRef)}
+      style={{
+        opacity: hadTable ? 1 : 0,
+        bottom: tables.length > 1 ? '124px' : '84px',
+        pointerEvents: tables.length > 1 ? 'auto' : 'none',
+      }}
+    >
+      <div className={Style.table}>
+        <AiMarkdown>
+          {tables[tableIndex]}
+        </AiMarkdown>
+      </div>
+    </div>
+    <div className={Style.buttons} style={{
+      bottom: hadTable ? '24px' : bottomHeight + 36 + 'px'
+    }}>
+      {/*<div className={Style.button + ' ' + Style.secondary} onClick={e => clear()}>*/}
+      {/*  <Icon>delete_outline</Icon>*/}
+      {/*  <span className={Style.text}>重置</span>*/}
+      {/*</div>*/}
+      <div
+        className={Style.button + ' ' + Style.secondary}
+        onClick={e => {}}
+      >
+        <Icon size='20px'>round_share</Icon>
+        <span className={Style.text}>分享</span>
+      </div>
+      <div
+        className={Style.button + ' ' + Style.secondary}
+        onClick={e => {}}
+        style={{marginLeft: '10px'}}
+      >
+        <Icon>round_tune</Icon>
+        <span className={Style.text}>选项</span>
+      </div>
+      <div className={Style.space}></div>
+      <div className={Style.button + ' ' + Style.main} onClick={e => regenerate()}>
+        <Icon>{generating ? 'outlined_stop' : 'round_refresh'}</Icon>
+        <span className={Style.text}>{generating ? '停止生成' : '重新生成'}</span>
+      </div>
+      {/*<div className={Style.button + ' ' + Style.main} onClick={e => use()}>*/}
+      {/*  <Icon size='26px'>round_done</Icon>*/}
+      {/*  <span className={Style.text}>{hadTable ? '应用文本' : '结束对话'}</span>*/}
+      {/*</div>*/}
+      <div
+        className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
+        onClick={e => {
+        }}
+        style={{
+          marginRight: '-4px',
+          display: 'none',
+        }}
+      >
+        <Icon size='24px'>round_arrow_back_ios</Icon>
+      </div>
+      <div
+        className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
+        onClick={e => {
+        }}
+        style={{
+          display: 'none',
+        }}
+      >
+        <Icon size='24px'>round_arrow_forward_ios</Icon>
+      </div>
+    </div>
+    <div className={Style.shadow} style={{top: '76px'}}>
+      <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
+    </div>
+    <div className={Style.shadow} style={{bottom: messages.length > 0 ? 86 + bottomHeight + 'px' : '84px'}}>
+      <div style={{boxShadow: '0 0 10px 10px #fff', bottom: 0}}></div>
+    </div>
+  </div>
 }
 
 export interface AiDialogProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
