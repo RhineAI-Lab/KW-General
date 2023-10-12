@@ -1,12 +1,9 @@
 import React, {DetailedHTMLProps, HTMLAttributes, useEffect, useLayoutEffect, useRef, useState} from "react";
 import Style from "./AiDialog.module.scss";
-import EditorStyle from "../Editor.module.scss";
 import Icon from "@/compoments/Icon/Icon";
-import AiMarkdown from "@/App/Editor/AiDialog/AiMarkdown";
-import SceneGenerator, {Chunk} from "@/App/Editor/AiDialog/SceneGenerator";
+import AiMarkdown from "@/App/Chat/AiDialog/AiMarkdown";
+import Inference, {Chunk} from "@/App/Chat/AiDialog/Inference";
 import {tip} from "@/App/App";
-import State from "@/State";
-import StepManager from "@/App/Editor/StepsBar/StepManager";
 import {Pagination} from "@mui/material";
 
 export class ScrollState{
@@ -30,13 +27,10 @@ let lastWindowResizeListener: any = null
 let lastTableLength = 0
 
 export default function AiDialog(props: AiDialogProps): JSX.Element {
-  let open = props.open
-  let setOpen = props.setOpen
-
   let [singleMode, setSingleMode] = useState(true)
   let [question, setQuestion] = useState('')
   let [messages, setMessages] = useState<any[]>([
-    SceneGenerator.messages[1],
+    Inference.messages[1],
     // {role: 'user', content: '写个代码'},
     // {role: 'assistant', content: '代码展示测试\n\n```javascript\nlet a = test()\n\nfunction test() {\n  console.log("hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. ")\n}\n```'},
     // {role: 'assistant', content: '当然！以下是好奇号火星车介绍场景的表格形式：\n\n| 序号 | 场景名称 | 场景介绍 | 场景信息 |\n|----|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n| 1 | 探索红色星球 | 欢迎来到火星上的探险之旅！好奇号火星车是NASA火星科学实验室的杰出成果，它是一辆自动化的火星探测车，被用来研究火星表面及其大气层，以揭示更多关于火星的神秘之处。好奇号火星车是人类探索太阳系的壮举，它的各种仪器和设备使它能够进行各类科学实验，并向地球发送宝贵的数据。这个场景中，您将能够近距离观察好奇号火星车的各个细节和功能。火星车的外观呈四方形，覆盖着厚实的金属外壳，以保护车身免受火星恶劣的环境影响。火星车上有多个高精度相机，用于拍摄火星表面的照片，还有激光探测仪，用于分析地质样本。 | 摄像头聚焦在火星车的前方，以展示与火星景观的交互。火星车行驶在红色的火星土壤上，轮胎与地面紧密接触，留下明显的车辙。火星车的机械臂伸展出来，采集火星土壤和岩石样本，然后将它们放入分析仪器中进行实时分析。场景采用逼真的光照效果，再现火星上的环境。 |\n| 2 | 红色星球的奇观 | 好奇号火星车将带您游览火星上引人入胜的奇观！火星表面充满了各种有趣的地貌特征，像是陨石坑、火山口等。在这个场景中，您将能够通过摄像头近距离观察这些奇观。火星车缓慢行驶，让您能够清晰地看到火星表面的地貌变化。火星上的山脉、峡谷、沙丘等将在您的眼前展现出来，带给您一种震撼的体验。同时，火星车上的高精度相机将记录下这些美丽景观的照片，供地球上的科学家进行进一步分析和研究。 | 摄像头将聚焦在火星表面的各种地貌特征上，例如陨石坑、火山口、山脉、峡谷、沙丘等。火星车缓慢驶过这些地貌，让您能够清晰地观察和欣赏它们。场景采用逼真的光照效果，再现火星上的环境。 |\n| 3 | 科学实验之旅 | 好奇号火星车是一台移动的火星科学实验室！在这个场景中，您将亲眼目睹火星车进行各种科学实验的过程。火星车上配备有化学实验装置、气象传感器、光谱仪等多种仪器，可以对火星表面及其大气进行详尽的研究。火星车上的机械臂将采集地壳样本，并进行实时分析。您可以通过摄像头观察到仪器的工作细节，以及火星车传输数据到地球的过程，真正感受到火星探索的科学魅力。 | 摄像头将焦点放在火星车上的仪器和设备上，展示它们在进行科学实验的过程中的细节。火星车上的机械臂将采集地壳样本，并将它们置于分析仪器中进行实时分析。同时，火星车将传输数据到地球上的接收站，您可以清楚地看到数据传输的过程。场景采用逼真的光照效果，再现火星上的环境。 |\n| 4 | 火星上的日落 | 在火星上欣赏壮观的日落景色！火星的日落与地球上的日落有所不同，它呈现出橙红色的明亮光晕和美丽的云层。在这个场景中，您将通过摄像头观察到好奇号火星车停在火星表面上，背景是日落的景色。火星车的金属外壳在夕阳的映衬下闪烁着柔和的光芒，营造出一种神秘而美丽的氛围。您将有机会欣赏到火星上独特的日落景色，并感受到火星的神秘之美。 | 摄像头将焦点放在火星车的位置，使其处于日落的背景下。火星车停在火星表面上，其金属外壳在夕阳照射下呈现出柔和的光芒。场景采用逼真的光照效果，再现火星上日落时的景色。 |\n| 5 | 寻找火星生命 | 火星一直是寻找外星生命的焦点之地！在这个场景中，您将能够了解好奇号火星车在寻找火星生命迹象方面的工作。火星车上配备了微生物生存环境测试仪、化学分析仪等仪器，用于分析土壤和大气中的生物特征。通过摄像头，您将近距离观察火星车进行生命探测实验的过程，感受到寻找外星生命的科学挑战。在这个场景中，您将站在火星上，与好奇号火星车一同寻找火星生命的答案。 | 摄像头将焦点放在火星车上的生命探测仪器和实验过程上。火星车将采集土壤和大气样本，并在仪器中分析其中的生物特征。您将近距离观察火星车进行这些实验，并感受到寻找外星生命的科学探索。场景采用逼真的光照效果，再现火星上的环境。 |\n\n希望以上场景表格能够满足您的需求。如有其他修改或添加的要求，请随时告诉我。'}
@@ -46,9 +40,6 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   let [generating, setGenerating] = useState(false)
 
   let [tables, setTables] = useState<string[]>([
-    // ' | 序号 | 场景名称 | 场景介绍AAAAAAAA | 场景信息 |\n|----|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n| 1 | 探索红色星球 | 欢迎来到火星上的探险之旅！好奇号火星车是NASA火星科学实验室的杰出成果，它是一辆自动化的火星探测车，被用来研究火星表面及其大气层，以揭示更多关于火星的神秘之处。好奇号火星车是人类探索太阳系的壮举，它的各种仪器和设备使它能够进行各类科学实验，并向地球发送宝贵的数据。这个场景中，您将能够近距离观察好奇号火星车的各个细节和功能。火星车的外观呈四方形，覆盖着厚实的金属外壳，以保护车身免受火星恶劣的环境影响。火星车上有多个高精度相机，用于拍摄火星表面的照片，还有激光探测仪，用于分析地质样本。 | 摄像头聚焦在火星车的前方，以展示与火星景观的交互。火星车行驶在红色的火星土壤上，轮胎与地面紧密接触，留下明显的车辙。火星车的机械臂伸展出来，采集火星土壤和岩石样本，然后将它们放入分析仪器中进行实时分析。场景采用逼真的光照效果，再现火星上的环境。 |\n| 2 | 红色星球的奇观 | 好奇号火星车将带您游览火星上引人入胜的奇观！火星表面充满了各种有趣的地貌特征，像是陨石坑、火山口等。在这个场景中，您将能够通过摄像头近距离观察这些奇观。火星车缓慢行驶，让您能够清晰地看到火星表面的地貌变化。火星上的山脉、峡谷、沙丘等将在您的眼前展现出来，带给您一种震撼的体验。同时，火星车上的高精度相机将记录下这些美丽景观的照片，供地球上的科学家进行进一步分析和研究。 | 摄像头将聚焦在火星表面的各种地貌特征上，例如陨石坑、火山口、山脉、峡谷、沙丘等。火星车缓慢驶过这些地貌，让您能够清晰地观察和欣赏它们。场景采用逼真的光照效果，再现火星上的环境。 |\n| 3 | 科学实验之旅 | 好奇号火星车是一台移动的火星科学实验室！在这个场景中，您将亲眼目睹火星车进行各种科学实验的过程。火星车上配备有化学实验装置、气象传感器、光谱仪等多种仪器，可以对火星表面及其大气进行详尽的研究。火星车上的机械臂将采集地壳样本，并进行实时分析。您可以通过摄像头观察到仪器的工作细节，以及火星车传输数据到地球的过程，真正感受到火星探索的科学魅力。 | 摄像头将焦点放在火星车上的仪器和设备上，展示它们在进行科学实验的过程中的细节。火星车上的机械臂将采集地壳样本，并将它们置于分析仪器中进行实时分析。同时，火星车将传输数据到地球上的接收站，您可以清楚地看到数据传输的过程。场景采用逼真的光照效果，再现火星上的环境。 |\n| 4 | 火星上的日落 | 在火星上欣赏壮观的日落景色！火星的日落与地球上的日落有所不同，它呈现出橙红色的明亮光晕和美丽的云层。在这个场景中，您将通过摄像头观察到好奇号火星车停在火星表面上，背景是日落的景色。火星车的金属外壳在夕阳的映衬下闪烁着柔和的光芒，营造出一种神秘而美丽的氛围。您将有机会欣赏到火星上独特的日落景色，并感受到火星的神秘之美。 | 摄像头将焦点放在火星车的位置，使其处于日落的背景下。火星车停在火星表面上，其金属外壳在夕阳照射下呈现出柔和的光芒。场景采用逼真的光照效果，再现火星上日落时的景色。 |\n| 5 | 寻找火星生命 | 火星一直是寻找外星生命的焦点之地！在这个场景中，您将能够了解好奇号火星车在寻找火星生命迹象方面的工作。火星车上配备了微生物生存环境测试仪、化学分析仪等仪器，用于分析土壤和大气中的生物特征。通过摄像头，您将近距离观察火星车进行生命探测实验的过程，感受到寻找外星生命的科学挑战。在这个场景中，您将站在火星上，与好奇号火星车一同寻找火星生命的答案。 | 摄像头将焦点放在火星车上的生命探测仪器和实验过程上。火星车将采集土壤和大气样本，并在仪器中分析其中的生物特征。您将近距离观察火星车进行这些实验，并感受到寻找外星生命的科学探索。场景采用逼真的光照效果，再现火星上的',
-    // ' | 序号 | 场景名称 | 场景介绍CAWFC| 场景信息 |\n|----|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n| 1 | 探索红色星球 | 欢迎来到火星上的探险之旅！好奇号火星车是NASA火星科学实验室的杰出成果，它是一辆自动化的火星探测车，被用来研究火星表面及其大气层，以揭示更多关于火星的神秘之处。好奇号火星车是人类探索太阳系的壮举，它的各种仪器和设备使它能够进行各类科学实验，并向地球发送宝贵的数据。这个场景中，您将能够近距离观察好奇号火星车的各个细节和功能。火星车的外观呈四方形，覆盖着厚实的金属外壳，以保护车身免受火星恶劣的环境影响。火星车上有多个高精度相机，用于拍摄火星表面的照片，还有激光探测仪，用于分析地质样本。 | 摄像头聚焦在火星车的前方，以展示与火星景观的交互。火星车行驶在红色的火星土壤上，轮胎与地面紧密接触，留下明显的车辙。火星车的机械臂伸展出来，采集火星土壤和岩石样本，然后将它们放入分析仪器中进行实时分析。场景采用逼真的光照效果，再现火星上的环境。 |\n| 2 | 红色星球的奇观 | 好奇号火星车将带您游览火星上引人入胜的奇观！火星表面充满了各种有趣的地貌特征，像是陨石坑、火山口等。在这个场景中，您将能够通过摄像头近距离观察这些奇观。火星车缓慢行驶，让您能够清晰地看到火星表面的地貌变化。火星上的山脉、峡谷、沙丘等将在您的眼前展现出来，带给您一种震撼的体验。同时，火星车上的高精度相机将记录下这些美丽景观的照片，供地球上的科学家进行进一步分析和研究。 | 摄像头将聚焦在火星表面的各种地貌特征上，例如陨石坑、火山口、山脉、峡谷、沙丘等。火星车缓慢驶过这些地貌，让您能够清晰地观察和欣赏它们。场景采用逼真的光照效果，再现火星上的环境。 |\n| 3 | 科学实验之旅 | 好奇号火星车是一台移动的火星科学实验室！在这个场景中，您将亲眼目睹火星车进行各种科学实验的过程。火星车上配备有化学实验装置、气象传感器、光谱仪等多种仪器，可以对火星表面及其大气进行详尽的研究。火星车上的机械臂将采集地壳样本，并进行实时分析。您可以通过摄像头观察到仪器的工作细节，以及火星车传输数据到地球的过程，真正感受到火星探索的科学魅力。 | 摄像头将焦点放在火星车上的仪器和设备上，展示它们在进行科学实验的过程中的细节。火星车上的机械臂将采集地壳样本，并将它们置于分析仪器中进行实时分析。同时，火星车将传输数据到地球上的接收站，您可以清楚地看到数据传输的过程。场景采用逼真的光照效果，再现火星上的环境。 |\n| 4 | 火星上的日落 | 在火星上欣赏壮观的日落景色！火星的日落与地球上的日落有所不同，它呈现出橙红色的明亮光晕和美丽的云层。在这个场景中，您将通过摄像头观察到好奇号火星车停在火星表面上，背景是日落的景色。火星车的金属外壳在夕阳的映衬下闪烁着柔和的光芒，营造出一种神秘而美丽的氛围。您将有机会欣赏到火星上独特的日落景色，并感受到火星的神秘之美。 | 摄像头将焦点放在火星车的位置，使其处于日落的背景下。火星车停在火星表面上，其金属外壳在夕阳照射下呈现出柔和的光芒。场景采用逼真的光照效果，再现火星上日落时的景色。 |\n| 5 | 寻找火星生命 | 火星一直是寻找外星生命的焦点之地！在这个场景中，您将能够了解好奇号火星车在寻找火星生命迹象方面的工作。火星车上配备了微生物生存环境测试仪、化学分析仪等仪器，用于分析土壤和大气中的生物特征。通过摄像头，您将近距离观察火星车进行生命探测实验的过程，感受到寻找外星生命的科学挑战。在这个场景中，您将站在火星上，与好奇号火星车一同寻找火星生命的答案。 | 摄像头将焦点放在火星车上的生命探测仪器和实验过程上。火星车将采集土壤和大气样本，并在仪器中分析其中的生物特征。您将近距离观察火星车进行这些实验，并感受到寻找外星生命的科学探索。场景采用逼真的光照效果，再现火星上的',
-    // ' | 序号 | 场景名称 | 场景介绍ddd | 场景信息 |\n|----|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n| 1 | 探索红色星球 | 欢迎来到火星上的探险之旅！好奇号火星车是NASA火星科学实验室的杰出成果，它是一辆自动化的火星探测车，被用来研究火星表面及其大气层，以揭示更多关于火星的神秘之处。好奇号火星车是人类探索太阳系的壮举，它的各种仪器和设备使它能够进行各类科学实验，并向地球发送宝贵的数据。这个场景中，您将能够近距离观察好奇号火星车的各个细节和功能。火星车的外观呈四方形，覆盖着厚实的金属外壳，以保护车身免受火星恶劣的环境影响。火星车上有多个高精度相机，用于拍摄火星表面的照片，还有激光探测仪，用于分析地质样本。 | 摄像头聚焦在火星车的前方，以展示与火星景观的交互。火星车行驶在红色的火星土壤上，轮胎与地面紧密接触，留下明显的车辙。火星车的机械臂伸展出来，采集火星土壤和岩石样本，然后将它们放入分析仪器中进行实时分析。场景采用逼真的光照效果，再现火星上的环境。 |\n| 2 | 红色星球的奇观 | 好奇号火星车将带您游览火星上引人入胜的奇观！火星表面充满了各种有趣的地貌特征，像是陨石坑、火山口等。在这个场景中，您将能够通过摄像头近距离观察这些奇观。火星车缓慢行驶，让您能够清晰地看到火星表面的地貌变化。火星上的山脉、峡谷、沙丘等将在您的眼前展现出来，带给您一种震撼的体验。同时，火星车上的高精度相机将记录下这些美丽景观的照片，供地球上的科学家进行进一步分析和研究。 | 摄像头将聚焦在火星表面的各种地貌特征上，例如陨石坑、火山口、山脉、峡谷、沙丘等。火星车缓慢驶过这些地貌，让您能够清晰地观察和欣赏它们。场景采用逼真的光照效果，再现火星上的环境。 |\n| 3 | 科学实验之旅 | 好奇号火星车是一台移动的火星科学实验室！在这个场景中，您将亲眼目睹火星车进行各种科学实验的过程。火星车上配备有化学实验装置、气象传感器、光谱仪等多种仪器，可以对火星表面及其大气进行详尽的研究。火星车上的机械臂将采集地壳样本，并进行实时分析。您可以通过摄像头观察到仪器的工作细节，以及火星车传输数据到地球的过程，真正感受到火星探索的科学魅力。 | 摄像头将焦点放在火星车上的仪器和设备上，展示它们在进行科学实验的过程中的细节。火星车上的机械臂将采集地壳样本，并将它们置于分析仪器中进行实时分析。同时，火星车将传输数据到地球上的接收站，您可以清楚地看到数据传输的过程。场景采用逼真的光照效果，再现火星上的环境。 |\n| 4 | 火星上的日落 | 在火星上欣赏壮观的日落景色！火星的日落与地球上的日落有所不同，它呈现出橙红色的明亮光晕和美丽的云层。在这个场景中，您将通过摄像头观察到好奇号火星车停在火星表面上，背景是日落的景色。火星车的金属外壳在夕阳的映衬下闪烁着柔和的光芒，营造出一种神秘而美丽的氛围。您将有机会欣赏到火星上独特的日落景色，并感受到火星的神秘之美。 | 摄像头将焦点放在火星车的位置，使其处于日落的背景下。火星车停在火星表面上，其金属外壳在夕阳照射下呈现出柔和的光芒。场景采用逼真的光照效果，再现火星上日落时的景色。 |\n| 5 | 寻找火星生命 | 火星一直是寻找外星生命的焦点之地！在这个场景中，您将能够了解好奇号火星车在寻找火星生命迹象方面的工作。火星车上配备了微生物生存环境测试仪、化学分析仪等仪器，用于分析土壤和大气中的生物特征。通过摄像头，您将近距离观察火星车进行生命探测实验的过程，感受到寻找外星生命的科学挑战。在这个场景中，您将站在火星上，与好奇号火星车一同寻找火星生命的答案。 | 摄像头将焦点放在火星车上的生命探测仪器和实验过程上。火星车将采集土壤和大气样本，并在仪器中分析其中的生物特征。您将近距离观察火星车进行这些实验，并感受到寻找外星生命的科学探索。场景采用逼真的光照效果，再现火星上的',
   ])
   let [tableIndex, setTableIndex] = useState(-1)
 
@@ -68,7 +59,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
   useEffect(() => {
     // console.log('EFFECT TEST')
-    // // console.log('Prompt', SceneGenerator.prompt)
+    // // console.log('Prompt', Inference.prompt)
     // let text = 'aa\n' +
     //   '\n' +
     //   '\n' +
@@ -127,8 +118,8 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   }
 
   const fresh = () => {
-    setMessages(SceneGenerator.getShowMessages())
-    let nts = SceneGenerator.tables
+    setMessages(Inference.getShowMessages())
+    let nts = Inference.tables
     let needPageTuning = nts.length !== lastTableLength
     setTables(nts)
     if (needPageTuning) {
@@ -137,13 +128,13 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     }
   }
 
-  SceneGenerator.onGeneratingChange = (generating: boolean, reason: string) => {
+  Inference.onGeneratingChange = (generating: boolean, reason: string) => {
     setGenerating(generating)
   }
 
   // 简单介绍好奇号火星车，表格中大概3个场景
   const start = (text: string) => {
-    SceneGenerator.send(text, chunk => {
+    Inference.send(text, () => {
       fresh()
       // if (chunk.type !== 'BODY' && chunk.type !== 'START') {
       //   setGenerating(false)
@@ -152,7 +143,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   }
 
   const send = (message: string) => {
-    if (SceneGenerator.generating) {
+    if (Inference.generating) {
       tip('请先停止当前会话')
       return false
     }
@@ -175,18 +166,18 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
   const regenerate = () => {
     function last() {
-      return SceneGenerator.messages[SceneGenerator.messages.length - 1]
+      return Inference.messages[Inference.messages.length - 1]
     }
-    if (SceneGenerator.generating) {
-      SceneGenerator.stop()
+    if (Inference.generating) {
+      Inference.stop()
     } else {
-      if (SceneGenerator.messages.length <= 2) {
+      if (Inference.messages.length <= 2) {
         tip('当前没有待重新提交的问题')
         return
       }
-      while (SceneGenerator.messages.length > 1) {
+      while (Inference.messages.length > 1) {
         if (last().role != 'user') {
-          SceneGenerator.messages.pop()
+          Inference.messages.pop()
         } else {
           break
         }
@@ -196,7 +187,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         tip('当前会话没有待重新提交的问题')
       }
       fresh()
-      let lastUser = SceneGenerator.messages.pop()
+      let lastUser = Inference.messages.pop()
       if (lastUser) {
         start(lastUser.content)
       }
@@ -244,11 +235,9 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
           tips.push('')
         }
       }
-      StepManager.setMessages(introduces, tips)
       tip('文本应用完成', 'success')
     }
-    setOpen(false)
-    // SceneGenerator.messages.push(
+    // Inference.messages.push(
     //   {role: 'assistant', content: '当然！以下是好奇号火星车介绍场景的表格形式：\n\n| 序号 | 场景名称 | 场景介绍 | 场景信息 |\n|----|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n| 1 | 探索红色星球 | 欢迎来到火星上的探险之旅！好奇号火星车是NASA火星科学实验室的杰出成果，它是一辆自动化的火星探测车，被用来研究火星表面及其大气层，以揭示更多关于火星的神秘之处。好奇号火星车是人类探索太阳系的壮举，它的各种仪器和设备使它能够进行各类科学实验，并向地球发送宝贵的数据。这个场景中，您将能够近距离观察好奇号火星车的各个细节和功能。火星车的外观呈四方形，覆盖着厚实的金属外壳，以保护车身免受火星恶劣的环境影响。火星车上有多个高精度相机，用于拍摄火星表面的照片，还有激光探测仪，用于分析地质样本。 | 摄像头聚焦在火星车的前方，以展示与火星景观的交互。火星车行驶在红色的火星土壤上，轮胎与地面紧密接触，留下明显的车辙。火星车的机械臂伸展出来，采集火星土壤和岩石样本，然后将它们放入分析仪器中进行实时分析。场景采用逼真的光照效果，再现火星上的环境。 |\n| 2 | 红色星球的奇观 | 好奇号火星车将带您游览火星上引人入胜的奇观！火星表面充满了各种有趣的地貌特征，像是陨石坑、火山口等。在这个场景中，您将能够通过摄像头近距离观察这些奇观。火星车缓慢行驶，让您能够清晰地看到火星表面的地貌变化。火星上的山脉、峡谷、沙丘等将在您的眼前展现出来，带给您一种震撼的体验。同时，火星车上的高精度相机将记录下这些美丽景观的照片，供地球上的科学家进行进一步分析和研究。 | 摄像头将聚焦在火星表面的各种地貌特征上，例如陨石坑、火山口、山脉、峡谷、沙丘等。火星车缓慢驶过这些地貌，让您能够清晰地观察和欣赏它们。场景采用逼真的光照效果，再现火星上的环境。 |\n| 3 | 科学实验之旅 | 好奇号火星车是一台移动的火星科学实验室！在这个场景中，您将亲眼目睹火星车进行各种科学实验的过程。火星车上配备有化学实验装置、气象传感器、光谱仪等多种仪器，可以对火星表面及其大气进行详尽的研究。火星车上的机械臂将采集地壳样本，并进行实时分析。您可以通过摄像头观察到仪器的工作细节，以及火星车传输数据到地球的过程，真正感受到火星探索的科学魅力。 | 摄像头将焦点放在火星车上的仪器和设备上，展示它们在进行科学实验的过程中的细节。火星车上的机械臂将采集地壳样本，并将它们置于分析仪器中进行实时分析。同时，火星车将传输数据到地球上的接收站，您可以清楚地看到数据传输的过程。场景采用逼真的光照效果，再现火星上的环境。 |\n| 4 | 火星上的日落 | 在火星上欣赏壮观的日落景色！火星的日落与地球上的日落有所不同，它呈现出橙红色的明亮光晕和美丽的云层。在这个场景中，您将通过摄像头观察到好奇号火星车停在火星表面上，背景是日落的景色。火星车的金属外壳在夕阳的映衬下闪烁着柔和的光芒，营造出一种神秘而美丽的氛围。您将有机会欣赏到火星上独特的日落景色，并感受到火星的神秘之美。 | 摄像头将焦点放在火星车的位置，使其处于日落的背景下。火星车停在火星表面上，其金属外壳在夕阳照射下呈现出柔和的光芒。场景采用逼真的光照效果，再现火星上日落时的景色。 |\n| 5 | 寻找火星生命 | 火星一直是寻找外星生命的焦点之地！在这个场景中，您将能够了解好奇号火星车在寻找火星生命迹象方面的工作。火星车上配备了微生物生存环境测试仪、化学分析仪等仪器，用于分析土壤和大气中的生物特征。通过摄像头，您将近距离观察火星车进行生命探测实验的过程，感受到寻找外星生命的科学挑战。在这个场景中，您将站在火星上，与好奇号火星车一同寻找火星生命的答案。 | 摄像头将焦点放在火星车上的生命探测仪器和实验过程上。火星车将采集土壤和大气样本，并在仪器中分析其中的生物特征。您将近距离观察火星车进行这些实验，并感受到寻找外星生命的科学探索。场景采用逼真的光照效果，再现火星上的环境。 |\n\n希望以上场景表格能够满足您的需求。如有其他修改或添加的要求，请随时告诉我。'}
     // )
     // fresh()
@@ -258,15 +247,15 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     // messages[0].content += '然！以下是好奇号火星车介绍场景的表格形式'
     // setMessages([...messages])
     // return;
-    if (SceneGenerator.generating) {
+    if (Inference.generating) {
       tip('请先等待当前会话生成完成')
       return
     }
-    SceneGenerator.messages = [
-      {role: 'system', content: SceneGenerator.prompt},
-      {role: 'assistant', content: SceneGenerator.firstMessage},
+    Inference.messages = [
+      {role: 'system', content: Inference.prompt},
+      {role: 'assistant', content: Inference.firstMessage},
     ]
-    SceneGenerator.tables = []
+    Inference.tables = []
     fresh()
   }
 
@@ -315,7 +304,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     resizeTextarea()
   }, [question])
 
-  State.focusAiInput = () => {
+  const setAiInputFocus = () => {
     if (inputRef.current) {
       const value = inputRef.current.value
       inputRef.current.focus()
@@ -323,250 +312,220 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     }
   }
 
-  return <div className={EditorStyle.dialogPage + ' ' + Style.AiDialog} style={{
-      opacity: open ? 1 : 0,
-      pointerEvents: open ? 'unset' : 'none',
-      transition: 'opacity 0.4s ease-in-out'
-  }} onClick={e => {
-      setOpen(false)
-  }}>
-    <div
-      className={EditorStyle.dialog + ' ' + Style.dialog + ' ' + (hadTable ? '' : Style.hadTable)}
-      onClick={e => e.stopPropagation()}
-      style={{
-        width: hadTable ? '80%' : '65%',
-        height: '80%',
-      }}
+  return <div
+      className={Style.AiDialog + ' ' + (hadTable ? '' : Style.hadTable + ' ' + props.className)}
+      {...props}
     >
-      <div className={Style.left}>
-        <div
-          ref={leftScrollRef}
-          className={Style.messagesHolder + ' scroll ' + Style.scroll}
-          onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
-          style={{bottom: hadTable ? '84px' : bottomHeight + 86 + 'px'}}
-        >
-          <div className={Style.messages}>
-            {
-              messages.map((v, i) => {
-                let [role, content] = [v.role, v.content]
-                let icon = '/editor/' + (role === 'assistant' ? 'ai-easy' : 'user') + '-head-icon.png'
-                return <div
-                  className={Style.message + ' ' + rolesStyle[v.role]}
-                  key={i}
-                  ref={i === messages.length - 1 ? lastMessageRef : null}
+      <div
+        ref={leftScrollRef}
+        className={Style.messagesHolder + ' scroll ' + Style.scroll}
+        onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
+        style={{bottom: hadTable ? '84px' : bottomHeight + 86 + 'px'}}
+      >
+        <div className={Style.messages}>
+          {
+            messages.map((v, i) => {
+              let [role, content] = [v.role, v.content]
+              let icon = '/chat/' + (role === 'assistant' ? 'ai-easy' : 'user') + '-head-icon.png'
+              return <div
+                className={Style.message + ' ' + rolesStyle[v.role]}
+                key={i}
+                ref={i === messages.length - 1 ? lastMessageRef : null}
+              >
+                <div className={Style.avatar}>
+                  <img src={icon} alt='head-icon'/>
+                </div>
+                <div
+                  className={Style.content + ' ' + Style.contentTruth}
+                  style={{
+                    width: widths[i],
+                    height: heights[i]
+                  }}
                 >
-                  <div className={Style.avatar}>
-                    <img src={icon} alt='head-icon'/>
-                  </div>
                   <div
-                    className={Style.content + ' ' + Style.contentTruth}
+                    className={Style.truthSize}
                     style={{
                       width: widths[i],
                       height: heights[i]
                     }}
-                  >
-                    <div
-                      className={Style.truthSize}
-                      style={{
-                        width: widths[i],
-                        height: heights[i]
-                      }}
-                    >
-                      <AiMarkdown>
-                        {v.content}
-                      </AiMarkdown>
-                    </div>
-                  </div>
-                </div>
-              })
-            }
-          </div>
-        </div>
-        <div
-          className={Style.messagesHolder + ' scroll ' + Style.scroll + ' ' + Style.messagesHolderGhost}
-          onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
-        >
-          <div className={Style.messages} onResize={freshMessagesSize} ref={ghostRef}>
-            {
-              messages.map((v, i) => {
-                let [role, content] = [v.role, v.content]
-                let icon = '/editor/' + (role === 'assistant' ? 'ai' : 'user') + '-head-icon.png'
-                return <div
-                  className={Style.message + ' ' + rolesStyle[v.role] + ' '}
-                  key={i}
-                >
-                  <div className={Style.avatar}>
-                    <img src={icon} alt='head-icon'/>
-                  </div>
-                  <div
-                    className={Style.content}
                   >
                     <AiMarkdown>
                       {v.content}
                     </AiMarkdown>
                   </div>
                 </div>
-              })
-            }
+              </div>
+            })
+          }
+        </div>
+      </div>
+      <div
+        className={Style.messagesHolder + ' scroll ' + Style.scroll + ' ' + Style.messagesHolderGhost}
+        onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
+      >
+        <div className={Style.messages} onResize={freshMessagesSize} ref={ghostRef}>
+          {
+            messages.map((v, i) => {
+              let [role, content] = [v.role, v.content]
+              let icon = '/editor/' + (role === 'assistant' ? 'ai' : 'user') + '-head-icon.png'
+              return <div
+                className={Style.message + ' ' + rolesStyle[v.role] + ' '}
+                key={i}
+              >
+                <div className={Style.avatar}>
+                  <img src={icon} alt='head-icon'/>
+                </div>
+                <div
+                  className={Style.content}
+                >
+                  <AiMarkdown>
+                    {v.content}
+                  </AiMarkdown>
+                </div>
+              </div>
+            })
+          }
+        </div>
+      </div>
+      <div className={Style.shadow} style={{top: '30px', display: hadTable ? 'block' : 'none'}}>
+        <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
+      </div>
+      <div className={Style.shadow} style={{bottom: '84px', display: hadTable ? 'block' : 'none'}}>
+        <div style={{boxShadow: '0 0 10px 10px #fff', bottom: 0}}></div>
+      </div>
+      <textarea
+        rows={1}
+        className={Style.input}
+        placeholder=" 让AI帮您设计 或向他询问问题"
+        value={question}
+        onChange={e => {
+          setQuestion(e.target.value)
+          resizeTextarea()
+        }}
+        onKeyDown={e => {
+          if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+            sendFromInput()
+            e.stopPropagation()
+            e.preventDefault()
+          }
+        }}
+        ref={inputRef}
+      />
+      <div className={Style.sendHolder}>
+        <div
+          className={Style.send + (clickable ? ' ' + Style.sendClickable : '')}
+          onClick={e => sendFromInput()}
+        >
+          <Icon color={clickable ? '#ffffff' : '#888888'} size='24px'>round_send</Icon>
+        </div>
+      </div>
+      <div className={Style.mode}></div>
+      <div className={Style.suggestion} style={{
+        opacity: showExamples ? 1 : 0,
+        pointerEvents: showExamples ? 'auto' : 'none',
+      }}>
+        <div className={Style.title}>Example & Suggestion</div>
+        <div className={Style.line}>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[0])}>
+              {examples[0]}
+              <Icon size='32px' className={Style.send}>send</Icon>
+            </div>
+          </div>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[1])}>
+              {examples[1]}
+              <Icon size='32px' className={Style.send}>send</Icon>
+            </div>
           </div>
         </div>
-        <div className={Style.shadow} style={{top: '30px', display: hadTable ? 'block' : 'none'}}>
-          <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
-        </div>
-        <div className={Style.shadow} style={{bottom: '84px', display: hadTable ? 'block' : 'none'}}>
-          <div style={{boxShadow: '0 0 10px 10px #fff', bottom: 0}}></div>
-        </div>
-        <textarea
-          rows={1}
-          className={Style.input}
-          placeholder=" 让AI帮您设计 或向他询问问题"
-          value={question}
-          onChange={e => {
-            setQuestion(e.target.value)
-            resizeTextarea()
-          }}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-              sendFromInput()
-              e.stopPropagation()
-              e.preventDefault()
-            }
-          }}
-          ref={inputRef}
-        />
-        <div className={Style.sendHolder}>
-          <div
-            className={Style.send + (clickable && open ? ' ' + Style.sendClickable : '')}
-            onClick={e => sendFromInput()}
-          >
-            <Icon color={clickable ? '#ffffff' : '#888888'} size='24px'>round_send</Icon>
-          </div>
-        </div>
-        <div className={Style.mode}></div>
-        <div className={Style.suggestion} style={{
-          opacity: showExamples ? 1 : 0,
-          pointerEvents: showExamples && open ? 'auto' : 'none',
-        }}>
-          <div className={Style.title}>Example & Suggestion</div>
-          <div className={Style.line}>
-            <div className={Style.cardHolder}>
-              <div className={Style.card} onClick={e => send(examples[0])}>
-                {examples[0]}
-                <Icon size='32px' className={Style.send}>send</Icon>
-              </div>
-            </div>
-            <div className={Style.cardHolder}>
-              <div className={Style.card} onClick={e => send(examples[1])}>
-                {examples[1]}
-                <Icon size='32px' className={Style.send}>send</Icon>
-              </div>
+        <div className={Style.line}>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[2])}>
+              {examples[2]}
+              <Icon size='32px' className={Style.send}>send</Icon>
             </div>
           </div>
-          <div className={Style.line}>
-            <div className={Style.cardHolder}>
-              <div className={Style.card} onClick={e => send(examples[2])}>
-                {examples[2]}
-                <Icon size='32px' className={Style.send}>send</Icon>
-              </div>
-            </div>
-            <div className={Style.cardHolder}>
-              <div className={Style.card} onClick={e => send(examples[3])}>
-                {examples[3]}
-                <Icon size='32px' className={Style.send}>send</Icon>
-              </div>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[3])}>
+              {examples[3]}
+              <Icon size='32px' className={Style.send}>send</Icon>
             </div>
           </div>
         </div>
       </div>
-      <div className={Style.right}>
-        <div className={Style.title}>
-          AI Scene Generator
-          <Icon size='48px'>round_insights</Icon>
+      <div className={Style.title}>
+        CuteGPT
+        <Icon size='48px'>round_insights</Icon>
+      </div>
+      <div
+        ref={rightScrollRef}
+        className={Style.tableHolder + ' scroll ' + Style.scroll}
+        onScroll={e => ScrollState.rightAtBottom = ScrollState.checkAtBottom(rightScrollRef)}
+        style={{
+          opacity: hadTable ? 1 : 0,
+          bottom: tables.length > 1 ? '124px' : '84px',
+          pointerEvents: tables.length > 1 ? 'auto' : 'none',
+        }}
+      >
+        <div className={Style.table}>
+          <AiMarkdown>
+            {tables[tableIndex]}
+          </AiMarkdown>
+        </div>
+      </div>
+      <div className={Style.pagination} style={{
+        opacity: tables.length > 1 ? 1 : 0,
+        pointerEvents: tables.length > 1 ? 'auto' : 'none',
+        bottom: tables.length > 1 ? '88px' : '60px'
+      }}>
+        <Pagination
+          count={tables.length}
+          page={tableIndex + 1}
+          color={'secondary'}
+          onChange={(e, v) => setTableIndex(v - 1)}
+          showFirstButton
+          showLastButton
+        />
+      </div>
+      <div className={Style.buttons} style={{
+        bottom: hadTable ? '24px' : bottomHeight + 36 + 'px'
+      }}>
+        <div className={Style.button + ' ' + Style.secondary} onClick={e => clear()}>
+          <Icon>delete_outline</Icon>
+          <span className={Style.text}>重置</span>
+        </div>
+        <div className={Style.button + ' ' + Style.secondary} onClick={e => regenerate()}>
+          <Icon>{generating ? 'outlined_stop' : 'round_refresh'}</Icon>
+          <span className={Style.text}>{generating ? '停止生成' : '重新生成'}</span>
+        </div>
+        <div className={Style.space}></div>
+        <div className={Style.button + ' ' + Style.main} onClick={e => use()}>
+          <Icon size='26px'>round_done</Icon>
+          <span className={Style.text}>{hadTable ? '应用文本' : '结束对话'}</span>
         </div>
         <div
-          ref={rightScrollRef}
-          className={Style.tableHolder + ' scroll ' + Style.scroll}
-          onScroll={e => ScrollState.rightAtBottom = ScrollState.checkAtBottom(rightScrollRef)}
+          className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
+          onClick={e => {}}
           style={{
-            opacity: hadTable ? 1 : 0,
-            bottom: tables.length > 1 ? '124px' : '84px',
-            pointerEvents: tables.length > 1 && open ? 'auto' : 'none',
+            marginRight: '-4px',
+            display: 'none',
           }}
         >
-          <div className={Style.table}>
-            <AiMarkdown>
-              {tables[tableIndex]}
-            </AiMarkdown>
-          </div>
+          <Icon size='24px'>round_arrow_back_ios</Icon>
         </div>
-        <div className={Style.pagination} style={{
-          opacity: tables.length > 1 ? 1 : 0,
-          pointerEvents: tables.length > 1 && open ? 'auto' : 'none',
-          bottom: tables.length > 1 ? '88px' : '60px'
-        }}>
-          <Pagination
-            count={tables.length}
-            page={tableIndex + 1}
-            color={'secondary'}
-            onChange={(e, v) => setTableIndex(v - 1)}
-            showFirstButton
-            showLastButton
-          />
-        </div>
-        <div className={Style.buttons} style={{
-          pointerEvents: open ? 'auto' : 'none',
-          bottom: hadTable ? '24px' : bottomHeight + 36 + 'px'
-        }}>
-          <div className={Style.button + ' ' + Style.secondary} onClick={e => clear()}>
-            <Icon>delete_outline</Icon>
-            <span className={Style.text}>重置</span>
-          </div>
-          <div className={Style.button + ' ' + Style.secondary} onClick={e => regenerate()}>
-            <Icon>{generating ? 'outlined_stop' : 'round_refresh'}</Icon>
-            <span className={Style.text}>{generating ? '停止生成' : '重新生成'}</span>
-          </div>
-          <div className={Style.space}></div>
-          <div className={Style.button + ' ' + Style.main} onClick={e => use()}>
-            <Icon size='26px'>round_done</Icon>
-            <span className={Style.text}>{hadTable ? '应用文本' : '结束对话'}</span>
-          </div>
-          <div
-            className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
-            onClick={e => {}}
-            style={{
-              marginRight: '-4px',
-              display: 'none',
-            }}
-          >
-            <Icon size='24px'>round_arrow_back_ios</Icon>
-          </div>
-          <div
-            className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
-            onClick={e => {}}
-            style={{
-              display: 'none',
-            }}
-          >
-            <Icon size='24px'>round_arrow_forward_ios</Icon>
-          </div>
-        </div>
-        <div className={Style.shadow} style={{top: '100px'}}>
-          <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
-        </div>
-        <div className={Style.shadow} style={{
-          bottom: hadTable ? (tables.length > 1 ? '124px' : '84px') : 86 + bottomHeight + 'px'
-        }}>
-          <div style={{boxShadow: '0 0 10px 10px #fff', bottom: 0}}></div>
+        <div
+          className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
+          onClick={e => {}}
+          style={{
+            display: 'none',
+          }}
+        >
+          <Icon size='24px'>round_arrow_forward_ios</Icon>
         </div>
       </div>
-      <div className={Style.close} onClick={e => setOpen(false)}>
-        <Icon size='42px' margin='6px'>round_close</Icon>
-      </div>
-    </div>
     </div>
 }
 
 export interface AiDialogProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-    open: boolean;
-    setOpen: (open: boolean) => void;
 }

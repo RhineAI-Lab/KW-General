@@ -4,11 +4,14 @@ import M3Style from './theme/material3-theme.module.scss'
 import {Route, Routes} from "react-router-dom";
 import Home from "./Home/Home";
 import Chat from "./Chat/Chat";
+import Icon from "../compoments/Icon/Icon";
+import {Slide} from "@mui/material";
+import {closeSnackbar, enqueueSnackbar} from "notistack";
 
 function App() {
   return (
     <div className={Style.App}>
-      <div className={M3Style.MaterialYou + ' ' + M3Style.Green}>
+      <div className={M3Style.MaterialYou + ' ' + M3Style.Green + ' ' + Style.theme}>
         <Routes>
           <Route path="/home" element={<Home/>} />
           <Route path="/" element={<Chat/>} />
@@ -27,5 +30,27 @@ declare global {
     interface IntrinsicElements {
       [tag: string]: any
     }
+  }
+}
+
+export const tip = (text: string, type = 'default') => {
+  const action = <React.Fragment>
+    <span className={Style.closeBtn}>
+      <Icon size='20px' onClick={e => closeSnackbar()}>close</Icon>
+    </span>
+  </React.Fragment>
+  // type = 'tip'
+  enqueueSnackbar(text, {
+    variant:type as any,
+    autoHideDuration: 1200,
+    anchorOrigin: { vertical: 'right', horizontal: 'bottom' },
+    TransitionComponent: (props: any) => <Slide {...props} direction="left" />,
+    action: action
+  })
+}
+
+declare module "notistack" {
+  interface VariantOverrides {
+    tip: true;
   }
 }
