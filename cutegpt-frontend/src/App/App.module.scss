@@ -11,4 +11,23 @@
     background: #694ca1;
     color: #fff;
   }
+
+  ::-moz-selection {
+    background: #694ca1;
+    color: #fff;
+    border-radius: 2px;
+  }
+
+  ::selection::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background-color: #694ca1;
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }

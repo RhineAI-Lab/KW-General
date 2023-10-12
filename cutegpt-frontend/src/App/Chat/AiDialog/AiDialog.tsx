@@ -162,6 +162,13 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   }
 
   const sendFromInput = () => {
+    if (Inference.generating) {
+      tip('请先停止当前会话')
+      return false
+    }
+    if (question.length <= 0) {
+      return false
+    }
     let message = question.trim()
     if (send(message)) {
       setQuestion('')
@@ -171,34 +178,34 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
 
   const regenerate = () => {
-    // function last() {
-    //   return Inference.messages[Inference.messages.length - 1]
-    // }
-    //
-    // if (Inference.generating) {
-    //   Inference.stop()
-    // } else {
-    //   if (Inference.messages.length <= 2) {
-    //     tip('当前没有待重新提交的问题')
-    //     return
-    //   }
-    //   while (Inference.messages.length > 1) {
-    //     if (last().role != 'user') {
-    //       Inference.messages.pop()
-    //     } else {
-    //       break
-    //     }
-    //   }
-    //   // 会话中仍至少有一条信息
-    //   if (last().role != 'user') {
-    //     tip('当前会话没有待重新提交的问题')
-    //   }
-    //   fresh()
-    //   let lastUser = Inference.messages.pop()
-    //   if (lastUser) {
-    //     start(lastUser.content)
-    //   }
-    // }
+    function last() {
+      return Inference.messages[Inference.messages.length - 1]
+    }
+
+    if (Inference.generating) {
+      Inference.stop()
+    } else {
+      if (Inference.messages.length <= 2) {
+        tip('当前没有待重新提交的问题')
+        return
+      }
+      while (Inference.messages.length > 1) {
+        if (last().role != 'user') {
+          Inference.messages.pop()
+        } else {
+          break
+        }
+      }
+      // 会话中仍至少有一条信息
+      if (last().role != 'user') {
+        tip('当前会话没有待重新提交的问题')
+      }
+      fresh()
+      let lastUser = Inference.messages.pop()
+      if (lastUser) {
+        start(lastUser.content)
+      }
+    }
   }
 
   const stop = () => {
@@ -392,7 +399,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                 className={Style.content}
               >
                 <AiMarkdown>
-                  {v.content}
+                  {v.content + ((i == messages.length - 1 && generating) ? ' ABC' : '')}
                 </AiMarkdown>
               </div>
             </div>
@@ -498,7 +505,14 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         <md-ripple></md-ripple>
       </div>
       <div className={Style.space}></div>
-      <md-filled-button style={{height: 48}}>
+      <md-filled-button style={{
+        height: 48,
+        opacity: messages.length > 1 ? 1 : 0,
+        pointerEvents: messages.length > 1 ? 'auto' : 'none',
+        transition: 'opacity 0.2s ease-in-out',
+      }} onClick={() => {
+        regenerate()
+      }}>
         <div className={Style.buttonInner}>
           <Icon size='24px'>{generating ? 'outlined_stop' : 'round_refresh'}</Icon>
           <span className={Style.text}>{generating ? '停止生成' : '重新生成'}</span>
