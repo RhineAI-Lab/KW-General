@@ -310,9 +310,15 @@
     color: #513e70;
     user-select: none;
 
+    transition: all 0.3s ease-in-out;
+
     span {
       margin-left: 16px;
       transform: translateY(-6px);
+    }
+
+    &:hover {
+      transform: translateX(-52%) scale(1.01);
     }
   }
 

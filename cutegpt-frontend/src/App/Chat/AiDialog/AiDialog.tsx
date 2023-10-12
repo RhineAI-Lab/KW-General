@@ -71,7 +71,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
             }
           `;
           shadowRoot.appendChild(styleElement);
-          console.log(shadowRoot)
+          // console.log(shadowRoot)
         }
       }
     }
