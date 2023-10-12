@@ -4,7 +4,7 @@ import Icon from "@/compoments/Icon/Icon";
 import AiMarkdown from "@/App/Chat/AiDialog/AiMarkdown";
 import Inference, {Chunk} from "@/App/Chat/AiDialog/Inference";
 import {tip} from "@/App/App";
-import {Pagination} from "@mui/material";
+import '@material/web/ripple/ripple.js';
 
 export class ScrollState {
   static leftAtBottom = true
@@ -56,19 +56,26 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     // '介绍LED灯原理，直接给场景表格，大概3个场景，文案要非常简短，其他你自己发挥。'
   ]
 
+  let rootRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    // console.log('EFFECT TEST')
-    // // console.log('Prompt', Inference.prompt)
-    // let text = 'aa\n' +
-    //   '\n' +
-    //   '\n' +
-    //   '序号 | 场景名称 | 场景介绍文本 | 场景信息 \n' +
-    //   '--- | ---------|----------|---------\n' +
-    //   '1    |整体'
-    // const regex = /\|? *序号 *\| *场景名称 *\|/;
-    // const tableStart = text.search(regex);
-    // console.log(tableStart)
-  }, [])
+    if (rootRef.current) {
+      let elements = rootRef.current!.getElementsByTagName('md-ripple')
+      for (let i = 0; i < elements.length; i++) {
+        const shadowRoot = elements[i].shadowRoot;
+        if (shadowRoot && !shadowRoot.getElementById('ripple-opacity-transition')) {
+          const styleElement = document.createElement('style');
+          styleElement.id = 'ripple-opacity-transition'
+          styleElement.textContent = `
+            .surface::before {
+              transition: all 0.2s ease-in-out !important;
+            }
+          `;
+          shadowRoot.appendChild(styleElement);
+          console.log(shadowRoot)
+        }
+      }
+    }
+  }, [messages])
 
   let leftScrollRef = useRef<HTMLDivElement>(null)
   let rightScrollRef = useRef<HTMLDivElement>(null)
@@ -164,34 +171,34 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
 
   const regenerate = () => {
-    function last() {
-      return Inference.messages[Inference.messages.length - 1]
-    }
-
-    if (Inference.generating) {
-      Inference.stop()
-    } else {
-      if (Inference.messages.length <= 2) {
-        tip('当前没有待重新提交的问题')
-        return
-      }
-      while (Inference.messages.length > 1) {
-        if (last().role != 'user') {
-          Inference.messages.pop()
-        } else {
-          break
-        }
-      }
-      // 会话中仍至少有一条信息
-      if (last().role != 'user') {
-        tip('当前会话没有待重新提交的问题')
-      }
-      fresh()
-      let lastUser = Inference.messages.pop()
-      if (lastUser) {
-        start(lastUser.content)
-      }
-    }
+    // function last() {
+    //   return Inference.messages[Inference.messages.length - 1]
+    // }
+    //
+    // if (Inference.generating) {
+    //   Inference.stop()
+    // } else {
+    //   if (Inference.messages.length <= 2) {
+    //     tip('当前没有待重新提交的问题')
+    //     return
+    //   }
+    //   while (Inference.messages.length > 1) {
+    //     if (last().role != 'user') {
+    //       Inference.messages.pop()
+    //     } else {
+    //       break
+    //     }
+    //   }
+    //   // 会话中仍至少有一条信息
+    //   if (last().role != 'user') {
+    //     tip('当前会话没有待重新提交的问题')
+    //   }
+    //   fresh()
+    //   let lastUser = Inference.messages.pop()
+    //   if (lastUser) {
+    //     start(lastUser.content)
+    //   }
+    // }
   }
 
   const stop = () => {
@@ -317,6 +324,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   }
 
   return <div
+    ref={rootRef}
     className={Style.AiDialog + ' ' + (hadTable ? '' : Style.hadTable + ' ' + props.className)}
     {...props}
   >
@@ -356,6 +364,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                   <AiMarkdown>
                     {v.content}
                   </AiMarkdown>
+                  <md-ripple></md-ripple>
                 </div>
               </div>
             </div>
@@ -397,7 +406,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
       <textarea
         rows={1}
         className={Style.input}
-        placeholder="让AI帮你解答问题或和他聊天"
+        placeholder="让AI给你解答问题或和他聊天"
         value={question}
         onChange={e => {
           setQuestion(e.target.value)
@@ -432,12 +441,14 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
           <div className={Style.card} onClick={e => send(examples[0])}>
             {examples[0]}
             <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
           </div>
         </div>
         <div className={Style.cardHolder}>
           <div className={Style.card} onClick={e => send(examples[1])}>
             {examples[1]}
             <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
           </div>
         </div>
       </div>
@@ -446,12 +457,14 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
           <div className={Style.card} onClick={e => send(examples[2])}>
             {examples[2]}
             <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
           </div>
         </div>
         <div className={Style.cardHolder}>
           <div className={Style.card} onClick={e => send(examples[3])}>
             {examples[3]}
             <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
           </div>
         </div>
       </div>
@@ -459,22 +472,6 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     <div className={Style.title}>
       CuteGPT
       <Icon size='48px'>round_insights</Icon>
-    </div>
-    <div
-      ref={rightScrollRef}
-      className={Style.tableHolder + ' scroll ' + Style.scroll}
-      onScroll={e => ScrollState.rightAtBottom = ScrollState.checkAtBottom(rightScrollRef)}
-      style={{
-        opacity: hadTable ? 1 : 0,
-        bottom: tables.length > 1 ? '124px' : '84px',
-        pointerEvents: tables.length > 1 ? 'auto' : 'none',
-      }}
-    >
-      <div className={Style.table}>
-        <AiMarkdown>
-          {tables[tableIndex]}
-        </AiMarkdown>
-      </div>
     </div>
     <div className={Style.buttons} style={{
       bottom: hadTable ? '24px' : bottomHeight + 36 + 'px'
@@ -485,24 +482,28 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
       {/*</div>*/}
       <div
         className={Style.button + ' ' + Style.secondary}
-        onClick={e => {}}
-      >
-        <Icon size='20px'>round_share</Icon>
-        <span className={Style.text}>分享</span>
-      </div>
-      <div
-        className={Style.button + ' ' + Style.secondary}
-        onClick={e => {}}
-        style={{marginLeft: '10px'}}
+        onClick={() => {}}
       >
         <Icon>round_tune</Icon>
         <span className={Style.text}>选项</span>
+        <md-ripple></md-ripple>
+      </div>
+      <div
+        className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
+        onClick={() => {}}
+        style={{marginLeft: '10px'}}
+      >
+        <Icon size='20px'>round_share</Icon>
+        {/*<span className={Style.text}>分享</span>*/}
+        <md-ripple></md-ripple>
       </div>
       <div className={Style.space}></div>
-      <div className={Style.button + ' ' + Style.main} onClick={e => regenerate()}>
-        <Icon>{generating ? 'outlined_stop' : 'round_refresh'}</Icon>
-        <span className={Style.text}>{generating ? '停止生成' : '重新生成'}</span>
-      </div>
+      <md-filled-button style={{height: 48}}>
+        <div className={Style.buttonInner}>
+          <Icon size='24px'>{generating ? 'outlined_stop' : 'round_refresh'}</Icon>
+          <span className={Style.text}>{generating ? '停止生成' : '重新生成'}</span>
+        </div>
+      </md-filled-button>
       {/*<div className={Style.button + ' ' + Style.main} onClick={e => use()}>*/}
       {/*  <Icon size='26px'>round_done</Icon>*/}
       {/*  <span className={Style.text}>{hadTable ? '应用文本' : '结束对话'}</span>*/}

@@ -1,0 +1,4 @@
+
+md-ripple:host(.surface) {
+  background: #f00;
+}

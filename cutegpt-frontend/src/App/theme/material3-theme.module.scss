@@ -409,6 +409,86 @@
     --md-sys-color-utility-outline: #a08c8c
 }
 
+.Purple {
+    --md-sys-color-on-surface-variant-2: linear-gradient(0deg, rgba(83, 67, 67, .08), rgba(83, 67, 67, .08));
+    --md-sys-color-on-surface-variant-4: linear-gradient(0deg, rgba(83, 67, 67, .12), rgba(83, 67, 67, .12));
+    --md-sys-color-on-surface-2: linear-gradient(0deg, rgba(33, 26, 26, .08), rgba(33, 26, 26, .08)), var(--md-sys-color-secondary-container);
+    --md-sys-color-on-surface-4: linear-gradient(0deg, rgba(33, 26, 26, .12), rgba(33, 26, 26, .12)), var(--md-sys-color-secondary-container);
+    --md-sys-color-white: #fff;
+    --md-sys-color-on-background: #211a1a;
+    --md-sys-color-background: #fcfcfc;
+    --md-sys-color-on-surface: #211a1a;
+    --md-sys-color-on-surface-variant: #534343;
+    --md-sys-color-surface-0: #fcfcfc;
+    --md-sys-color-surface-variant: #f4dedd;
+    --md-sys-color-inverse-surface: #362f2f;
+    --md-sys-color-inverse-on-surface: #fbeeed;
+    --md-sys-color-primary: #5b3c9d;
+    --md-sys-color-primary-80: #5b3c9d;
+    --md-sys-color-primary-30: #5b3c9d;
+    --md-sys-color-primary-20: #5b3c9d;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #ffdadb;
+    --md-sys-color-on-primary-container: #400008;
+    --md-sys-color-secondary: #765656;
+    --md-sys-color-on-secondary: #fff;
+    --md-sys-color-secondary-container: #ffdad9;
+    --md-sys-color-on-secondary-container: #2d1516;
+    --md-sys-color-tertiary-container: #fda;
+    --md-sys-color-on-tertiary-container: #281800;
+    --md-sys-color-utility-error: #ba1b1b;
+    --md-sys-color-utility-on-error: #fff;
+    --md-sys-color-utility-outline: #857373;
+    --md-sys-color-surface-1: #f5f0f0;
+    --md-sys-color-surface-2: #f3eaeb;
+    --md-sys-color-surface-3: #f0e5e5;
+    --md-sys-color-surface-4: #efe3e4;
+    --md-sys-color-surface-5: #eddfe0;
+    --md-sys-color-ref-secondary-200: #e6bcbc;
+    --md-sys-color-ref-secondary-300: #c9a1a1;
+    --md-sys-color-ref-neutral-100: #e3e3e3;
+    --md-sys-color-ref-neutral-200: #c7c7c7
+}
+
+.PurpleDark {
+    --md-sys-color-on-surface-variant-2: linear-gradient(0deg, rgba(215, 194, 193, .08), rgba(215, 194, 193, .08));
+    --md-sys-color-on-surface-variant-4: linear-gradient(0deg, rgba(215, 194, 193, .12), rgba(215, 194, 193, .12));
+    --md-sys-color-on-surface-2: linear-gradient(0deg, rgba(237, 224, 223, .08), rgba(237, 224, 223, .08)), var(--md-sys-color-secondary-container);
+    --md-sys-color-on-surface-4: linear-gradient(0deg, rgba(237, 224, 223, .12), rgba(237, 224, 223, .12)), var(--md-sys-color-secondary-container);
+    --md-sys-color-white: #fff;
+    --md-sys-color-on-background: #ede0df;
+    --md-sys-color-background: #211a1a;
+    --md-sys-color-on-surface: #ede0df;
+    --md-sys-color-on-surface-variant: #d7c2c1;
+    --md-sys-color-surface-0: #211a1a;
+    --md-sys-color-surface-variant: #534343;
+    --md-sys-color-surface-1: #2f2525;
+    --md-sys-color-surface-2: #362929;
+    --md-sys-color-surface-3: #3c2e2e;
+    --md-sys-color-surface-4: #3e2f2f;
+    --md-sys-color-surface-5: #433232;
+    --md-sys-color-inverse-surface: #362f2f;
+    --md-sys-color-inverse-on-surface: #fbeeed;
+    --md-sys-color-primary: #ffb3b5;
+    --md-sys-color-primary-80: #ffb3b5;
+    --md-sys-color-primary-30: #7d2a30;
+    --md-sys-color-primary-20: #5f121b;
+    --md-sys-color-neutral-10: #211a1a;
+    --md-sys-color-neutral-90: #ede0df;
+    --md-sys-color-on-primary: #5f121b;
+    --md-sys-color-primary-container: #7d2a30;
+    --md-sys-color-on-primary-container: #ffdadb;
+    --md-sys-color-secondary: #e6bcbc;
+    --md-sys-color-on-secondary: #442929;
+    --md-sys-color-secondary-container: #5c3f3f;
+    --md-sys-color-on-secondary-container: #ffdad9;
+    --md-sys-color-tertiary-container: #5b4219;
+    --md-sys-color-on-tertiary-container: #fda;
+    --md-sys-color-utility-error: #ffb4a9;
+    --md-sys-color-utility-on-error: #680003;
+    --md-sys-color-utility-outline: #a08c8c
+}
+
 .Yellow {
     --md-sys-color-on-surface-variant-2: linear-gradient(0deg, rgba(72, 71, 58, .08), rgba(72, 71, 58, .08));
     --md-sys-color-on-surface-variant-4: linear-gradient(0deg, rgba(72, 71, 58, .12), rgba(72, 71, 58, .12));

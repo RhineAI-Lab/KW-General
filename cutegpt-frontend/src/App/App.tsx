@@ -1,6 +1,7 @@
 import React from 'react'
 import Style from './App.module.scss'
 import M3Style from './theme/material3-theme.module.scss'
+import './theme/material3-hook.css'
 import {Route, Routes} from "react-router-dom";
 import Home from "./Home/Home";
 import Chat from "./Chat/Chat";
@@ -11,7 +12,7 @@ import {closeSnackbar, enqueueSnackbar} from "notistack";
 function App() {
   return (
     <div className={Style.App}>
-      <div className={M3Style.MaterialYou + ' ' + M3Style.Green + ' ' + Style.theme}>
+      <div className={M3Style.MaterialYou + ' ' + M3Style.Purple + ' ' + Style.theme}>
         <Routes>
           <Route path="/home" element={<Home/>} />
           <Route path="/" element={<Chat/>} />

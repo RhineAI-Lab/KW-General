@@ -3,7 +3,7 @@ export default class Inference {
 
   static prompt = ''
 
-  static firstMessage = '我是STEP-FLOW的AI助手，可以帮您设计一些模型的展示场景，介绍文本，或与您交流，回答相关的问题。请问有什么可以帮您？'
+  static firstMessage = '我是复旦大学知识工厂训练出的AI模型CuteGPT，请问有什么可以帮您？'
 
 
   static messages: Chunk[]  = [

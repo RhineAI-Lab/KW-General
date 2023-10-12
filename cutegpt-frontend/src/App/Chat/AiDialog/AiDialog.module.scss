@@ -83,6 +83,9 @@
           background: #f7f2ff;
           padding: 12px 18px;
           color: #130328;
+
+          --md-ripple-hover-opacity: 0.02;
+          --md-ripple-pressed-opacity: 0.04;
         }
       }
 
@@ -95,6 +98,11 @@
         .content {
           background: #5b3c9d;
           color: #ffffff;
+
+          --md-ripple-hover-opacity: 0.05;
+          --md-ripple-pressed-opacity: 0.09;
+          --md-ripple-hover-color: #000;
+          --md-ripple-pressed-color: #000;
         }
       }
     }
@@ -125,8 +133,14 @@
     backdrop-filter: blur(16px);
     box-shadow: 0 0 6px 6px #aaaaaa2a;
     border-radius: 20px;
-    transition: background-color 0.12s ease-in-out, height 0.2s ease-in-out;
-    overflow: visible;
+    border: none;
+    transition: background-color 0.12s ease-in-out, height 0.2s ease-in-out, width 0.3s ease-in-out;
+    overflow: hidden;
+
+    &:hover {
+      box-shadow: 0 0 8px 8px #aaaaaa20;
+      width: 86.5%;
+    }
   }
 
   .input {
@@ -145,7 +159,7 @@
     font-family: sans-serif;
     line-height: 26px;
     font-size: 16px;
-    color: #000000dd;
+    color: #000000;
     padding: 12px 52px 12px 16px;
     transition: background-color 0.12s ease-in-out, height 0.2s ease-in-out;
     box-sizing: border-box;
@@ -195,7 +209,7 @@
 
   .sendClickable {
     pointer-events: all;
-    background: #6d35be;
+    background: var(--md-sys-color-primary);
 
     &:hover {
       cursor: pointer;
@@ -252,6 +266,7 @@
           min-height: 60px;
           cursor: pointer;
           transition: all 0.3s ease-in-out;
+          --md-ripple-hover-opacity: 0.01;
 
           .send {
             position: absolute;
@@ -331,7 +346,20 @@
       flex-grow: 1;
     }
 
+    .buttonInner {
+      display: flex;
+      align-items: center;
+      margin: 0 -4px 0 -12px;
+
+      .text {
+        font-size: 16px;
+        font-weight: 500;
+        margin-left: 8px;
+      }
+    }
+
     .button {
+      position: relative;
       display: inline-flex;
       background: #5b3c9d;
       color: #ffffff;
@@ -351,13 +379,13 @@
         white-space: nowrap;
       }
 
-      &:hover {
-        background: #4a2d88;
-      }
-
-      &:active {
-        background: #3d2377;
-      }
+      //&:hover {
+      //  background: #4a2d88;
+      //}
+      //
+      //&:active {
+      //  background: #3d2377;
+      //}
     }
 
     .mini {
@@ -370,7 +398,7 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-55%, -50%);
       }
     }
 
@@ -378,13 +406,13 @@
       background: #eddfff;
       color: #3c1f65;
 
-      &:hover {
-        background: #d7c6f5;
-      }
-
-      &:active {
-        background: #c9b6ea;
-      }
+      //&:hover {
+      //  background: #d7c6f5;
+      //}
+      //
+      //&:active {
+      //  background: #c9b6ea;
+      //}
     }
   }
 
