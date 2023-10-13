@@ -1,3 +1,4 @@
+import hashlib
 from threading import Thread
 
 import torch
@@ -102,10 +103,9 @@ def parse_draw(response):
 
 
 @torch.no_grad()
-def normal_chat(model, tokenizer, query, history=None, max_length=1024, min_length=3, num_beams=1, do_sample=True,
+def normal_chat(model, tokenizer, query, history=None, prompt=overall_instruction, max_length=1024, min_length=3, num_beams=1, do_sample=True,
                 top_p=0.9, top_k=50, temperature=0.5, repetition_penalty=1.2, length_penalty=1.0, logits_processor=None,
                 **kwargs):
-    prompt = overall_instruction
     for i, (old_query, response) in enumerate(history):
         # 多轮对话需要跟训练时保持一致
         prompt += "问：{}\n答：\n{}\n".format(old_query, response)
@@ -144,6 +144,46 @@ def normal_chat(model, tokenizer, query, history=None, max_length=1024, min_leng
     for i, response in enumerate(streamer):
         response = response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
         yield response
+
+
+nonce_used = []
+
+
+def md5_string(input_string):
+    m = hashlib.md5()
+    m.update(input_string.encode('utf-8'))
+    return m.hexdigest().upper()
+
+
+def check_authentication(data):
+    try:
+        version = data['authentication']['version']
+        if version != '1.0.0':
+            return False, '鉴权版本不支持，请更新版本。'
+        nonce = data['authentication']['nonce']
+        timestamp = data['timestamp']
+        token = data['authentication']['token']
+        query = data['task']['messages'][-1]['content']
+        model = data['task']['model']
+        sign = data['authentication']['sign']
+    except:
+        return False, '缺少鉴权参数。'
+    if nonce in nonce_used:
+        return False, '该凭证已过期，请重试。'
+    nonce_used.append(nonce)
+    if len(nonce) >= 1024:
+        nonce_used.pop()
+    validity = 120 * 1000
+    if time.time() - timestamp > validity:
+        return False, '凭证有效期已过，请重试。'
+
+    # 签名 nonce-timestamp-token-query-model-salt
+    salt = 'AF9C41B0E60C6B9CD2F84D8BC5B5F2A2'
+    original = f'{nonce}-{timestamp}-{token}-{query}-{model}-{salt}'
+    sign_truth = md5_string(original)
+    if sign != sign_truth:
+        return False, '签名校验错误。'
+    return True, '成功。'
 
 
 def normal_chat_wrapper(query, styled_history, history, memory_limit=3):
@@ -187,6 +227,11 @@ def make_sse(obj):
 
 @app.route('/chat/full/stream', methods=['POST'])
 def chat_full_stream():
+    data = request.json
+    auth_result, auth_info = check_authentication(data)
+    if not auth_result:
+        return jsonify({'code': 10000, 'message': auth_info, 'type': 'ERROR', 'content': ''})
+
     history = []
     query = ''
     try:
@@ -199,7 +244,7 @@ def chat_full_stream():
         try:
             yield make_sse({'code': 0, 'message': 'success', 'type': 'START'})
             all_response = ''
-            for i, response in enumerate(normal_chat(model, tokenizer, query, history, memory_limit=4)):
+            for i, response in enumerate(normal_chat(model, tokenizer, query, history, prompt=overall_instruction, memory_limit=4)):
                 print(f'Batch {i}: {response}')
                 yield make_sse({
                     'code': 0,
@@ -225,62 +270,13 @@ def chat_full_stream():
     return Response(generate(), content_type='text/event-stream')
 
 
-@app.route('/chat/stream/<query>', methods=['GET'])
-def chat_easy_stream(query=''):
-    history = []
-    try:
-        history = request.json['task']['history']
-    except:
-        pass
-
-    def generate():
-        try:
-            print('Query:', query)
-            yield make_sse('Thinking...\n\n')
-            all_response = ''
-            for i, response in enumerate(normal_chat(model, tokenizer, query, history, memory_limit=4)):
-                print(f'Batch {i}: {response}')
-                yield make_sse(response)
-                all_response += response
-            all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
-            print('\n\nAll Response:')
-            print(all_response)
-            yield make_sse('Answer finished.')
-        except Exception as e:
-            print(repr(e))
-            yield make_sse({
-                'code': 10000,
-                'message': 'unknown error: \n ' + repr(e),
-                'type': 'ERROR',
-            })
-
-    return Response(generate(), content_type='text/event-stream')
-
-
-@app.route('/chat/<query>', methods=['GET'])
-def chat_easy(query = ''):
-    history = []
-    try:
-        history = request.json['task']['history']
-    except:
-        pass
-
-    try:
-        print('Query:', query)
-        all_response = ''
-        for i, response in enumerate(normal_chat(model, tokenizer, query, history, memory_limit=4)):
-            # print(f'Batch {i}: {response}')
-            all_response += response
-        all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
-        print('\n\nAll Response:')
-        print(all_response)
-        return all_response
-    except Exception as e:
-        return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
-
-
 @app.route('/chat/full/direct', methods=['POST'])
 def chat_full_direct():
+    data = request.json
+    auth_result, auth_info = check_authentication(data)
+    if not auth_result:
+        return jsonify({'code': 10000, 'message': auth_info, 'type': 'ERROR', 'content': ''})
+    
     history = []
     query = ''
     try:
@@ -292,7 +288,7 @@ def chat_full_direct():
     try:
         print('Query:', query)
         all_response = ''
-        for i, response in enumerate(normal_chat(model, tokenizer, query, history, memory_limit=4)):
+        for i, response in enumerate(normal_chat(model, tokenizer, query, history, overall_instruction, memory_limit=4)):
             # print(f'Batch {i}: {response}')
             all_response += response
         all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
@@ -307,7 +303,7 @@ def chat_full_direct():
 def stream_test():
     def generate():
         for i in range(5):  # 作为示例，我们只循环5次
-            yield f"data: 这是第 {i} 条测试消息\n\n"  # 使用 Server-Sent Events (SSE) 格式
+            yield f"data: 这是第 {i}/5 条测试消息\n\n"  # 使用 Server-Sent Events (SSE) 格式
             time.sleep(2)  # 每隔2秒发送一次消息
     return Response(generate(), content_type='text/event-stream')
 
