@@ -11,7 +11,11 @@ import {closeSnackbar, enqueueSnackbar} from "notistack";
 
 function App() {
   return (
-    <div className={Style.App}>
+    <div
+      className={Style.App}
+      onMouseDown={e => {
+        e.stopPropagation()
+      }}>
       <div className={M3Style.MaterialYou + ' ' + M3Style.Purple + ' ' + Style.theme}>
         <Routes>
           <Route path="/home" element={<Home/>} />

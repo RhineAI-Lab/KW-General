@@ -27,6 +27,27 @@ let lastWindowResizeListener: any = null
 let lastTableLength = 0
 
 export default function AiDialog(props: AiDialogProps): JSX.Element {
+
+  // device level  0-手机 1-平板 2-电脑
+  const [dl, setDl] = useState(0)
+
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth <= 768) {
+        setDl(0)
+      } else if (window.innerWidth <= 1024) {
+        setDl(1)
+      } else {
+        setDl(2)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   let [singleMode, setSingleMode] = useState(true)
   let [question, setQuestion] = useState('')
   let [messages, setMessages] = useState<any[]>([
@@ -332,9 +353,18 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
   return <div
     ref={rootRef}
-    className={Style.AiDialog + ' ' + (hadTable ? '' : Style.hadTable + ' ' + props.className)}
+    className={
+      Style.AiDialog + ' ' +
+      (hadTable ? '' : Style.hadTable + ' ' + props.className) + ' ' +
+      (dl == 0 ? Style.dl0 : '')
+    }
     {...props}
   >
+    <div className={Style.shadow} style={{
+      marginBottom: '-16px',
+    }}>
+      <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
+    </div>
     <div
       ref={leftScrollRef}
       className={Style.messagesHolder + ' scroll ' + Style.scroll}
@@ -342,6 +372,10 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
       style={{bottom: hadTable ? '84px' : bottomHeight + 86 + 'px'}}
     >
       <div className={Style.messages}>
+        <div className={Style.title}>
+          CuteGPT
+          <Icon size='48px'>round_insights</Icon>
+        </div>
         {
           messages.map((v, i) => {
             let [role, content] = [v.role, v.content]
@@ -399,7 +433,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                 className={Style.content}
               >
                 <AiMarkdown>
-                  {v.content + ((i == messages.length - 1 && generating) ? ' ABC' : '')}
+                  {v.content + ((i == messages.length - 1 && generating && v.role == 'assistant') ? ' ABC' : '')}
                 </AiMarkdown>
               </div>
             </div>
@@ -407,78 +441,13 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         }
       </div>
     </div>
-    <div className={Style.inputHolder} style={{
-      height: bottomHeight
+    <div className={Style.shadow} style={{
+      marginTop: '-16px',
     }}>
-      <textarea
-        rows={1}
-        className={Style.input}
-        placeholder="让AI给你解答问题或和他聊天"
-        value={question}
-        onChange={e => {
-          setQuestion(e.target.value)
-          resizeTextarea()
-        }}
-        onKeyDown={e => {
-          if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-            sendFromInput()
-            e.stopPropagation()
-            e.preventDefault()
-          }
-        }}
-        ref={inputRef}
-      />
-    </div>
-    <div className={Style.sendHolder}>
-      <div
-        className={Style.send + (clickable ? ' ' + Style.sendClickable : '')}
-        onClick={e => sendFromInput()}
-      >
-        <Icon color={clickable ? '#ffffff' : '#888888'} size='24px'>round_send</Icon>
-      </div>
-    </div>
-    <div className={Style.mode}></div>
-    <div className={Style.suggestion} style={{
-      opacity: showExamples ? 1 : 0,
-      pointerEvents: showExamples ? 'auto' : 'none',
-    }}>
-      <div className={Style.suggestionTitle}>Example & Suggestion</div>
-      <div className={Style.line}>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[0])}>
-            {examples[0]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[1])}>
-            {examples[1]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-      </div>
-      <div className={Style.line}>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[2])}>
-            {examples[2]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[3])}>
-            {examples[3]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div className={Style.title}>
-      CuteGPT
-      <Icon size='48px'>round_insights</Icon>
+      <div style={{
+        boxShadow: '0 0 10px 10px #fff',
+        marginTop: '16px',
+      }}></div>
     </div>
     <div className={Style.buttons} style={{
       bottom: hadTable ? '24px' : bottomHeight + 36 + 'px'
@@ -544,11 +513,81 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         <Icon size='24px'>round_arrow_forward_ios</Icon>
       </div>
     </div>
-    <div className={Style.shadow} style={{top: '76px'}}>
-      <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
+    <div className={Style.inputHolder} style={{
+      height: bottomHeight,
+      minHeight: bottomHeight,
+    }}>
+      <textarea
+        rows={1}
+        className={Style.input}
+        placeholder="让AI给你解答问题或和他聊天"
+        value={question}
+        onChange={e => {
+          setQuestion(e.target.value)
+          resizeTextarea()
+        }}
+        onKeyDown={e => {
+          if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+            sendFromInput()
+            e.stopPropagation()
+            e.preventDefault()
+          }
+        }}
+        ref={inputRef}
+      />
     </div>
-    <div className={Style.shadow} style={{bottom: messages.length > 0 ? 86 + bottomHeight + 'px' : '84px'}}>
-      <div style={{boxShadow: '0 0 10px 10px #fff', bottom: 0}}></div>
+    <div className={Style.sendHolder}>
+      <div
+        className={Style.mic}
+        onClick={e => sendFromInput()}
+      >
+        <Icon size='28px'>round_mic_none</Icon>
+      </div>
+      <div
+        className={Style.send + (clickable ? ' ' + Style.sendClickable : '')}
+        onClick={e => sendFromInput()}
+      >
+        <Icon color={clickable ? '#ffffff' : '#888888'} size={clickable ? '20px' : '24px'}>round_send</Icon>
+      </div>
+    </div>
+    <div className={Style.mode}></div>
+    <div className={Style.suggestion} style={{
+      opacity: showExamples ? 1 : 0,
+      pointerEvents: showExamples ? 'auto' : 'none',
+    }}>
+      <div className={Style.suggestionTitle}>Example & Suggestion</div>
+      <div className={Style.line}>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[0])}>
+            {examples[0]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[1])}>
+            {examples[1]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+      </div>
+      <div className={Style.line}>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[2])}>
+            {examples[2]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[3])}>
+            {examples[3]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 }
