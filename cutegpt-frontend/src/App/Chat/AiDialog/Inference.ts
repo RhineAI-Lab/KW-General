@@ -1,3 +1,4 @@
+import MD5 from 'crypto-js/md5';
 
 export default class Inference {
 
@@ -29,6 +30,7 @@ export default class Inference {
   static getShowMessages() {
     this.charIndex++
     let messagesShow = []
+    messagesShow.push({role: 'assistant', content: this.firstMessage})
     this.tables = []
     for (let i = 0; i < this.messages.length; i++) {
       let message = this.messages[i]
@@ -84,6 +86,7 @@ export default class Inference {
         }
       }
     }
+    // console.log(messagesShow)
     return messagesShow
   }
 
@@ -155,15 +158,34 @@ export default class Inference {
     }
   }
 
+  static md5(text: string): string {
+    return MD5(text).toString().toUpperCase() // 32位大写
+  }
+
   static fetchStream(messages: Chunk[], callback: (line: any) => void) {
     let model = 'CuteGPT'
+    let timestamp = new Date().getTime()
+    let query = messages[messages.length - 1].content
+    let salt = 'AF9C41B0E60C6B9CD2F84D8BC5B5F2A2'
+    let token = 'TEMP-USER-TOKEN'
+    let nonce = this.md5(timestamp + Math.random().toString())
+    // 签名 nonce-timestamp-token-query-model-salt
+    let sign = this.md5(nonce + '-' + timestamp + '-' + token + '-' + query + '-' + model + '-' + salt)
 
     console.log('AI Fetch ' + model + ' :', messages)
     let raw = JSON.stringify({
       "task": {
+        "model": model,
         "messages": messages
       },
-      "model": model,
+      "authentication": {
+        "version": "v1.0.0",
+        "token": token,
+        "nonce": nonce,
+        "sign": sign
+      },
+      "version": "v1.0.0",
+      "timestamp": timestamp
     })
     console.log(raw)
 
@@ -199,6 +221,7 @@ export default class Inference {
           if (done) break;
 
           data += decoder.decode(value, {stream: true});
+          // console.log(data)
 
           while (data.includes("\n\n")) {
             let eventEndIndex = data.indexOf("\n\n");
@@ -216,7 +239,7 @@ export default class Inference {
             callback({code: 0, message: 'Normal.', type: 'END'})
           } else {
             this.setGenerating(false, 'unknown')
-            callback({code: 600, message: 'Unknown error.', type: 'ERROR'})
+            callback({code: 600, message: 'Warning: Unknown finish reason.', type: 'ERROR'})
           }
         } else {
           this.setGenerating(false, 'network0')

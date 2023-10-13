@@ -7,7 +7,8 @@ import Home from "./Home/Home";
 import Chat from "./Chat/Chat";
 import Icon from "../compoments/Icon/Icon";
 import {Slide} from "@mui/material";
-import {closeSnackbar, enqueueSnackbar} from "notistack";
+import {TipSnackbar} from "@/App/TipSnackbar/TipSnackbar";
+import {closeSnackbar, enqueueSnackbar, SnackbarProvider} from "notistack";
 
 function App() {
   return (
@@ -17,10 +18,15 @@ function App() {
         e.stopPropagation()
       }}>
       <div className={M3Style.MaterialYou + ' ' + M3Style.Purple + ' ' + Style.theme}>
-        <Routes>
-          <Route path="/home" element={<Home/>} />
-          <Route path="/" element={<Chat/>} />
-        </Routes>
+        <SnackbarProvider maxSnack={5} Components={{
+          // @ts-ignore
+          tip: TipSnackbar,
+        }}>
+          <Routes>
+            <Route path="/home" element={<Home/>} />
+            <Route path="/" element={<Chat/>} />
+          </Routes>
+        </SnackbarProvider>
       </div>
     </div>
   )

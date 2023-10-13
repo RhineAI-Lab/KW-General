@@ -290,29 +290,34 @@ def filter_answer(chat_iter):
                 if last[:len(ot)] == ot:
                     yield i, last[len(ot):]
                 else:
-                    yield i, last[len(ot):]
+                    yield i, last
         else:
             yield i, response
 
 
 @app.route('/chat/full/<way>', methods=['POST'])
 def chat_full_stream(way='direct'):
+    def general_return(return_data):
+        if way != 'stream':
+            return jsonify(return_data)
+        else:
+            return make_sse(return_data)
     data = request.json
     auth_result, auth_info = check_authentication(data)
     if not auth_result:
-        return jsonify({'code': 10100, 'message': 'Authentication failed: ' + auth_info, 'type': 'ERROR'})
+        return general_return({'code': 10100, 'message': 'Authentication failed: ' + auth_info, 'type': 'ERROR'})
 
     if 'task' not in data:
-        return jsonify({'code': 10200, 'message': 'Arg "task" is necessary.', 'type': 'ERROR'})
+        return general_return({'code': 10200, 'message': 'Arg "task" is necessary.', 'type': 'ERROR'})
     task = data['task']
 
     prompt, history, query = make_history(task)
     if len(query) == 0:
-        return jsonify({'code': 10200, 'message': 'Task is invalid.', 'type': 'ERROR'})
+        return general_return({'code': 10200, 'message': 'Task is invalid.', 'type': 'ERROR'})
     memory_limit, top_p, top_k, temperature = get_options(task)
     model_name = task['model']
     if model_name.lower() != 'cutegpt' and model_name.lower() != 'cute-gpt':
-        return jsonify({'code': 10200, 'message': 'Model is not supported.', 'type': 'ERROR'})
+        return general_return({'code': 10200, 'message': 'Model is not supported.', 'type': 'ERROR'})
 
     start_time = time.time()
     chat_iter = normal_chat(
@@ -359,7 +364,7 @@ def chat_full_stream(way='direct'):
             all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
             print('\n\nAll Response:')
             print(all_response)
-            yield make_sse({'code': 0, 'message': 'Success.', 'type': 'END', 'content': all_response})
+            yield make_sse({'code': 0, 'message': 'Success.', 'type': 'END', 'content': all_response, 'finish_reason': 'stop'})
         except Exception as e:
             print(repr(e))
             yield make_sse({'code': 10000, 'message': 'Unknown error: \n ' + repr(e) + '.', 'type': 'ERROR'})
