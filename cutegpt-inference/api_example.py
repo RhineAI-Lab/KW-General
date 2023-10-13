@@ -120,11 +120,12 @@ request_body = {
         },
     },
     "authentication": {  # 身份验证 及通信签名
+        "version": "v1.0.0",
         "token": "登录凭证",
         "nonce": "16位随机码",
         "sign": "签名",
     },
-    "version": "1.0.0",
+    "version": "v1.0.0",
     "timestamp": 166666666
 }
 

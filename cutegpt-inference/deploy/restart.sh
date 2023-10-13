@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # 查找监听在23496端口的Python程序的PID
-pid=$(lsof -i :23496 -n | grep "python" | awk '{print $2}' | uniq)
+pid=$(lsof -i :23496 -n | awk '{print $2}' | uniq)
 
 # 如果找到了PID，就结束该进程
 if [ ! -z "$pid" ]; then
@@ -12,9 +12,8 @@ else
 fi
 
 # 启动新的Python程序
-# 你可以替换下面的命令为你自己的Python程序的启动命令
-nohup python /data/heqianyu/ghr_src/sync/deploy/server_easy.py &
+nohup python /data/heqianyu/ghr_src/sync/deploy/server_easy.py > server_easy.log 2>&1 &
 
 echo "Started new python program"
 
-tail -f nohup.out
+tail -f server_easy.log

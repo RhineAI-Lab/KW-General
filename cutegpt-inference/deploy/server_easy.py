@@ -1,4 +1,5 @@
 import hashlib
+import traceback
 from threading import Thread
 
 import torch
@@ -40,32 +41,39 @@ from transformers.generation.utils import LogitsProcessorList, logger
 from transformers.generation.logits_process import NoBadWordsLogitsProcessor
 from transformers import AutoModelWithLMHead, T5Tokenizer, AutoTokenizer, LlamaForCausalLM, LlamaTokenizer
 
+use_model = True
+assistant_model = None
+model = None
+
 tokenizer = LlamaTokenizer.from_pretrained(model_name)
 print(tokenizer.additional_special_tokens)
-model = LlamaForCausalLM.from_pretrained(
-    model_name,
-    # load_in_8bit=True,
-    torch_dtype=torch.float16,
-    # device_map={"": device},
-    device_map="auto",
-)
+
+if use_model:
+    model = LlamaForCausalLM.from_pretrained(
+        model_name,
+        # load_in_8bit=True,
+        torch_dtype=torch.float16,
+        # device_map={"": device},
+        device_map="auto",
+    )
 
 # assistant_model_name = "cutegpt1b3-ift"
 assistant_model_name = "/data/heqianyu/big_model/instruction_tuning_github/evaluation/website/cutegpt1b3-ift"
-assistant_model = AutoModelForCausalLM.from_pretrained(
-    assistant_model_name,
-    torch_dtype=torch.float16,
-    device_map="auto",
-)
-model.eval()
-assistant_model.eval()
+if use_model:
+    assistant_model = AutoModelForCausalLM.from_pretrained(
+        assistant_model_name,
+        torch_dtype=torch.float16,
+        device_map="auto",
+    )
+    model.eval()
+    assistant_model.eval()
 device = torch.device("cuda")
 # pdb.set_trace()
 
 
-from stream_assistant_generate import stream_patch_model
-
-stream_patch_model(model)
+if use_model:
+    from stream_assistant_generate import stream_patch_model
+    stream_patch_model(model)
 
 
 def parse_text(text):
@@ -100,10 +108,11 @@ def parse_draw(response):
 
 
 @torch.no_grad()
-def normal_chat(model, tokenizer, query, history=None, prompt=overall_instruction, max_length=1024, min_length=3,
-                num_beams=1, do_sample=True,
-                top_p=0.9, top_k=50, temperature=0.5, repetition_penalty=1.2, length_penalty=1.0, logits_processor=None,
-                **kwargs):
+def normal_chat(
+    model, tokenizer, query, history=None, prompt=overall_instruction, max_length=1024, min_length=3, num_beams=1,
+    do_sample=True, top_p=0.9, top_k=50, temperature=0.5, repetition_penalty=1.2, length_penalty=1.0,
+    logits_processor=None, **kwargs
+):
     for i, (old_query, response) in enumerate(history):
         # 多轮对话需要跟训练时保持一致
         prompt += "问：{}\n答：\n{}\n".format(old_query, response)
@@ -114,9 +123,9 @@ def normal_chat(model, tokenizer, query, history=None, prompt=overall_instructio
 
     slen = len(input_ids[0])
     generation_config = GenerationConfig(
-        temperature=0.7,
-        top_p=0.8,
-        top_k=50,
+        temperature=temperature,
+        top_p=top_p,
+        top_k=top_k,
         repetition_penalty=1.1,
         max_new_tokens=512,
     )
@@ -125,8 +134,8 @@ def normal_chat(model, tokenizer, query, history=None, prompt=overall_instructio
     generation_kwargs = dict(
         input_ids=input_ids,
         generation_config=generation_config,
-        return_dict_in_generate=True,
-        output_scores=True,
+        # return_dict_in_generate=True,
+        # output_scores=True,
         # eos_token_id = tokenizer.eos_token_id,
         eos_token_id=tokenizer.convert_tokens_to_ids('<end>'),
         # eos_token_id = 250680,
@@ -141,6 +150,7 @@ def normal_chat(model, tokenizer, query, history=None, prompt=overall_instructio
 
     for i, response in enumerate(streamer):
         response = response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
+        # print(response)
         yield response
 
 
@@ -156,20 +166,22 @@ def md5_string(input_string):
 def check_authentication(data):
     try:
         version = data['authentication']['version']
-        if version != '1.0.0':
+        if version != 'v1.0.0':
             return False, '鉴权版本不支持，请更新版本。'
         nonce = data['authentication']['nonce']
-        timestamp = data['timestamp']
         token = data['authentication']['token']
-        query = data['task']['messages'][-1]['content']
-        model_name = data['task']['model']
         sign = data['authentication']['sign']
-    except:
+
+        timestamp = data['timestamp']
+        model_name = data['task']['model']
+        messages = data['task']['messages']
+        query = messages[len(messages)-1]['content']
+    except Exception as e:
+        traceback.print_exc()
         return False, '缺少鉴权参数。'
     try:
         if nonce in nonce_used:
             return False, '该凭证已过期，请重试。'
-        nonce_used.append(nonce)
         if len(nonce) >= 1024:
             nonce_used.pop()
         validity = 120 * 1000
@@ -182,6 +194,7 @@ def check_authentication(data):
         sign_truth = md5_string(original)
         if sign != sign_truth:
             return False, '签名校验错误。'
+        nonce_used.append(nonce)
         return True, '成功。'
     except:
         return False, '未知的鉴权错误。'
@@ -198,20 +211,21 @@ def make_history(task):
         for i, line in enumerate(messages):
             role = line['role']
             content = line['content']
-            if len(prompt) == 0 and role == 'system':
-                prompt = content
-                continue
-            if role == 'user':
+            if role == 'system':
+                if len(prompt) == 0:
+                    prompt = content
+                    continue
+            elif role == 'user':
                 if len(now) == 0:
                     now.append(content)
-                if len(now) == 1:
+                elif len(now) == 1:
                     now.append(empty_message)
                     history.append(now)
                     now = [content]
-            if role == 'assistant':
+            elif role == 'assistant':
                 if len(now) == 0:
                     history.append([empty_message, content])
-                if len(now) == 1:
+                elif len(now) == 1:
                     now.append(content)
                     history.append(now)
                     now = []
@@ -261,8 +275,21 @@ def make_sse(obj):
     return f"data: {json.dumps(obj)}\n\n"
 
 
-@app.route('/chat/full/stream', methods=['POST'])
-def chat_full_stream():
+def filter_answer(chat_iter):
+    for i, response in chat_iter:
+        print(f'Batch {i}: {response}')
+        if i == 0:
+            continue
+        if i == 1:
+            if response[:3] == '回答：':
+                response = response[3:]
+            elif response[:2] == '答：':
+                response = response[2:]
+        yield i, response
+
+
+@app.route('/chat/full/<way>', methods=['POST'])
+def chat_full_stream(way='direct'):
     data = request.json
     auth_result, auth_info = check_authentication(data)
     if not auth_result:
@@ -281,26 +308,42 @@ def chat_full_stream():
         return jsonify({'code': 10200, 'message': 'Model is not supported.', 'type': 'ERROR'})
 
     start_time = time.time()
+    chat_iter = normal_chat(
+        model,
+        tokenizer,
+        query,
+        history,
+        prompt=prompt,
+        memory_limit=memory_limit,
+        top_k=top_k,
+        top_p=top_p,
+        temperature=temperature,
+    )
+
+    if way != 'stream':
+        try:
+            print('Query:', query)
+            all_response = ''
+            for i, response in enumerate(chat_iter):
+                print(f'Batch {i}: {response}')
+                if i == 0:
+                    continue
+                all_response += response
+            all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
+            print('\n\nAll Response:')
+            print(all_response)
+            return jsonify({'code': 0, 'message': 'Success.', 'type': 'FINISHED', 'content': all_response})
+        except Exception as e:
+            return jsonify({'code': 10000, 'message': 'Unknown error: \n ' + repr(e) + '.', 'type': 'ERROR'})
 
     def generate():
         try:
-            yield make_sse({'code': 0, 'message': 'success', 'type': 'START'})
+            yield make_sse({'code': 0, 'message': 'Success.', 'type': 'START'})
             all_response = ''
-            for i, response in enumerate(normal_chat(
-                model,
-                tokenizer,
-                query,
-                history,
-                prompt=prompt,
-                memory_limit=memory_limit,
-                top_k=top_k,
-                top_p=top_p,
-                temperature=temperature,
-            )):
-                print(f'Batch {i}: {response}')
+            for i, response in filter_answer(chat_iter):
                 yield make_sse({
                     'code': 0,
-                    'message': 'success',
+                    'message': 'Success.',
                     'type': 'BODY',
                     'index': i,
                     'content': response
@@ -315,36 +358,6 @@ def chat_full_stream():
             yield make_sse({'code': 10000, 'message': 'Unknown error: \n ' + repr(e) + '.', 'type': 'ERROR'})
 
     return Response(generate(), content_type='text/event-stream')
-
-
-@app.route('/chat/full/direct', methods=['POST'])
-def chat_full_direct():
-    data = request.json
-    auth_result, auth_info = check_authentication(data)
-    if not auth_result:
-        return jsonify({'code': 10000, 'message': auth_info, 'type': 'ERROR', 'content': ''})
-
-    history = []
-    query = ''
-    try:
-        query = request.json['task']['query']
-        history = request.json['task']['history']
-    except Exception as e:
-        pass
-
-    try:
-        print('Query:', query)
-        all_response = ''
-        for i, response in enumerate(
-                normal_chat(model, tokenizer, query, history, overall_instruction, memory_limit=4)):
-            # print(f'Batch {i}: {response}')
-            all_response += response
-        all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
-        print('\n\nAll Response:')
-        print(all_response)
-        return jsonify({'code': 0, 'message': 'success', 'type': 'FINISHED', 'content': all_response})
-    except Exception as e:
-        return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
 
 
 @app.route('/test/stream', methods=['POST'])
@@ -363,4 +376,5 @@ def flask():
 
 
 if __name__ == '__main__':
+    # chat_local_test()
     flask()
