@@ -1,15 +1,10 @@
 
 export default class Inference {
 
-  static prompt = ''
+  static prompt = '你是复旦大学知识工场实验室训练出来的语言模型CuteGPT。给定任务描述，请给出对应请求的回答。'
+  static firstMessage = '我是复旦大学知识工厂实验室训练出的AI模型CuteGPT，请问有什么可以帮您？'
 
-  static firstMessage = '我是复旦大学知识工厂训练出的AI模型CuteGPT，请问有什么可以帮您？'
-
-
-  static messages: Chunk[]  = [
-    {role: 'system', content: Inference.prompt},
-    {role: 'assistant', content: Inference.firstMessage},
-  ]
+  static messages: Chunk[]  = []
   static tables: string[] = []
 
   static generating = false
@@ -161,17 +156,7 @@ export default class Inference {
   }
 
   static fetchStream(messages: Chunk[], callback: (line: any) => void) {
-    let model = 'gpt-3.5-turbo'
-
-    let w = window as any
-    if (w.prompt && w.prompt.length > 0) {
-      console.info('Use prompt: ', w.prompt)
-      messages[0] = {role: 'system', content: w.prompt}
-    }
-    if (w.gpt4) {
-      console.info('Use model: ', w.gpt4)
-      model = 'gpt-4'
-    }
+    let model = 'CuteGPT'
 
     console.log('AI Fetch ' + model + ' :', messages)
     let raw = JSON.stringify({
@@ -182,7 +167,8 @@ export default class Inference {
     })
     console.log(raw)
 
-    let url = "https://rhineai.com/chat/full/stream"
+    // let url = "https://rhineai.com/chat/full/stream"
+    let url = "http://10.176.40.138:23496/chat/full/stream"
     let headers = new Headers()
     headers.append("Content-Type", "application/json")
 
