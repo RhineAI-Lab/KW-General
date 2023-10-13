@@ -276,7 +276,7 @@ def chat_full_direct():
     auth_result, auth_info = check_authentication(data)
     if not auth_result:
         return jsonify({'code': 10000, 'message': auth_info, 'type': 'ERROR', 'content': ''})
-    
+
     history = []
     query = ''
     try:

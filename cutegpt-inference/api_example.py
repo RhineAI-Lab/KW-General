@@ -113,7 +113,7 @@ request_body = {
 
         "model": "指定模型",  # 选填
         "options": {  # 模型推理超参数
-            "memoryLimit": 4,
+            "memory_limit": 4,
             "top_p": 0.9,
             "top_k": 50,
             "temperature": 0.5,
@@ -146,7 +146,7 @@ response_body = {
 
         "model": "模型",
         "options": {  # 模型推理超参数
-            "memoryLimit": 4,
+            "memory_limit": 4,
             "top_p": 0.9,
             "top_k": 50,
             "temperature": 0.5,

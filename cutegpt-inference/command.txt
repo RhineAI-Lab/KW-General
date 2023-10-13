@@ -11,3 +11,4 @@ ps aux | grep python
 nvidia-smi
 kill -9
 
+/data/heqianyu/ghr_src/sync/deploy/restart.sh
