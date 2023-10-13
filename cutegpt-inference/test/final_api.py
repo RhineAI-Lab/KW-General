@@ -13,13 +13,15 @@ headers = {
 }
 
 
+# MD5摘要
 def md5_string(input_string):
     m = hashlib.md5()
     m.update(input_string.encode('utf-8'))
     return m.hexdigest().upper()
 
 
-def check_authentication(data):
+# 通信签名 防止篡改及盗用
+def make_authentication(data):
     try:
         version = data['authentication']['version']
         if version != 'v1.0.0':
@@ -73,7 +75,7 @@ data = {
 nonce = md5_string('NONCE' + str(random.random()))
 data['authentication']['nonce'] = nonce
 
-result, sign = check_authentication(data)
+result, sign = make_authentication(data)
 data['authentication']['sign'] = sign
 
 print(json.dumps(data, indent=4))

@@ -31,6 +31,7 @@ import warnings
 from typing import Optional, List, Callable, Tuple
 from fastchat.model.model_chatglm import InvalidScoreLogitsProcessor
 from flask import Flask, request, jsonify, Response, stream_with_context
+from flask_cors import CORS, cross_origin
 
 import torch.nn as nn
 from peft import PeftModel
@@ -213,7 +214,7 @@ def make_history(task):
             content = line['content']
             if role == 'system':
                 if len(prompt) == 0:
-                    prompt = content
+                    prompt = content + '\n'
                     continue
             elif role == 'user':
                 if len(now) == 0:
@@ -270,7 +271,7 @@ def chat_local_test():
 
 app = Flask(__name__)
 app.env = 'development'
-
+CORS(app)
 
 def make_sse(obj):
     return f"data: {json.dumps(obj)}\n\n"
