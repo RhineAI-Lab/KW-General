@@ -133,16 +133,10 @@ response_body = {
     'message': 'success',
     'type': 'BODY',  # SSE流中说明类型
 
-    "authentication": {
-        "nonce": "16位随机码",
-        "sign": "签名",
-        "version": "1.0.0"
-    },
-
     "task": {
         "index": 0,
         "content": "当前文本",
-        "inferenceTime": 1800,  # 推理耗时
+        "inference_time": 1800,  # 推理耗时
 
         "model": "模型",
         "options": {  # 模型推理超参数

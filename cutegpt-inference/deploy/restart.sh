@@ -16,3 +16,5 @@ fi
 nohup python /data/heqianyu/ghr_src/sync/deploy/server_easy.py &
 
 echo "Started new python program"
+
+tail -f nohup.out
