@@ -262,7 +262,8 @@ def chat_local_test():
         print(f'\n[Round {i}]')
         message = input('In: ')
         print('Out: ', end='')
-        for j, resp in enumerate(normal_chat(model, tokenizer, message, history, memory_limit=4)):
+        chat_iter = normal_chat(model, tokenizer, message, history, memory_limit=4)
+        for j, resp in filter_answer(chat_iter):
             print('Box', j)
             print(resp)
 
@@ -276,16 +277,21 @@ def make_sse(obj):
 
 
 def filter_answer(chat_iter):
-    for i, response in chat_iter:
+    ot = '回答：'
+    last = ''
+    for i, response in enumerate(chat_iter):
         print(f'Batch {i}: {response}')
         if i == 0:
             continue
-        if i == 1:
-            if response[:3] == '回答：':
-                response = response[3:]
-            elif response[:2] == '答：':
-                response = response[2:]
-        yield i, response
+        if len(last) < len(ot):
+            last += response
+            if len(last) >= len(ot):
+                if last[:len(ot)] == ot:
+                    yield i, last[len(ot):]
+                else:
+                    yield i, last[len(ot):]
+        else:
+            yield i, response
 
 
 @app.route('/chat/full/<way>', methods=['POST'])
@@ -324,8 +330,8 @@ def chat_full_stream(way='direct'):
         try:
             print('Query:', query)
             all_response = ''
-            for i, response in enumerate(chat_iter):
-                print(f'Batch {i}: {response}')
+            for i, response in filter_answer(chat_iter):
+                # print(f'Batch {i}: {response}')
                 if i == 0:
                     continue
                 all_response += response
