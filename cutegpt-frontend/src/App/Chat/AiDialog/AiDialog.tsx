@@ -364,6 +364,60 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     }}>
       <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
     </div>
+    <div className={Style.suggestion} style={{
+      opacity: showExamples ? 1 : 0,
+      pointerEvents: showExamples ? 'auto' : 'none',
+    }}>
+      <div className={Style.suggestionTitle}>Example & Suggestion</div>
+      <div className={Style.line}>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[0])}>
+            {examples[0]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[1])}>
+            {examples[1]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+      </div>
+      <div className={Style.line}>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[2])}>
+            {examples[2]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[3])}>
+            {examples[3]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+      </div>
+      <div className={Style.line}>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[1])}>
+            {examples[1]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+        <div className={Style.cardHolder}>
+          <div className={Style.card} onClick={e => send(examples[3])}>
+            {examples[3]}
+            <Icon size='32px' className={Style.send}>send</Icon>
+            <md-ripple></md-ripple>
+          </div>
+        </div>
+      </div>
+    </div>
     <div
       ref={leftScrollRef}
       className={Style.messagesHolder + ' scroll ' + Style.scroll}
@@ -442,6 +496,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     </div>
     <div className={Style.shadow} style={{
       marginTop: '-16px',
+      marginBottom: '-1px'
     }}>
       <div style={{
         boxShadow: '0 0 10px 10px #fff',
@@ -482,7 +537,11 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         regenerate()
       }}>
         <div className={Style.buttonInner}>
-          <Icon size='24px'>{generating ? 'outlined_stop' : 'round_refresh'}</Icon>
+          {
+            generating
+              ? <Icon size='28px'>outlined_stop</Icon>
+              : <Icon size='24px'>round_refresh</Icon>
+          }
           <span className={Style.text}>{generating ? '停止生成' : '重新生成'}</span>
         </div>
       </md-filled-button>
@@ -550,44 +609,6 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
       </div>
     </div>
     <div className={Style.mode}></div>
-    <div className={Style.suggestion} style={{
-      opacity: showExamples ? 1 : 0,
-      pointerEvents: showExamples ? 'auto' : 'none',
-    }}>
-      <div className={Style.suggestionTitle}>Example & Suggestion</div>
-      <div className={Style.line}>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[0])}>
-            {examples[0]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[1])}>
-            {examples[1]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-      </div>
-      <div className={Style.line}>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[2])}>
-            {examples[2]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[3])}>
-            {examples[3]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 }
 

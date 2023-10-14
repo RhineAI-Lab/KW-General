@@ -31,3 +31,24 @@
     pointer-events: none;
   }
 }
+
+.scale {
+  width:  100%;
+  height: 100%;
+}
+@media (max-width: 768px) {
+  .scale {
+    width:  104.16667%;
+    height: 104.16667%;
+    transform: translate(-2%, -2%) scale(96%);
+    //  10 = 25 * 0.5 * 0.8
+  }
+}
+@media (max-width: 460px) {
+  .scale {
+    width:  125%;
+    height: 125%;
+    transform: translate(-10%, -10%) scale(80%);
+    //  10 = 25 * 0.5 * 0.8
+  }
+}

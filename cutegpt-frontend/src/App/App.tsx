@@ -12,21 +12,23 @@ import {closeSnackbar, enqueueSnackbar, SnackbarProvider} from "notistack";
 
 function App() {
   return (
-    <div
-      className={Style.App}
-      onMouseDown={e => {
-        e.stopPropagation()
-      }}>
-      <div className={M3Style.MaterialYou + ' ' + M3Style.Purple + ' ' + Style.theme}>
-        <SnackbarProvider maxSnack={5} Components={{
-          // @ts-ignore
-          tip: TipSnackbar,
+    <div className={Style.scale}>
+      <div
+        className={Style.App}
+        onMouseDown={e => {
+          e.stopPropagation()
         }}>
-          <Routes>
-            <Route path="/home" element={<Home/>} />
-            <Route path="/" element={<Chat/>} />
-          </Routes>
-        </SnackbarProvider>
+        <div className={M3Style.MaterialYou + ' ' + M3Style.Purple + ' ' + Style.theme}>
+          <SnackbarProvider maxSnack={5} Components={{
+            // @ts-ignore
+            tip: TipSnackbar,
+          }}>
+            <Routes>
+              <Route path="/home" element={<Home/>} />
+              <Route path="/" element={<Chat/>} />
+            </Routes>
+          </SnackbarProvider>
+        </div>
       </div>
     </div>
   )

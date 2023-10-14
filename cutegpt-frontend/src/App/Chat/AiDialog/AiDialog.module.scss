@@ -1,3 +1,4 @@
+$input-height: 56px;
 
 @keyframes slideUp {
   from {
@@ -128,9 +129,8 @@
     width: 86%;
     max-width: 860px;
     flex-shrink: 0;
-    background: #ffffffcc;
     backdrop-filter: blur(16px);
-    box-shadow: 0 0 6px 6px #aaaaaa2a;
+    box-shadow: 0 0 5px 5px #aaaaaa2a;
     border-radius: 20px;
     border: none;
     transition:
@@ -152,7 +152,6 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
     text-align: center;
 
     border: none;
@@ -164,7 +163,7 @@
     line-height: 26px;
     font-size: 16px;
     color: #000000;
-    padding: 12px 52px 12px 52px;
+    padding: 14px 52px;
     transition: background-color 0.12s ease-in-out, height 0.2s ease-in-out;
     box-sizing: border-box;
   }
@@ -185,7 +184,7 @@
     position: relative;
     width: 86%;
     max-width: 860px;
-    height: 50px;
+    height: $input-height;
     margin-bottom: 24px;
     flex-shrink: 0;
     //background: #ff888888;
@@ -193,8 +192,9 @@
     transition:
         height 0.2s ease-in-out,
         margin-bottom 0.2s ease-in-out,
+        margin-top 0.2s ease-in-out,
         width 0.2s ease-in-out;
-    margin-top: -74px;
+    margin-top: -24px - $input-height;
   }
 
   .mic {
@@ -264,11 +264,12 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -40%);
     width: 90%;
     transition: opacity 0.4s ease-in-out;
     max-height: 55%;
     overflow: hidden;
+    z-index: 0;
 
     .suggestionTitle {
       display: flex;
@@ -278,6 +279,7 @@
       margin: 0 0 22px 8px;
       font-size: 46px;
       font-family: 'Google Sans', sans-serif;
+      transition: all 0.2s ease-in-out;
       color: #3c4757;
       font-weight: 600;
       white-space: nowrap;
@@ -332,6 +334,10 @@
         }
       }
     }
+
+    .line:nth-child(3) {
+      display: none;
+    }
   }
 
   .title {
@@ -378,6 +384,9 @@
     max-width: 860px;
     height: 48px;
     margin-bottom: 12px;
+    padding-top: 5px;
+    background: #ffffff;
+    z-index: 10;
 
     justify-content: right;
     user-select: none;
@@ -550,6 +559,10 @@
 .dl0 {
   $mb: 16px;
 
+  .content {
+    //font-size: 16px;
+  }
+
   .buttons {
     width: calc(100% - $mb * 2);
   }
@@ -558,6 +571,7 @@
     width: calc(100% - $mb * 2);
     margin-bottom: $mb;
     border-radius: 22px;
+    box-shadow: 0 0 4px 4px #aaaaaa1a;
 
     &:hover {
       width: calc(101% - $mb * 2);
@@ -567,6 +581,29 @@
   .sendHolder {
     width: calc(100% - $mb * 2);
     margin-bottom: $mb;
-    margin-top: calc(-50px - $mb);
+    margin-top: -$input-height - $mb;
+  }
+
+  .suggestion {
+    .suggestionTitle {
+      font-size: 30px;
+      margin: 0 0 14px 8px;
+    }
+
+    .line {
+      .cardHolder {
+        .card {
+          padding: 18px 76px 18px 26px;
+          //font-size: 16px;
+        }
+      }
+      .cardHolder:nth-child(2) {
+        display: none;
+      }
+    }
+
+    .line:nth-child(3) {
+      display: block;
+    }
   }
 }
