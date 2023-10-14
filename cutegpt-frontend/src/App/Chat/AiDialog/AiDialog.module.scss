@@ -133,7 +133,11 @@
     box-shadow: 0 0 6px 6px #aaaaaa2a;
     border-radius: 20px;
     border: none;
-    transition: background-color 0.12s ease-in-out, height 0.2s ease-in-out, width 0.3s ease-in-out;
+    transition:
+        background-color 0.12s ease-in-out,
+        height 0.2s ease-in-out,
+        margin-bottom 0.2s ease-in-out,
+        width 0.2s ease-in-out;
     overflow: hidden;
     margin-bottom: 24px;
 
@@ -186,7 +190,10 @@
     flex-shrink: 0;
     //background: #ff888888;
     pointer-events: none;
-    transition: height 0.3s ease-in-out;
+    transition:
+        height 0.2s ease-in-out,
+        margin-bottom 0.2s ease-in-out,
+        width 0.2s ease-in-out;
     margin-top: -74px;
   }
 
@@ -374,7 +381,7 @@
 
     justify-content: right;
     user-select: none;
-    transition: bottom 0.2s ease-in-out;
+    transition: width 0.2s ease-in-out;
 
     .space {
       flex-grow: 1;
@@ -541,5 +548,25 @@
 }
 
 .dl0 {
+  $mb: 16px;
 
+  .buttons {
+    width: calc(100% - $mb * 2);
+  }
+
+  .inputHolder {
+    width: calc(100% - $mb * 2);
+    margin-bottom: $mb;
+    border-radius: 22px;
+
+    &:hover {
+      width: calc(101% - $mb * 2);
+    }
+  }
+
+  .sendHolder {
+    width: calc(100% - $mb * 2);
+    margin-bottom: $mb;
+    margin-top: calc(-50px - $mb);
+  }
 }

@@ -432,7 +432,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                 className={Style.content}
               >
                 <AiMarkdown>
-                  {v.content + ((i == messages.length - 1 && generating && v.role == 'assistant') ? ' ABC' : '')}
+                  {v.content + ((i == messages.length - 1 && generating && v.role == 'assistant') ? ' ABCDEFGHIJ' : '')}
                 </AiMarkdown>
               </div>
             </div>
