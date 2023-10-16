@@ -3,7 +3,7 @@ import MD5 from 'crypto-js/md5';
 export default class Inference {
 
   static prompt = '你是复旦大学知识工场实验室训练出来的语言模型CuteGPT。给定任务描述，请给出对应请求的回答。'
-  static firstMessage = '我是复旦大学知识工厂实验室训练出的AI模型CuteGPT，请问有什么可以帮您？'
+  static firstMessage = '我是复旦大学知识工场实验室训练出的AI模型CuteGPT，请问有什么可以帮您？'
 
   static messages: Chunk[]  = []
   static tables: string[] = []
