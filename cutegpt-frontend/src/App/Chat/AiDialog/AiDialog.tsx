@@ -2,9 +2,10 @@ import React, {DetailedHTMLProps, HTMLAttributes, useEffect, useLayoutEffect, us
 import Style from "./AiDialog.module.scss";
 import Icon from "@/compoments/Icon/Icon";
 import AiMarkdown from "@/App/Chat/AiDialog/AiMarkdown";
-import Inference, {Chunk} from "@/App/Chat/AiDialog/Inference";
+import Inference, {Chunk} from "@/App/Chat/AiDialog/Session/Inference";
 import {tip} from "@/App/App";
 import '@material/web/ripple/ripple.js';
+import Session from "@/App/Chat/AiDialog/Session/Session";
 
 export class ScrollState {
   static leftAtBottom = true
@@ -72,8 +73,8 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   let examples = [
     'Python中怎么发送HTTP的Post请求，详细讲解用法，并写一个示例。',
     '做个电机工作原理的讲义，中英双语。我要用他讲课，要让初中生能理解。',
-    '推荐几本有名的科幻小说，并列出作者和发行年份等信息，做成表格给我。',
-    '你看过红楼梦吗？接下来的对话中，你要扮演红楼梦里的林黛玉和我说话。',
+    '请推荐三本中国古典小说，包含其作品名以及作者名，以表格的形式给出。',
+    '介绍一下你自己，你能做些什么。',
   ]
 
   let rootRef = useRef<HTMLDivElement | null>(null)
@@ -145,13 +146,13 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
   const fresh = () => {
     setMessages(Inference.getShowMessages())
-    let nts = Inference.tables
-    let needPageTuning = nts.length !== lastTableLength
-    setTables(nts)
-    if (needPageTuning) {
-      setTableIndex(nts.length - 1)
-      lastTableLength = nts.length
-    }
+    // let nts = Inference.tables
+    // let needPageTuning = nts.length !== lastTableLength
+    // setTables(nts)
+    // if (needPageTuning) {
+    //   setTableIndex(nts.length - 1)
+    //   lastTableLength = nts.length
+    // }
   }
 
   Inference.onGeneratingChange = (generating: boolean, reason: string) => {
@@ -160,7 +161,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
   // 简单介绍好奇号火星车，表格中大概3个场景
   const start = (text: string) => {
-    Inference.send(text, () => {
+    Inference.send(text, -1,() => {
       fresh()
       // if (chunk.type !== 'BODY' && chunk.type !== 'START') {
       //   setGenerating(false)
@@ -198,33 +199,31 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
 
   const regenerate = () => {
-    function last() {
-      return Inference.messages[Inference.messages.length - 1]
-    }
-
     if (Inference.generating) {
       Inference.stop()
     } else {
-      if (Inference.messages.length <= 2) {
+      if (Session.size() <= 1) {
         tip('当前没有待重新提交的问题')
         return
       }
-      while (Inference.messages.length > 1) {
-        if (last().role != 'user') {
-          Inference.messages.pop()
-        } else {
-          break
-        }
-      }
-      // 会话中仍至少有一条信息
-      if (last().role != 'user') {
-        tip('当前会话没有待重新提交的问题')
-      }
-      fresh()
-      let lastUser = Inference.messages.pop()
-      if (lastUser) {
-        start(lastUser.content)
-      }
+      let from = null
+
+      // while (Session.size() > 1) {
+      //   if (Session.last.role != 'user') {
+      //     Inference.messages.pop()
+      //   } else {
+      //     break
+      //   }
+      // }
+      // // 会话中仍至少有一条信息
+      // if (Session.last.role != 'user') {
+      //   tip('当前会话没有待重新提交的问题')
+      // }
+      // fresh()
+      // let lastUser = Inference.messages.pop()
+      // if (lastUser) {
+      //   start(lastUser.content)
+      // }
     }
   }
 
@@ -285,12 +284,16 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
       tip('请先等待当前会话生成完成')
       return
     }
-    Inference.messages = [
-      {role: 'system', content: Inference.prompt},
-      {role: 'assistant', content: Inference.firstMessage},
-    ]
-    Inference.tables = []
+    // Inference.messages = [
+    // ]
+    // Inference.tables = []
     fresh()
+    tip('暂不支持重置会话。')
+  }
+
+  const share = () => {
+    navigator.clipboard.writeText('http://chat.rhineai.com')
+    tip('分享链接已复制')
   }
 
   let showExamples = messages.length <= 1
@@ -506,21 +509,25 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     <div className={Style.buttons} style={{
       bottom: hadTable ? '24px' : bottomHeight + 36 + 'px'
     }}>
-      {/*<div className={Style.button + ' ' + Style.secondary} onClick={e => clear()}>*/}
-      {/*  <Icon>delete_outline</Icon>*/}
-      {/*  <span className={Style.text}>重置</span>*/}
+      {/*<div*/}
+      {/*  className={Style.button + ' ' + Style.secondary}*/}
+      {/*  onClick={() => {}}*/}
+      {/*>*/}
+      {/*  <Icon>round_tune</Icon>*/}
+      {/*  <span className={Style.text}>清空</span>*/}
+      {/*  <md-ripple></md-ripple>*/}
       {/*</div>*/}
       <div
         className={Style.button + ' ' + Style.secondary}
-        onClick={() => {}}
+        onClick={() => {clear()}}
       >
-        <Icon>round_tune</Icon>
-        <span className={Style.text}>选项</span>
+        <Icon>delete_outline</Icon>
+        <span className={Style.text}>重置</span>
         <md-ripple></md-ripple>
       </div>
       <div
         className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
-        onClick={() => {}}
+        onClick={() => {share()}}
         style={{marginLeft: '10px'}}
       >
         <Icon size='20px'>round_share</Icon>
