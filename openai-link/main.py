@@ -2,6 +2,7 @@
 
 import os
 import json
+import traceback
 
 from flask import Flask, request, jsonify, Response, stream_with_context
 from flask_cors import CORS, cross_origin
@@ -48,6 +49,7 @@ def chat_full_stream():
         model = request.json['task']['model'] or model
     except Exception as e:
         pass
+    # print(request.json['task'])
 
     def generate():
         try:
@@ -76,6 +78,7 @@ def chat_full_stream():
                     })
                     all_response += delta.content
         except Exception as e:
+            traceback.print_exc()
             print(repr(e))
             yield make_sse({
                 'code': 10000,
@@ -101,6 +104,7 @@ def chat_easy_get(query):
         # return jsonify({'code': 0, 'message': 'success', 'type': 'FINISH', 'content': answer, 'response': response})
         return answer
     except Exception as e:
+        traceback.print_exc()
         return jsonify({'code': 10000, 'message': 'unknown error: \n ' + repr(e), 'type': 'ERROR'})
 
 

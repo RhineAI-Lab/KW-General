@@ -47,6 +47,7 @@ def chat_stream(user, system='', model='gpt-3.5-turbo'):
 
 def chat_stream_full(messages, model='gpt-3.5-turbo'):
     set_key(model)
+    print(model, openai.api_key)
     completion = openai.ChatCompletion.create(
         model=model,
         messages=messages,
