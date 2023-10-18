@@ -6,6 +6,7 @@ export default class Session {
 
   // 储存历史会话
   static start: number = 0
+  static startList: number[] = [0]
   static messages: Message[] = []
 
   // 当前工作区
@@ -14,10 +15,12 @@ export default class Session {
 
 
   // 获取当前单流对话列表
-  static getEasyMessages(): EasyMessage[] {
+  static getNowEasyMessages(): EasyMessage[] {
     let arr: EasyMessage[] = []
     let nowMessages = this.getNowMessages()
-
+    for (const message of nowMessages) {
+      arr.push({role: message.role, content: message.content})
+    }
     this.nowEasyMessages = arr
     return arr
   }
@@ -47,11 +50,37 @@ export default class Session {
 
   // 刷新当前简单列表
   static freshEasyMessages() {
-    this.getEasyMessages()
+    this.getNowEasyMessages()
+  }
+
+  // 获取当前对话位于父对话的列表
+  static getList(m: Message): number[] {
+    if (m.deep == 0) {
+      return Session.startList
+    }
+    for (const message of this.messages) {
+      if (message.nextList.indexOf(m.sid) > -1) {
+        return message.nextList
+      }
+    }
+    return [m.sid]
+  }
+
+  // 获取上一条信息
+  static getPrevious(m: Message) {
+    if (m.deep == 0) {
+      return undefined
+    }
+    for (const message of this.messages) {
+      if (message.nextList.indexOf(m.sid) > -1) {
+        return message
+      }
+    }
   }
 
   // 添加消息 添加后无需刷新
-  static addToNow(role: Role, content: string, stop: string = 'stop', from = -1) {
+  static addToNow(role: Role, content: string, stop: string = 'stop', from : number | undefined = undefined) {
+    // TODO: from功能
     let sid = this.newSid()
     if (this.last) {
       this.last.nextList.push(sid)

@@ -1,6 +1,7 @@
 import MD5 from 'crypto-js/md5';
 import Session from "@/App/Chat/AiDialog/Session/Session";
 import {Role} from "@/App/Chat/AiDialog/Session/Role";
+import Message from "@/App/Chat/AiDialog/Session/Message";
 
 export default class Inference {
 
@@ -26,17 +27,17 @@ export default class Inference {
 
   static getShowMessages() {
     this.charIndex++
-    let easyMessages = Session.getEasyMessages()
+    let messages = Session.getNowMessages()
     let messagesShow = []
-    messagesShow.push({role: 'assistant', content: this.firstMessage})
-    for (let i = 0; i < easyMessages.length; i++) {
-      let message = easyMessages[i]
+    messagesShow.push({role: 'assistant', content: this.firstMessage, sid: -1, list: [-1]})
+    for (let i = 0; i < messages.length; i++) {
+      let message = messages[i]
       if (message.role == 'assistant' || message.role == 'user') {
         let content = message.content
         const regex = /\|? *序号 *\| *场景名称 *\|/;
         const tableStart = content.search(regex);
         if (tableStart == -1) {
-          messagesShow.push({role: message.role, content: content})
+          messagesShow.push({role: message.role, content: content, sid: message.sid, list: Session.getList(message)})
         } else {
           let end = -1
           for (let j = tableStart; j < content.length - 1; j++) {
@@ -47,7 +48,7 @@ export default class Inference {
           }
           let tableText = ''
           if (end == -1) {
-            messagesShow.push({role: message.role, content: content.slice(0, tableStart)})
+            messagesShow.push({role: message.role, content: content.slice(0, tableStart), sid: message.sid, list: Session.getList(message)})
             tableText = content.slice(tableStart)
             if (this.generating) {
               let char = '♫♬'[this.charIndex%2]
@@ -56,7 +57,7 @@ export default class Inference {
               }
             }
           } else {
-            messagesShow.push({role: message.role, content: content.slice(0, tableStart) + content.slice(end + 1)}) // +2
+            messagesShow.push({role: message.role, content: content.slice(0, tableStart) + content.slice(end + 1), sid: message.sid, list: Session.getList(message)}) // +2
             tableText = content.slice(tableStart, end)
           }
           if (tableText.split('\n').length > 2) {
@@ -87,7 +88,7 @@ export default class Inference {
     return messagesShow
   }
 
-  static send(message: string, from = -1, callback: (line: any) => void) {
+  static send(message: string, from: number | undefined = undefined, callback: (line: any) => void) {
     let interval: any = null
     this.setGenerating(true, '')
     Session.addToNow(Role.USER, message, 'stop', from)

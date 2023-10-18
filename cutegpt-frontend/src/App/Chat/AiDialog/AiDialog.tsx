@@ -6,6 +6,7 @@ import Inference, {Chunk} from "@/App/Chat/AiDialog/Session/Inference";
 import {tip} from "@/App/App";
 import '@material/web/ripple/ripple.js';
 import Session from "@/App/Chat/AiDialog/Session/Session";
+import {Role} from "@/App/Chat/AiDialog/Session/Role";
 
 export class ScrollState {
   static leftAtBottom = true
@@ -160,8 +161,8 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   }
 
   // 简单介绍好奇号火星车，表格中大概3个场景
-  const start = (text: string) => {
-    Inference.send(text, -1,() => {
+  const start = (text: string, from: number | undefined = undefined) => {
+    Inference.send(text, from,() => {
       fresh()
       // if (chunk.type !== 'BODY' && chunk.type !== 'START') {
       //   setGenerating(false)
@@ -206,7 +207,23 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         tip('当前没有待重新提交的问题')
         return
       }
-      let from = null
+      let from = undefined
+      let userMessage = undefined
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].role == Role.USER) {
+          let previous = Session.getPrevious(messages[i])
+          if (previous) {
+            from = previous.sid
+            userMessage = previous
+          }
+          break
+        }
+      }
+      if (userMessage === undefined) {
+        tip('当前会话没有待重新提交的问题')
+        return
+      }
+      start(userMessage.content, from)
 
       // while (Session.size() > 1) {
       //   if (Session.last.role != 'user') {
@@ -288,7 +305,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     // ]
     // Inference.tables = []
     fresh()
-    tip('暂不支持重置会话。')
+    tip('暂不支持重置会话')
   }
 
   const share = () => {
