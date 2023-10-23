@@ -2,15 +2,18 @@
 
 import os
 import json
-import openai
+from openai import OpenAI
 import keys
 from call import set_key
 
-openai.api_key = keys.keys4[0]
+client = OpenAI(
+    # defaults to os.environ.get("OPENAI_API_KEY")
+    api_key=keys.keys4[0],
+)
 
 
 def chat_stream(question, model="gpt-4"):
-    completion = openai.ChatCompletion.create(
+    completion = client.chat.completions.create(
         model=model,
         messages=[
             {"role": "system", "content": "你的名字是AISG"},
@@ -18,6 +21,7 @@ def chat_stream(question, model="gpt-4"):
         ],
         stream=True,
     )
+    print(completion)
     for chunk in completion:
         print(chunk)
         yield chunk.choices[0].delta
