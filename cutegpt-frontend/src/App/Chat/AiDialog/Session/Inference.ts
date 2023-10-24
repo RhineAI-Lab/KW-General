@@ -92,6 +92,9 @@ export default class Inference {
     let interval: any = null
     this.setGenerating(true, '')
     Session.addToNow(Role.USER, message, 'stop', from)
+    Session.freshEasyMessages()
+    console.log(Session.nowEasyMessages)
+    let nm = null // new message
     this.fetchStream(Session.nowEasyMessages, (line) => {
       let startTag = '<span style="color: #340486; font-weight: 700">'
       let middleText = 'Thinking'
@@ -106,14 +109,14 @@ export default class Inference {
         }
       }
       if (line.type == 'ERROR') {
-        Session.addToNow(Role.ASSISTANT, '<font color="#dd0011">[ ' + line.message + ' ]</font>')
+        nm = Session.addToNow(Role.ASSISTANT, '<font color="#dd0011">[ ' + line.message + ' ]</font>')
         console.error(line)
         callback(line)
         return
       } else if (line.type == 'START') {
         console.log('AI START')
         if (last().role !== 'assistant') {
-          Session.addToNow(Role.ASSISTANT, startTag + middleText + '.' + endTag)
+          nm = Session.addToNow(Role.ASSISTANT, startTag + middleText + '.' + endTag)
           callback(line)
         }
         interval = setInterval(() => {

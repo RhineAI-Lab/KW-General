@@ -85,7 +85,7 @@ export default class Session {
   }
 
   // 添加消息 添加后无需刷新
-  static addToNow(role: Role, content: string, stop: string = 'stop', from : number | undefined = undefined) {
+  static addToNow(role: Role, content: string, stop: string = 'stop', from : number | undefined = undefined): Message {
     if (from === undefined) {
       if (this.last) {
         from = this.last.sid
@@ -113,6 +113,7 @@ export default class Session {
     this.messages.push(newMessage)
     this.nowEasyMessages.push({role: role, content: content})
     this.last = newMessage
+    return newMessage
   }
 
   static newSid(): number {
