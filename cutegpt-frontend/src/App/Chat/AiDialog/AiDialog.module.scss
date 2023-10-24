@@ -36,6 +36,7 @@ $input-height: 56px;
         margin: 16px 0;
         min-height: 42px;
         padding: 0 14px;
+        transition: padding-top 0.2s ease-in-out;
 
         .avatar {
           display: inline-block;
@@ -92,10 +93,33 @@ $input-height: 56px;
             line-height: 16px;
           }
         }
+
+        .operateButtons {
+          position: absolute;
+          display: flex;
+          top: 0;
+          height: 60px;
+
+          .buttonInner {
+            display: flex;
+            align-items: center;
+            margin: 0 -4px 0 -12px;
+
+            .text {
+              font-size: 16px;
+              font-weight: 500;
+              margin-left: 8px;
+            }
+          }
+        }
       }
 
       .messageEntering {
         animation: slideUp 0.48s ease-in-out;
+      }
+
+      .focusMessage {
+        padding-top: 52px;
       }
 
       .assistant {
@@ -115,6 +139,11 @@ $input-height: 56px;
 
           --md-ripple-hover-opacity: 0.02;
           --md-ripple-pressed-opacity: 0.04;
+        }
+
+        .operateButtons {
+          left: 70px;
+          padding: 5px 0;
         }
       }
 
@@ -137,6 +166,10 @@ $input-height: 56px;
           --md-ripple-pressed-opacity: 0.09;
           --md-ripple-hover-color: #000;
           --md-ripple-pressed-color: #000;
+        }
+
+        .operateButtons {
+          right: 70px;
         }
       }
     }
@@ -425,10 +458,6 @@ $input-height: 56px;
     user-select: none;
     transition: width 0.2s ease-in-out;
 
-    .space {
-      flex-grow: 1;
-    }
-
     .buttonInner {
       display: flex;
       align-items: center;
@@ -440,62 +469,82 @@ $input-height: 56px;
         margin-left: 8px;
       }
     }
+  }
 
-    .button {
-      position: relative;
-      display: inline-flex;
-      background: #5b3c9d;
-      color: #ffffff;
-      padding: 0 14px;
-      border-radius: 28px;
-      height: 48px;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
+  .space {
+    flex-grow: 1;
+  }
+
+  .button {
+    position: relative;
+    display: inline-flex;
+    background: #5b3c9d;
+    color: #ffffff;
+    padding: 0 14px;
+    border-radius: 28px;
+    height: 48px;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap;
+
+    .text {
+      font-size: 16px;
+      font-weight: 500;
+      margin-left: 8px;
+      margin-right: 4px;
       white-space: nowrap;
-
-      .text {
-        font-size: 16px;
-        font-weight: 500;
-        margin-left: 8px;
-        margin-right: 4px;
-        white-space: nowrap;
-      }
-
-      //&:hover {
-      //  background: #4a2d88;
-      //}
-      //
-      //&:active {
-      //  background: #3d2377;
-      //}
     }
 
-    .mini {
-      position: relative;
-      width: 20px;
-      overflow: hidden;
-      margin-right: 0 !important;
+    // &:hover {
+    //   background: #4a2d88;
+    // }
+    //
+    // &:active {
+    //   background: #3d2377;
+    // }
+  }
 
-      span {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-55%, -50%);
-      }
+  .mini {
+    position: relative;
+    width: 20px;
+    overflow: hidden;
+    margin-right: 0 !important;
+
+    span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-55%, -50%);
     }
+  }
 
-    .secondary {
-      background: #eddfff;
-      color: #3c1f65;
+  .secondary {
+    background: #eddfff;
+    color: #3c1f65;
 
-      //&:hover {
-      //  background: #d7c6f5;
-      //}
-      //
-      //&:active {
-      //  background: #c9b6ea;
-      //}
+    // &:hover {
+    //   background: #d7c6f5;
+    // }
+    //
+    // &:active {
+    //   background: #c9b6ea;
+    // }
+  }
+
+  .outlined {
+    position: relative;
+    background: #ffffff00;
+    border: 1px solid #3c1f65;
+    width: 26px;
+    height: 26px;
+    padding: 6px;
+
+    span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 

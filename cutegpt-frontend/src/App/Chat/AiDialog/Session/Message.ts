@@ -9,6 +9,9 @@ export default class Message {
   deep: number = 0
   time: number = new Date().getTime()
 
+  like = false
+  favorite = false
+
   next: number = -1  // sid
   nextList: number[] = []
 
