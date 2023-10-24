@@ -197,7 +197,7 @@ $input-height: 56px;
     flex-shrink: 0;
     backdrop-filter: blur(16px);
     box-shadow: 0 0 5px 5px #aaaaaa2a;
-    border-radius: 20px;
+    border-radius: calc(infinity * 1px);
     border: none;
     transition:
         background-color 0.12s ease-in-out,
@@ -652,11 +652,11 @@ $input-height: 56px;
   .inputHolder {
     width: calc(100% - $mb * 2);
     margin-bottom: $mb;
-    border-radius: 22px;
+    border-radius: calc(infinity * 1px);
     box-shadow: 0 0 4px 4px #aaaaaa1a;
 
     &:hover {
-      width: calc(101% - $mb * 2);
+      width: calc(100.4% - $mb * 2);
     }
   }
 
