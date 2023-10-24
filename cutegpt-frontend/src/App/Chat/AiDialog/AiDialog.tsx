@@ -488,7 +488,9 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                     display: i > 0 ? 'inline-block' : 'none',
                   }}
                 >
-                  <Icon size='24px'>outlined_create</Icon>
+                  <Icon size='26px'>{
+                    v.role == Role.ASSISTANT ? 'round_refresh' : 'outlined_create'
+                  }</Icon>
                   {/*<span className={Style.text}>分享</span>*/}
                   <md-ripple></md-ripple>
                 </div>
@@ -503,7 +505,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                     display: i > 0 ? 'inline-block' : 'none',
                   }}
                 >
-                  <Icon size='28px'>round_star_border</Icon>
+                  <Icon size='29px'>round_star_border</Icon>
                   {/*<span className={Style.text}>分享</span>*/}
                   <md-ripple></md-ripple>
                 </div>
@@ -517,7 +519,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                     display: i > 0 ? 'inline-block' : 'none',
                   }}
                 >
-                  <Icon size='25px'>outlined_delete</Icon>
+                  <Icon size='26px'>outlined_delete</Icon>
                   {/*<span className={Style.text}>分享</span>*/}
                   <md-ripple></md-ripple>
                 </div>
