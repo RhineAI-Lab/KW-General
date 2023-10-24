@@ -7,11 +7,14 @@ export default class Session {
   // 储存历史会话
   static start: number = 0
   static startList: number[] = [0]
-  static messages: Message[] = []
+  static messages: Message[] = [
+    // new Message(0, Role.USER, '你好', 'stop', 1),
+    // new Message(1, Role.ASSISTANT, '你好！我是复旦大学知识工场实验室训练出来的语言模型CuteGPT。很高兴为你服务。请问有什么问题需要帮助的吗？')
+  ]
 
   // 当前工作区
   static nowEasyMessages: EasyMessage[] = []
-  static last: Message
+  static last: Message | undefined
 
 
   // 获取当前单流对话列表
@@ -21,23 +24,26 @@ export default class Session {
     for (const message of nowMessages) {
       arr.push({role: message.role, content: message.content})
     }
+    console.log(arr)
     this.nowEasyMessages = arr
     return arr
   }
 
   // 获取当前对话列表
   static getNowMessages(): Message[] {
-    let arr: Message[] = []
+    this.last = undefined
+    let mr: Message[] = []
     let now = this.get(this.start)
     while (now) {
-      arr.push(now)
+      mr.push(now)
+      this.last = now
       if (now.hasNext()) {
         now = this.get(now.next)
       } else {
         now = undefined
       }
     }
-    return arr
+    return mr
   }
 
   // 获取当前对话长度
@@ -80,12 +86,21 @@ export default class Session {
 
   // 添加消息 添加后无需刷新
   static addToNow(role: Role, content: string, stop: string = 'stop', from : number | undefined = undefined) {
-    // TODO: from功能
+    if (from === undefined) {
+      if (this.last) {
+        from = this.last.sid
+      } else {
+        from = -1
+      }
+    }
+    let fm = this.get(from)
+
     let sid = this.newSid()
-    if (this.last) {
-      this.last.nextList.push(sid)
-      this.last.next = sid
+    if (fm) {
+      fm.nextList.push(sid)
+      fm.next = sid
     } else {
+      this.startList.push(sid)
       this.start = sid
     }
 

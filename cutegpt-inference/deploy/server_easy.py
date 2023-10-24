@@ -346,7 +346,7 @@ def chat_full_stream(way='direct'):
             print(all_response)
             return jsonify({'code': 0, 'message': 'Success.', 'type': 'FINISHED', 'content': all_response})
         except Exception as e:
-            return jsonify({'code': 10000, 'message': 'Unknown error: \n ' + repr(e) + '.', 'type': 'ERROR'})
+            return jsonify({'code': 10000, 'message': 'Unknown error 1: \n ' + repr(e) + '.', 'type': 'ERROR'})
 
     def generate():
         try:
@@ -367,7 +367,7 @@ def chat_full_stream(way='direct'):
             yield make_sse({'code': 0, 'message': 'Success.', 'type': 'END', 'content': all_response, 'finish_reason': 'stop'})
         except Exception as e:
             print(repr(e))
-            yield make_sse({'code': 10000, 'message': 'Unknown error: \n ' + repr(e) + '.', 'type': 'ERROR'})
+            yield make_sse({'code': 10000, 'message': 'Unknown error 2: \n ' + repr(e) + '.', 'type': 'ERROR'})
 
     return Response(generate(), content_type='text/event-stream')
 

@@ -97,7 +97,7 @@ export default class Inference {
       let middleText = 'Thinking'
       let endTag = '</span>'
       const last = () => {
-        return Session.last
+        return Session.last as Message
       }
       const clearThinking = () => {
         if (last().content.startsWith(startTag + middleText)) {

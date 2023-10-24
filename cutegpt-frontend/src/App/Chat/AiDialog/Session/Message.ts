@@ -16,11 +16,16 @@ export default class Message {
     return this.next != -1
   }
 
-  constructor(sid: number, role: Role, content: string, stop: string = 'stop') {
+  constructor(sid: number, role: Role, content: string, stop: string = 'stop', next: number = -1, nextList: number[] = []) {
     this.sid = sid
     this.role = role
     this.content = content
     this.stop = stop
+    this.next = next
+    if (next != -1 && nextList.length == 0) {
+      nextList = [next]
+    }
+    this.nextList = nextList
   }
 }
 
