@@ -57,7 +57,7 @@ $input-height: 56px;
           line-height: 30px;
           font-size: 15px;
           color: #222222;
-          border-radius: 24px;
+          border-radius: 20px;
           max-width: calc(100% - 110px);
           overflow: hidden;
           padding: 12px 18px;
@@ -67,6 +67,29 @@ $input-height: 56px;
             top: 0;
             left: 0;
             padding: 12px 18px;
+          }
+
+          .pageProgress {
+            background: #ffffff;
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            border-radius: 14px;
+            padding: 8px 16px;
+            font-size: 16px;
+            line-height: 16px;
+            text-align: center;
+            font-weight: 600;
+            z-index: 1;
+            user-select: none;
+            pointer-events: none;
+          }
+
+          .pageProgressSpace {
+            display: inline-block;
+            padding: 8px 24px;
+            font-size: 16px;
+            line-height: 16px;
           }
         }
       }
@@ -85,6 +108,11 @@ $input-height: 56px;
           padding: 12px 18px;
           color: #130328;
 
+          .pageProgress {
+            background: #ffffffaa;
+            color: #320f5b;
+          }
+
           --md-ripple-hover-opacity: 0.02;
           --md-ripple-pressed-opacity: 0.04;
         }
@@ -99,6 +127,11 @@ $input-height: 56px;
         .content {
           background: #5b3c9d;
           color: #ffffff;
+
+          .pageProgress {
+            background: rgba(115, 84, 178, 0.53);
+            color: #f2e9ff;
+          }
 
           --md-ripple-hover-opacity: 0.05;
           --md-ripple-pressed-opacity: 0.09;

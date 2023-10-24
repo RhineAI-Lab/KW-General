@@ -8,8 +8,9 @@ export default class Session {
   static start: number = 0
   static startList: number[] = [0]
   static messages: Message[] = [
-    // new Message(0, Role.USER, '你好', 'stop', 1),
-    // new Message(1, Role.ASSISTANT, '你好！我是复旦大学知识工场实验室训练出来的语言模型CuteGPT。很高兴为你服务。请问有什么问题需要帮助的吗？')
+    new Message(0, Role.USER, '你好', 'stop', 1, [1, 2]),
+    new Message(1, Role.ASSISTANT, '你好！我是复旦大学知识工场实验室训练出来的语言模型CuteGPT。很高兴为你服务。请问有什么问题需要帮助的吗？'),
+    new Message(2, Role.ASSISTANT, '回答2'),
   ]
 
   // 当前工作区
@@ -61,8 +62,8 @@ export default class Session {
 
   // 获取当前对话位于父对话的列表
   static getList(m: Message): number[] {
-    if (m.deep == 0) {
-      return Session.startList
+    if (this.startList.indexOf(m.sid) > -1) {
+      return this.startList
     }
     for (const message of this.messages) {
       if (message.nextList.indexOf(m.sid) > -1) {
