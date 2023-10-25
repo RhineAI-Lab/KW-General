@@ -315,15 +315,24 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     if (target) {
       let previous = Session.getPreviousBySid(v.sid)
       console.log(previous)
-      if (previous) {
-        previous.nextList = previous.nextList.filter(n => n !== v.sid)
-        if (previous.next == v.sid) {
-          v.sid = previous.nextList[previous.nextList.length - 1]
-        }
-        previous.removeList.push(v.sid)
+      if (!previous) {
+        previous = Session.base
       }
+      let pnl = previous.nextList
+      let index = pnl.indexOf(v.sid)
+      pnl.splice(index, 1)
+      if (previous.next == v.sid) {
+        if (pnl.length > 0) {
+          previous.next = pnl[pnl.length - 1]
+        } else {
+          previous.next = -1
+        }
+      }
+      previous.removeList.push(v.sid)
     }
     fresh()
+    console.log(Session.base)
+    console.log(Session.messages)
   }
 
 
@@ -420,7 +429,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
       if (previous) {
         previous.next = sid
       } else {
-        Session.start = sid
+        Session.base.next = sid
       }
       fresh()
     }

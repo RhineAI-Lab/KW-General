@@ -1,12 +1,12 @@
 import EasyMessage from "@/App/Chat/AiDialog/Session/EasyMessage";
 import Message from "@/App/Chat/AiDialog/Session/Message";
 import {Role} from "@/App/Chat/AiDialog/Session/Role";
+import Inference from "@/App/Chat/AiDialog/Session/Inference";
 
 export default class Session {
 
   // 储存历史会话
-  static start: number = -1
-  static startList: number[] = []
+  static base: Message = new Message(-1, Role.SYSTEM, 'BASE MESSAGE', 'stop', -1, [])
   static messages: Message[] = [
     // new Message(0, Role.USER, '你好', 'stop', 1, [1, 2]),
     // new Message(1, Role.ASSISTANT, '你好！我是复旦大学知识工场实验室训练出来的语言模型CuteGPT。很高兴为你服务。请问有什么问题需要帮助的吗？'),
@@ -34,7 +34,7 @@ export default class Session {
   static getNowMessages(): Message[] {
     this.last = undefined
     let mr: Message[] = []
-    let now = this.get(this.start)
+    let now = this.get(this.base.next)
     while (now) {
       mr.push(now)
       this.last = now
@@ -62,8 +62,8 @@ export default class Session {
 
   // 获取当前对话位于父对话的列表
   static getList(m: Message): number[] {
-    if (this.startList.indexOf(m.sid) > -1) {
-      return this.startList
+    if (this.base.nextList.indexOf(m.sid) > -1) {
+      return this.base.nextList
     }
     for (const message of this.messages) {
       if (message.nextList.indexOf(m.sid) > -1) {
@@ -114,8 +114,8 @@ export default class Session {
       fm.nextList.push(sid)
       fm.next = sid
     } else {
-      this.startList.push(sid)
-      this.start = sid
+      this.base.nextList.push(sid)
+      this.base.next = sid
     }
 
     let newMessage = new Message(sid, role, content, stop)

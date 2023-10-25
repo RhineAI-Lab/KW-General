@@ -103,7 +103,7 @@ export default class Inference {
       pl = previous.nextList
     }
     if (from === -1) {
-      pl = Session.startList
+      pl = Session.base.nextList
     }
     for (let i = 0; i < pl.length; i++) {
       let item = Session.get(pl[i])
@@ -114,10 +114,10 @@ export default class Inference {
     }
     if (!dup) {
       dup = Session.addToNow(Role.USER, message, 'stop', from)
-    } else if (from === -1) {
-      Session.start = dup.sid
-      dup.next = -1
-    } else if (previous) {
+    } else {
+      if (!previous) {
+        previous = Session.base
+      }
       previous.next = dup.sid
       dup.next = -1
     }
