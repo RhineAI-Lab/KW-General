@@ -549,13 +549,8 @@ $input-height: 56px;
   }
 
   .disable {
-    pointer-events: none;
-    background: #ffffff00;
-    border: 1px solid #a296b2;
-
-    span {
-      color: #a296b2;
-    }
+    opacity: 0.3;
+    cursor: default;
   }
 
   .hadTable {

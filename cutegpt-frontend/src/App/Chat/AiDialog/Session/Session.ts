@@ -5,8 +5,8 @@ import {Role} from "@/App/Chat/AiDialog/Session/Role";
 export default class Session {
 
   // 储存历史会话
-  static start: number = 0
-  static startList: number[] = [0]
+  static start: number = -1
+  static startList: number[] = []
   static messages: Message[] = [
     // new Message(0, Role.USER, '你好', 'stop', 1, [1, 2]),
     // new Message(1, Role.ASSISTANT, '你好！我是复旦大学知识工场实验室训练出来的语言模型CuteGPT。很高兴为你服务。请问有什么问题需要帮助的吗？'),
@@ -77,6 +77,16 @@ export default class Session {
   static getPrevious(m: Message) {
     for (const message of this.messages) {
       if (message.nextList.indexOf(m.sid) > -1) {
+        return message
+      }
+    }
+    return undefined
+  }
+
+  // 获取上一条信息
+  static getPreviousBySid(sid: number) {
+    for (const message of this.messages) {
+      if (message.nextList.indexOf(sid) > -1) {
         return message
       }
     }
