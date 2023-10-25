@@ -85,14 +85,19 @@ export default class Session {
     }
   }
 
+  // 获取当前最后一条sid
+  static getLastId() {
+    if (this.last) {
+      return this.last.sid
+    } else {
+      return -1
+    }
+  }
+
   // 添加消息 添加后无需刷新
   static addToNow(role: Role, content: string, stop: string = 'stop', from : number | undefined = undefined): Message {
     if (from === undefined) {
-      if (this.last) {
-        from = this.last.sid
-      } else {
-        from = -1
-      }
+      from = this.getLastId()
     }
     let fm = this.get(from)
 

@@ -178,7 +178,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
   const send = (message: string) => {
     if (Inference.generating) {
-      tip('请先停止当前会话')
+      tip('请等待或先停止当前会话')
       return false
     }
     if (message.length <= 0) {
@@ -191,7 +191,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
 
   const sendFromInput = () => {
     if (Inference.generating) {
-      tip('请先停止当前会话')
+      tip('请等待或先停止当前会话')
       return false
     }
     if (question.trim().length <= 0) {
@@ -203,50 +203,37 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     }
   }
 
-  const regenerate = () => {
+  const regenerateOrStop = (fi: number = messages.length - 1) => {
     if (Inference.generating) {
       Inference.stop()
     } else {
-      if (Session.size() < 1) {
-        tip('当前没有待重新提交的问题')
-        return
-      }
-      let from = -1
-      let userMessage = undefined
-      console.log(messages)
-      for (let i = messages.length - 1; i >= 0; i--) {
-        if (messages[i].role == Role.USER) {
-          let previous = Session.getPrevious(messages[i])
-          if (previous) {
-            from = previous.sid
-          }
-          userMessage = messages[i]
-          break
-        }
-      }
-      if (userMessage === undefined) {
-        tip('当前会话没有待重新提交的问题')
-        return
-      }
-      start(userMessage.content, from)
-
-      // while (Session.size() > 1) {
-      //   if (Session.last.role != 'user') {
-      //     Inference.messages.pop()
-      //   } else {
-      //     break
-      //   }
-      // }
-      // // 会话中仍至少有一条信息
-      // if (Session.last.role != 'user') {
-      //   tip('当前会话没有待重新提交的问题')
-      // }
-      // fresh()
-      // let lastUser = Inference.messages.pop()
-      // if (lastUser) {
-      //   start(lastUser.content)
-      // }
+      regenerate(fi)
     }
+  }
+
+  const regenerate = (fi = messages.length - 1) => {
+    if (Session.size() < 1) {
+      tip('当前没有待重新提交的问题')
+      return
+    }
+    let from = -1
+    let userMessage = undefined
+    console.log(messages)
+    for (let i = fi; i >= 0; i--) {
+      if (messages[i].role == Role.USER) {
+        let previous = Session.getPrevious(messages[i])
+        if (previous) {
+          from = previous.sid
+        }
+        userMessage = messages[i]
+        break
+      }
+    }
+    if (userMessage === undefined) {
+      tip('当前会话没有待重新提交的问题')
+      return
+    }
+    start(userMessage.content, from)
   }
 
   const stop = () => {
@@ -375,6 +362,18 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     }
   }
 
+  // is generating and is last message sid
+  const isGl = (sid: number) => {
+    return generating && sid == messages[messages.length - 1].sid
+  }
+
+  // get operate buttons holder width
+  const getObw = (v: any, i: number) => {
+    let w = widths[i] + 36
+    let d = v.list.length > 1 ? 302 : 196
+    return w ? Math.max(w, d) : d
+  }
+
   return <div
     ref={rootRef}
     className={
@@ -466,22 +465,30 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
             >
               <div className={Style.operateButtons} style={{
                 opacity: focusI == i ? 1 : 0,
-                width: Math.max(widths[i] + 36, v.list.length > 1 ? 302 : 196),
+                width: getObw(v, i),
               }}>
                 <div
                   className={Style.button + ' ' + Style.secondary + ' ' + Style.mini + ' ' + Style.outlined}
                   onClick={e => {
                     e.stopPropagation()
+                    navigator.clipboard.writeText(v.content)
+                    tip('已复制')
                   }}
                 >
                   <Icon size='23px'>round_content_copy</Icon>
-                  {/*<span className={Style.text}>分享</span>*/}
                   <md-ripple></md-ripple>
                 </div>
                 <div
                   className={Style.button + ' ' + Style.secondary + ' ' + Style.mini + ' ' + Style.outlined}
                   onClick={e => {
                     e.stopPropagation()
+                    if (isGl(v.sid)) {
+                      regenerateOrStop(i)
+                    } else if (generating) {
+                      tip('请等待或先停止当前会话')
+                    } else {
+                      regenerate(i)
+                    }
                   }}
                   style={{
                     marginLeft: '10px',
@@ -489,9 +496,8 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                   }}
                 >
                   <Icon size='26px'>{
-                    v.role == Role.ASSISTANT ? 'round_refresh' : 'outlined_create'
+                    v.role == Role.ASSISTANT ? (isGl(v.sid) ? 'outlined_stop' : 'round_refresh') : 'outlined_create'
                   }</Icon>
-                  {/*<span className={Style.text}>分享</span>*/}
                   <md-ripple></md-ripple>
                 </div>
                 <div className={Style.space}></div>
@@ -506,7 +512,6 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                   }}
                 >
                   <Icon size='29px'>round_star_border</Icon>
-                  {/*<span className={Style.text}>分享</span>*/}
                   <md-ripple></md-ripple>
                 </div>
                 <div
@@ -520,7 +525,6 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                   }}
                 >
                   <Icon size='26px'>outlined_delete</Icon>
-                  {/*<span className={Style.text}>分享</span>*/}
                   <md-ripple></md-ripple>
                 </div>
                 <div
@@ -534,7 +538,6 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                 }}
                 >
                   <Icon size='20px'>round_arrow_back_ios</Icon>
-                  {/*<span className={Style.text}>分享</span>*/}
                   <md-ripple></md-ripple>
                 </div>
                 <div
@@ -548,7 +551,6 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                 }}
                 >
                   <Icon size='20px'>round_arrow_forward_ios</Icon>
-                  {/*<span className={Style.text}>分享</span>*/}
                   <md-ripple></md-ripple>
                 </div>
               </div>

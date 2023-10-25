@@ -91,7 +91,39 @@ export default class Inference {
   static send(message: string, from: number | undefined = undefined, callback: (line: any) => void) {
     let interval: any = null
     this.setGenerating(true, '')
-    Session.addToNow(Role.USER, message, 'stop', from)
+    // from === undefined : 从最后发送  from === -1 : 从开头发送
+    if (from === undefined) {
+      from = Session.getLastId()
+    }
+    console.log('START SEND')
+    console.log('last', Session.last)
+    console.log('from', from)
+    let previous = Session.get(from)
+    console.log('previous', previous)
+    let dup = undefined
+    let pl: number[] = []
+    if (previous) {
+      pl = previous.nextList
+    }
+    if (from === -1) {
+      pl = Session.startList
+    }
+    for (let i = 0; i < pl.length; i++) {
+      let item = Session.get(pl[i])
+      if (item && item.content == message) {
+        dup = item
+        break
+      }
+    }
+    if (!dup) {
+      dup = Session.addToNow(Role.USER, message, 'stop', from)
+    } else if (from === -1) {
+      Session.start = dup.sid
+      dup.next = -1
+    } else if (previous) {
+      previous.next = dup.sid
+      dup.next = -1
+    }
     Session.freshEasyMessages()
     console.log(Session.nowEasyMessages)
     let nm = null // new message
