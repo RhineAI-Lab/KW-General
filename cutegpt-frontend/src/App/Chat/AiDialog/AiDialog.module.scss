@@ -99,6 +99,7 @@ $input-height: 56px;
           display: flex;
           top: 0;
           height: 60px;
+          padding: 5px 0;
 
           .buttonInner {
             display: flex;
@@ -143,7 +144,6 @@ $input-height: 56px;
 
         .operateButtons {
           left: 70px;
-          padding: 5px 0;
         }
       }
 
@@ -545,6 +545,16 @@ $input-height: 56px;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+    }
+  }
+
+  .disable {
+    pointer-events: none;
+    background: #ffffff00;
+    border: 1px solid #a296b2;
+
+    span {
+      color: #a296b2;
     }
   }
 

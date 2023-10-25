@@ -58,7 +58,8 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     // {role: 'assistant', content: '代码展示测试\n\n```javascript\nlet a = test()\n\nfunction test() {\n  console.log("hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. hello world. ")\n}\n```'},
     // {role: 'assistant', content: '当然！以下是好奇号火星车介绍场景的表格形式：\n\n| 序号 | 场景名称 | 场景介绍 | 场景信息 |\n|----|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n| 1 | 探索红色星球 | 欢迎来到火星上的探险之旅！好奇号火星车是NASA火星科学实验室的杰出成果，它是一辆自动化的火星探测车，被用来研究火星表面及其大气层，以揭示更多关于火星的神秘之处。好奇号火星车是人类探索太阳系的壮举，它的各种仪器和设备使它能够进行各类科学实验，并向地球发送宝贵的数据。这个场景中，您将能够近距离观察好奇号火星车的各个细节和功能。火星车的外观呈四方形，覆盖着厚实的金属外壳，以保护车身免受火星恶劣的环境影响。火星车上有多个高精度相机，用于拍摄火星表面的照片，还有激光探测仪，用于分析地质样本。 | 摄像头聚焦在火星车的前方，以展示与火星景观的交互。火星车行驶在红色的火星土壤上，轮胎与地面紧密接触，留下明显的车辙。火星车的机械臂伸展出来，采集火星土壤和岩石样本，然后将它们放入分析仪器中进行实时分析。场景采用逼真的光照效果，再现火星上的环境。 |\n| 2 | 红色星球的奇观 | 好奇号火星车将带您游览火星上引人入胜的奇观！火星表面充满了各种有趣的地貌特征，像是陨石坑、火山口等。在这个场景中，您将能够通过摄像头近距离观察这些奇观。火星车缓慢行驶，让您能够清晰地看到火星表面的地貌变化。火星上的山脉、峡谷、沙丘等将在您的眼前展现出来，带给您一种震撼的体验。同时，火星车上的高精度相机将记录下这些美丽景观的照片，供地球上的科学家进行进一步分析和研究。 | 摄像头将聚焦在火星表面的各种地貌特征上，例如陨石坑、火山口、山脉、峡谷、沙丘等。火星车缓慢驶过这些地貌，让您能够清晰地观察和欣赏它们。场景采用逼真的光照效果，再现火星上的环境。 |\n| 3 | 科学实验之旅 | 好奇号火星车是一台移动的火星科学实验室！在这个场景中，您将亲眼目睹火星车进行各种科学实验的过程。火星车上配备有化学实验装置、气象传感器、光谱仪等多种仪器，可以对火星表面及其大气进行详尽的研究。火星车上的机械臂将采集地壳样本，并进行实时分析。您可以通过摄像头观察到仪器的工作细节，以及火星车传输数据到地球的过程，真正感受到火星探索的科学魅力。 | 摄像头将焦点放在火星车上的仪器和设备上，展示它们在进行科学实验的过程中的细节。火星车上的机械臂将采集地壳样本，并将它们置于分析仪器中进行实时分析。同时，火星车将传输数据到地球上的接收站，您可以清楚地看到数据传输的过程。场景采用逼真的光照效果，再现火星上的环境。 |\n| 4 | 火星上的日落 | 在火星上欣赏壮观的日落景色！火星的日落与地球上的日落有所不同，它呈现出橙红色的明亮光晕和美丽的云层。在这个场景中，您将通过摄像头观察到好奇号火星车停在火星表面上，背景是日落的景色。火星车的金属外壳在夕阳的映衬下闪烁着柔和的光芒，营造出一种神秘而美丽的氛围。您将有机会欣赏到火星上独特的日落景色，并感受到火星的神秘之美。 | 摄像头将焦点放在火星车的位置，使其处于日落的背景下。火星车停在火星表面上，其金属外壳在夕阳照射下呈现出柔和的光芒。场景采用逼真的光照效果，再现火星上日落时的景色。 |\n| 5 | 寻找火星生命 | 火星一直是寻找外星生命的焦点之地！在这个场景中，您将能够了解好奇号火星车在寻找火星生命迹象方面的工作。火星车上配备了微生物生存环境测试仪、化学分析仪等仪器，用于分析土壤和大气中的生物特征。通过摄像头，您将近距离观察火星车进行生命探测实验的过程，感受到寻找外星生命的科学挑战。在这个场景中，您将站在火星上，与好奇号火星车一同寻找火星生命的答案。 | 摄像头将焦点放在火星车上的生命探测仪器和实验过程上。火星车将采集土壤和大气样本，并在仪器中分析其中的生物特征。您将近距离观察火星车进行这些实验，并感受到寻找外星生命的科学探索。场景采用逼真的光照效果，再现火星上的环境。 |\n\n希望以上场景表格能够满足您的需求。如有其他修改或添加的要求，请随时告诉我。'}
   ])
-  let [focusI, setFocusI] = useState(2)
+  let [focusI, setFocusI] = useState(-1)
+  let [editI, setEditI] = useState(-1)
 
   let [maxMessageWidth, setMaxMessageWidth] = useState(0)
   let [generating, setGenerating] = useState(false)
@@ -176,7 +177,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   }
   // console.log('messages:', JSON.stringify(messages))
 
-  const send = (message: string) => {
+  const send = (message: string, from: number | undefined = undefined) => {
     if (Inference.generating) {
       tip('请等待或先停止当前会话')
       return false
@@ -184,7 +185,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     if (message.length <= 0) {
       return false
     }
-    start(message)
+    start(message, from)
     setMessages([...messages, {role: 'user', content: message, sid: -2, list: [-2]}])
     return true
   }
@@ -198,7 +199,19 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
       return false
     }
     let message = question.trim()
-    if (send(message)) {
+    let from = undefined
+    if (editI !== -1) {
+      let previous = Session.getPrevious(messages[editI].sid)
+      if (previous) {
+        from = previous.sid
+      } else {
+        from = -1
+      }
+      setTimeout(() => {
+        setEditI(-1)
+      }, 1)
+    }
+    if (send(message, from)) {
       setQuestion('')
     }
   }
@@ -311,6 +324,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   const ghostRef = useRef<HTMLDivElement | null>(null)
   const [widths, setWidths] = useState<number[]>([])
   const [heights, setHeights] = useState<number[]>([])
+  const [bottomHeight, setBottomHeight] = useState(0)
 
   const freshMessagesSize = () => {
     const ghost = ghostRef.current;
@@ -348,19 +362,56 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   }, [messages])
 
 
-  const [bottomHeight, setBottomHeight] = useState(0)
-
   useEffect(() => {
     resizeTextarea()
   }, [question])
 
-  const setAiInputFocus = () => {
+  const setInputFocus = () => {
     if (inputRef.current) {
       const value = inputRef.current.value
       inputRef.current.focus()
       inputRef.current.setSelectionRange(value.length, value.length)
     }
   }
+
+  const edit = (v: any, i: number) => {
+    setEditI(i)
+    setQuestion(v.content)
+    setInputFocus()
+    if (focusI >= i) {
+      setFocusI(-1)
+    }
+  }
+
+  const select = (sid: number) => {
+    let target = Session.get(sid)
+    if (target) {
+      let previous = Session.getPrevious(target)
+      console.log(target, previous)
+      if (previous) {
+        previous.next = sid
+      } else {
+        Session.start = sid
+      }
+      fresh()
+    }
+  }
+
+  const lastMessage = (v: any, i: number) => {
+    let vi = v.list.indexOf(v.sid)
+    if (vi > 0) {
+      select(v.list[vi - 1])
+    }
+  }
+
+  const nextMessage = (v: any, i: number) => {
+    let vi = v.list.indexOf(v.sid)
+    if (vi < v.list.length - 1) {
+      select(v.list[vi + 1])
+    }
+  }
+
+
 
   // is generating and is last message sid
   const isGl = (sid: number) => {
@@ -372,6 +423,13 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     let w = widths[i] + 36
     let d = v.list.length > 1 ? 302 : 196
     return w ? Math.max(w, d) : d
+  }
+
+  // operate buttons classname
+  const obsClass = (disable = false) => {
+    let ct = Style.button + ' ' + Style.secondary + ' ' + Style.mini + ' ' + Style.outlined
+    if (disable) ct += ' ' + Style.disable
+    return ct
   }
 
   return <div
@@ -462,13 +520,17 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
               className={Style.message + ' ' + rolesStyle[v.role] + ' ' + (i == focusI ? Style.focusMessage : '')}
               key={i}
               ref={i === messages.length - 1 ? lastMessageRef : null}
+              style={{
+                opacity: (editI > -1 && editI <= i) ? 0.5 : 1,
+                pointerEvents: (editI > -1 && editI <= i) ? 'none' : 'all',
+              }}
             >
               <div className={Style.operateButtons} style={{
                 opacity: focusI == i ? 1 : 0,
                 width: getObw(v, i),
               }}>
                 <div
-                  className={Style.button + ' ' + Style.secondary + ' ' + Style.mini + ' ' + Style.outlined}
+                  className={obsClass()}
                   onClick={e => {
                     e.stopPropagation()
                     navigator.clipboard.writeText(v.content)
@@ -479,15 +541,19 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                   <md-ripple></md-ripple>
                 </div>
                 <div
-                  className={Style.button + ' ' + Style.secondary + ' ' + Style.mini + ' ' + Style.outlined}
+                  className={obsClass()}
                   onClick={e => {
                     e.stopPropagation()
-                    if (isGl(v.sid)) {
-                      regenerateOrStop(i)
-                    } else if (generating) {
-                      tip('请等待或先停止当前会话')
+                    if (v.role == Role.USER) {
+                      edit(v, i)
                     } else {
-                      regenerate(i)
+                      if (isGl(v.sid)) {
+                        regenerateOrStop(i)
+                      } else if (generating) {
+                        tip('请等待或先停止当前会话')
+                      } else {
+                        regenerate(i)
+                      }
                     }
                   }}
                   style={{
@@ -502,7 +568,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                 </div>
                 <div className={Style.space}></div>
                 <div
-                  className={Style.button + ' ' + Style.secondary + ' ' + Style.mini + ' ' + Style.outlined}
+                  className={obsClass()}
                   onClick={e => {
                     e.stopPropagation()
                   }}
@@ -515,7 +581,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                   <md-ripple></md-ripple>
                 </div>
                 <div
-                  className={Style.button + ' ' + Style.secondary + ' ' + Style.mini + ' ' + Style.outlined}
+                  className={obsClass()}
                   onClick={e => {
                     e.stopPropagation()
                   }}
@@ -528,9 +594,10 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                   <md-ripple></md-ripple>
                 </div>
                 <div
-                  className={Style.button + ' ' + Style.secondary + ' ' + Style.mini + ' ' + Style.outlined}
+                  className={obsClass(v.list.indexOf(v.sid) <= 0)}
                   onClick={e => {
                     e.stopPropagation()
+                    lastMessage(v, i)
                   }}
                   style={{
                     marginLeft: '16px',
@@ -541,9 +608,10 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
                   <md-ripple></md-ripple>
                 </div>
                 <div
-                  className={Style.button + ' ' + Style.secondary + ' ' + Style.mini + ' ' + Style.outlined}
+                  className={obsClass(v.list.indexOf(v.sid) >= v.list.length - 1)}
                   onClick={e => {
                     e.stopPropagation()
+                    nextMessage(v, i)
                   }}
                   style={{
                     marginLeft: '10px',
@@ -667,15 +735,22 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         pointerEvents: messages.length > 1 ? 'auto' : 'none',
         transition: 'opacity 0.2s ease-in-out',
       }} onClick={() => {
-        regenerate()
+        if (editI > -1) {
+          setEditI(-1)
+          setQuestion('')
+        } else {
+          regenerateOrStop()
+        }
       }}>
         <div className={Style.buttonInner}>
           {
-            generating
+            editI > -1
+              ? <Icon size='28px'>close</Icon>
+              : generating
               ? <Icon size='28px'>outlined_stop</Icon>
               : <Icon size='24px'>round_refresh</Icon>
           }
-          <span className={Style.text}>{generating ? '停止生成' : '重新生成'}</span>
+          <span className={Style.text}>{editI > -1 ? '取消编辑' : generating ? '停止生成' : '重新生成'}</span>
         </div>
       </md-filled-button>
       {/*<div className={Style.button + ' ' + Style.main} onClick={e => use()}>*/}

@@ -95,11 +95,7 @@ export default class Inference {
     if (from === undefined) {
       from = Session.getLastId()
     }
-    console.log('START SEND')
-    console.log('last', Session.last)
-    console.log('from', from)
     let previous = Session.get(from)
-    console.log('previous', previous)
     let dup = undefined
     let pl: number[] = []
     if (previous) {
