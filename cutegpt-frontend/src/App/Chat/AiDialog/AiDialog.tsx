@@ -19,7 +19,7 @@ export class ScrollState {
       let height1 = scrollContainer.clientHeight
       let height2 = scrollContainer.scrollTop
       let height3 = scrollContainer.scrollHeight
-      return height1 + height2 + 20 > height3;
+      return height1 + height2 + 40 > height3;
     }
     return false
   }
@@ -352,8 +352,10 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
   }
 
   const share = () => {
-    navigator.clipboard.writeText('http://chat.rhineai.com')
-    tip('分享链接已复制')
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText('http://chat.rhineai.com')
+      tip('分享链接已复制')
+    }
   }
 
   let showExamples = messages.length <= 1
@@ -501,347 +503,353 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     onClick={e => setFocusI(-1)}
     {...props}
   >
-    <div className={Style.shadow} style={{
-      marginBottom: '-16px',
-    }}>
-      <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
+    <div className={Style.leftBar}>
+
     </div>
-    <div className={Style.suggestion} style={{
-      opacity: showExamples ? 1 : 0,
-      pointerEvents: showExamples ? 'auto' : 'none',
-    }}>
-      <div className={Style.suggestionTitle}>Example & Suggestion</div>
-      <div className={Style.line}>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[0])}>
-            {examples[0]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
+    <div className={Style.main}>
+      <div className={Style.shadow} style={{
+        marginBottom: '-16px',
+      }}>
+        <div style={{boxShadow: '0 0 10px 10px #fff', top: 0}}></div>
+      </div>
+      <div className={Style.suggestion} style={{
+        opacity: showExamples ? 1 : 0,
+        pointerEvents: showExamples ? 'auto' : 'none',
+      }}>
+        <div className={Style.suggestionTitle}>Example & Suggestion</div>
+        <div className={Style.line}>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[0])}>
+              {examples[0]}
+              <Icon size='32px' className={Style.send}>send</Icon>
+              <md-ripple></md-ripple>
+            </div>
+          </div>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[1])}>
+              {examples[1]}
+              <Icon size='32px' className={Style.send}>send</Icon>
+              <md-ripple></md-ripple>
+            </div>
           </div>
         </div>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[1])}>
-            {examples[1]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
+        <div className={Style.line}>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[2])}>
+              {examples[2]}
+              <Icon size='32px' className={Style.send}>send</Icon>
+              <md-ripple></md-ripple>
+            </div>
+          </div>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[3])}>
+              {examples[3]}
+              <Icon size='32px' className={Style.send}>send</Icon>
+              <md-ripple></md-ripple>
+            </div>
+          </div>
+        </div>
+        <div className={Style.line}>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[1])}>
+              {examples[1]}
+              <Icon size='32px' className={Style.send}>send</Icon>
+              <md-ripple></md-ripple>
+            </div>
+          </div>
+          <div className={Style.cardHolder}>
+            <div className={Style.card} onClick={e => send(examples[3])}>
+              {examples[3]}
+              <Icon size='32px' className={Style.send}>send</Icon>
+              <md-ripple></md-ripple>
+            </div>
           </div>
         </div>
       </div>
-      <div className={Style.line}>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[2])}>
-            {examples[2]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
+      <div
+        ref={leftScrollRef}
+        className={Style.messagesHolder + ' scroll ' + Style.scroll}
+        onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
+        style={{bottom: hadTable ? '84px' : bottomHeight + 86 + 'px'}}
+      >
+        <div className={Style.messages}>
+          <div className={Style.title}>
+            CuteGPT
+            <Icon size='48px'>round_insights</Icon>
           </div>
-        </div>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[3])}>
-            {examples[3]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-      </div>
-      <div className={Style.line}>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[1])}>
-            {examples[1]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-        <div className={Style.cardHolder}>
-          <div className={Style.card} onClick={e => send(examples[3])}>
-            {examples[3]}
-            <Icon size='32px' className={Style.send}>send</Icon>
-            <md-ripple></md-ripple>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      ref={leftScrollRef}
-      className={Style.messagesHolder + ' scroll ' + Style.scroll}
-      onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
-      style={{bottom: hadTable ? '84px' : bottomHeight + 86 + 'px'}}
-    >
-      <div className={Style.messages}>
-        <div className={Style.title}>
-          CuteGPT
-          <Icon size='48px'>round_insights</Icon>
-        </div>
-        {
-          messages.map((v, i) => {
-            let [role, content] = [v.role, v.content]
-            let icon = '/chat/' + (role === 'assistant' ? 'ai-easy' : 'user') + '-head-icon.png'
-            return <div
-              className={Style.message + ' ' + rolesStyle[v.role] + ' ' + (i == focusI ? Style.focusMessage : '')}
-              key={i}
-              ref={i === messages.length - 1 ? lastMessageRef : null}
-              style={{
-                opacity: (editI > -1 && editI <= i) ? 0.5 : 1,
-                pointerEvents: (editI > -1 && editI <= i) ? 'none' : 'all',
-              }}
-            >
-              <div className={Style.operateButtons} style={{
-                opacity: focusI == i ? 1 : 0,
-                width: getObw(v, i),
-              }}>
-                <div
-                  className={obsClass()}
-                  onClick={e => {
-                    e.stopPropagation()
-                    navigator.clipboard.writeText(v.content)
-                    tip('已复制')
-                  }}
-                >
-                  <Icon size='23px'>round_content_copy</Icon>
-                  <md-ripple></md-ripple>
-                </div>
-                <div
-                  className={obsClass()}
-                  onClick={e => {
-                    e.stopPropagation()
-                    if (v.role == Role.USER) {
-                      edit(v, i)
-                    } else {
-                      if (isGl(v.sid)) {
-                        regenerateOrStop(i)
-                      } else if (!tipGenerating()) {
-                        regenerate(i)
-                      }
-                    }
-                  }}
-                  style={{
-                    marginLeft: '10px',
-                    display: i > 0 ? 'inline-block' : 'none',
-                  }}
-                >
-                  <Icon size='26px'>{
-                    v.role == Role.ASSISTANT ? (isGl(v.sid) ? 'outlined_stop' : 'round_refresh') : 'outlined_create'
-                  }</Icon>
-                  <md-ripple></md-ripple>
-                </div>
-                <div className={Style.space}></div>
-                <div
-                  className={obsClass()}
-                  onClick={e => {
-                    e.stopPropagation()
-                    favorite(v, i)
-                  }}
-                  style={{
-                    marginLeft: '16px',
-                    display: i > 0 ? 'inline-block' : 'none',
-                  }}
-                >
-                  <Icon size='29px'>{v.favorite ? 'round_star' : 'round_star_border'}</Icon>
-                  <md-ripple></md-ripple>
-                </div>
-                <div
-                  className={obsClass()}
-                  onClick={e => {
-                    e.stopPropagation()
-                    remove(v, i)
-                  }}
-                  style={{
-                    marginLeft: '10px',
-                    display: i > 0 ? 'inline-block' : 'none',
-                  }}
-                >
-                  <Icon size='26px'>outlined_delete</Icon>
-                  <md-ripple></md-ripple>
-                </div>
-                <div
-                  className={obsClass(v.list.indexOf(v.sid) <= 0)}
-                  onClick={e => {
-                    e.stopPropagation()
-                    lastMessage(v, i)
-                  }}
-                  style={{
-                    marginLeft: '16px',
-                    display: v.list.length > 1 ? 'inline-block' : 'none',
-                }}
-                >
-                  <Icon size='20px'>round_arrow_back_ios</Icon>
-                  <md-ripple></md-ripple>
-                </div>
-                <div
-                  className={obsClass(v.list.indexOf(v.sid) >= v.list.length - 1)}
-                  onClick={e => {
-                    e.stopPropagation()
-                    nextMessage(v, i)
-                  }}
-                  style={{
-                    marginLeft: '10px',
-                    display: v.list.length > 1 ? 'inline-block' : 'none',
-                }}
-                >
-                  <Icon size='20px'>round_arrow_forward_ios</Icon>
-                  <md-ripple></md-ripple>
-                </div>
-              </div>
-              <div className={Style.avatar}>
-                <img src={icon} alt='head-icon'/>
-              </div>
-              <div
-                className={Style.content + ' ' + Style.contentTruth}
+          {
+            messages.map((v, i) => {
+              let [role, content] = [v.role, v.content]
+              let icon = '/chat/' + (role === 'assistant' ? 'ai-easy' : 'user') + '-head-icon.png'
+              return <div
+                className={Style.message + ' ' + rolesStyle[v.role] + ' ' + (i == focusI ? Style.focusMessage : '')}
+                key={i}
+                ref={i === messages.length - 1 ? lastMessageRef : null}
                 style={{
-                  width: widths[i],
-                  height: heights[i]
-                }}
-                onClick={e => {
-                  e.stopPropagation()
-                  setFocusI(i)
+                  opacity: (editI > -1 && editI <= i) ? 0.5 : 1,
+                  pointerEvents: (editI > -1 && editI <= i) ? 'none' : 'all',
                 }}
               >
+                <div className={Style.operateButtons} style={{
+                  opacity: focusI == i ? 1 : 0,
+                  width: getObw(v, i),
+                }}>
+                  <div
+                    className={obsClass()}
+                    onClick={e => {
+                      e.stopPropagation()
+                      if (navigator.clipboard) {
+                        navigator.clipboard.writeText(v.content)
+                        tip('已复制')
+                      }
+                    }}
+                  >
+                    <Icon size='23px'>round_content_copy</Icon>
+                    <md-ripple></md-ripple>
+                  </div>
+                  <div
+                    className={obsClass()}
+                    onClick={e => {
+                      e.stopPropagation()
+                      if (v.role == Role.USER) {
+                        edit(v, i)
+                      } else {
+                        if (isGl(v.sid)) {
+                          regenerateOrStop(i)
+                        } else if (!tipGenerating()) {
+                          regenerate(i)
+                        }
+                      }
+                    }}
+                    style={{
+                      marginLeft: '10px',
+                      display: i > 0 ? 'inline-block' : 'none',
+                    }}
+                  >
+                    <Icon size='26px'>{
+                      v.role == Role.ASSISTANT ? (isGl(v.sid) ? 'outlined_stop' : 'round_refresh') : 'outlined_create'
+                    }</Icon>
+                    <md-ripple></md-ripple>
+                  </div>
+                  <div className={Style.space}></div>
+                  <div
+                    className={obsClass()}
+                    onClick={e => {
+                      e.stopPropagation()
+                      favorite(v, i)
+                    }}
+                    style={{
+                      marginLeft: '16px',
+                      display: i > 0 ? 'inline-block' : 'none',
+                    }}
+                  >
+                    <Icon size='29px'>{v.favorite ? 'round_star' : 'round_star_border'}</Icon>
+                    <md-ripple></md-ripple>
+                  </div>
+                  <div
+                    className={obsClass()}
+                    onClick={e => {
+                      e.stopPropagation()
+                      remove(v, i)
+                    }}
+                    style={{
+                      marginLeft: '10px',
+                      display: i > 0 ? 'inline-block' : 'none',
+                    }}
+                  >
+                    <Icon size='26px'>outlined_delete</Icon>
+                    <md-ripple></md-ripple>
+                  </div>
+                  <div
+                    className={obsClass(v.list.indexOf(v.sid) <= 0)}
+                    onClick={e => {
+                      e.stopPropagation()
+                      lastMessage(v, i)
+                    }}
+                    style={{
+                      marginLeft: '16px',
+                      display: v.list.length > 1 ? 'inline-block' : 'none',
+                    }}
+                  >
+                    <Icon size='20px'>round_arrow_back_ios</Icon>
+                    <md-ripple></md-ripple>
+                  </div>
+                  <div
+                    className={obsClass(v.list.indexOf(v.sid) >= v.list.length - 1)}
+                    onClick={e => {
+                      e.stopPropagation()
+                      nextMessage(v, i)
+                    }}
+                    style={{
+                      marginLeft: '10px',
+                      display: v.list.length > 1 ? 'inline-block' : 'none',
+                    }}
+                  >
+                    <Icon size='20px'>round_arrow_forward_ios</Icon>
+                    <md-ripple></md-ripple>
+                  </div>
+                </div>
+                <div className={Style.avatar}>
+                  <img src={icon} alt='head-icon'/>
+                </div>
                 <div
-                  className={Style.truthSize}
+                  className={Style.content + ' ' + Style.contentTruth}
                   style={{
                     width: widths[i],
                     height: heights[i]
                   }}
+                  onClick={e => {
+                    e.stopPropagation()
+                    setFocusI(i)
+                  }}
+                >
+                  <div
+                    className={Style.truthSize}
+                    style={{
+                      width: widths[i],
+                      height: heights[i]
+                    }}
+                  >
+                    <AiMarkdown>
+                      {v.content}
+                    </AiMarkdown>
+                    <md-ripple></md-ripple>
+                  </div>
+                  <div className={Style.pageProgress} style={{
+                    display: v.list.length > 1 ? 'inline-block' : 'none',
+                  }}>
+                    {v.list.indexOf(v.sid) + 1 + ' / ' + v.list.length}
+                  </div>
+                </div>
+              </div>
+            })
+          }
+        </div>
+      </div>
+      <div
+        className={Style.messagesHolder + ' scroll ' + Style.scroll + ' ' + Style.messagesHolderGhost}
+        onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
+      >
+        <div className={Style.messages} onResize={freshMessagesSize} ref={ghostRef}>
+          {
+            messages.map((v, i) => {
+              let [role, content] = [v.role, v.content]
+              let icon = '/editor/' + (role === 'assistant' ? 'ai' : 'user') + '-head-icon.png'
+              return <div
+                className={Style.message + ' ' + rolesStyle[v.role] + ' '}
+                key={i}
+              >
+                <div className={Style.avatar}>
+                  <img src={icon} alt='head-icon'/>
+                </div>
+                <div
+                  className={Style.content}
                 >
                   <AiMarkdown>
-                    {v.content}
+                    {
+                      v.content
+                      + ((i == messages.length - 1 && generating && v.role == 'assistant') ? ' ABCDEFGHIJ' : '')
+                      + (v.list && v.list.length > 1 ? '<span class="' + Style.pageProgressSpace + '">' + (v.list.indexOf(v.sid) + 1 + ' / ' + v.list.length) + '</span>' : '')
+                    }
                   </AiMarkdown>
-                  <md-ripple></md-ripple>
-                </div>
-                <div className={Style.pageProgress} style={{
-                  display: v.list.length > 1 ? 'inline-block' : 'none',
-                }}>
-                  {v.list.indexOf(v.sid) + 1 + ' / ' + v.list.length}
                 </div>
               </div>
-            </div>
-          })
-        }
-      </div>
-    </div>
-    <div
-      className={Style.messagesHolder + ' scroll ' + Style.scroll + ' ' + Style.messagesHolderGhost}
-      onScroll={e => ScrollState.leftAtBottom = ScrollState.checkAtBottom(leftScrollRef)}
-    >
-      <div className={Style.messages} onResize={freshMessagesSize} ref={ghostRef}>
-        {
-          messages.map((v, i) => {
-            let [role, content] = [v.role, v.content]
-            let icon = '/editor/' + (role === 'assistant' ? 'ai' : 'user') + '-head-icon.png'
-            return <div
-              className={Style.message + ' ' + rolesStyle[v.role] + ' '}
-              key={i}
-            >
-              <div className={Style.avatar}>
-                <img src={icon} alt='head-icon'/>
-              </div>
-              <div
-                className={Style.content}
-              >
-                <AiMarkdown>
-                  {
-                    v.content
-                    + ((i == messages.length - 1 && generating && v.role == 'assistant') ? ' ABCDEFGHIJ' : '')
-                    + (v.list && v.list.length > 1 ? '<span class="' + Style.pageProgressSpace + '">' + (v.list.indexOf(v.sid) + 1 + ' / ' + v.list.length) + '</span>' : '')
-                  }
-                </AiMarkdown>
-              </div>
-            </div>
-          })
-        }
-      </div>
-    </div>
-    <div className={Style.shadow} style={{
-      marginTop: '-16px',
-      marginBottom: '-1px'
-    }}>
-      <div style={{
-        boxShadow: '0 0 10px 10px #fff',
-        marginTop: '16px',
-      }}></div>
-    </div>
-    <div className={Style.buttons} style={{
-      bottom: hadTable ? '24px' : bottomHeight + 36 + 'px'
-    }}>
-      {/*<div*/}
-      {/*  className={Style.button + ' ' + Style.secondary}*/}
-      {/*  onClick={() => {}}*/}
-      {/*>*/}
-      {/*  <Icon>round_tune</Icon>*/}
-      {/*  <span className={Style.text}>清空</span>*/}
-      {/*  <md-ripple></md-ripple>*/}
-      {/*</div>*/}
-      <div
-        className={Style.button + ' ' + Style.secondary}
-        onClick={() => {clear()}}
-      >
-        <Icon>delete_outline</Icon>
-        <span className={Style.text}>重置</span>
-        <md-ripple></md-ripple>
-      </div>
-      <div
-        className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
-        onClick={() => {share()}}
-        style={{marginLeft: '10px'}}
-      >
-        <Icon size='20px'>round_share</Icon>
-        {/*<span className={Style.text}>分享</span>*/}
-        <md-ripple></md-ripple>
-      </div>
-      <div className={Style.space}></div>
-      <md-filled-button style={{
-        height: 48,
-        opacity: messages.length > 1 ? 1 : 0,
-        pointerEvents: messages.length > 1 ? 'auto' : 'none',
-        transition: 'opacity 0.2s ease-in-out',
-      }} onClick={() => {
-        if (editI > -1) {
-          setEditI(-1)
-          setQuestion('')
-        } else {
-          regenerateOrStop()
-        }
-      }}>
-        <div className={Style.buttonInner}>
-          {
-            editI > -1
-              ? <Icon size='28px'>close</Icon>
-              : generating
-              ? <Icon size='28px'>outlined_stop</Icon>
-              : <Icon size='24px'>round_refresh</Icon>
+            })
           }
-          <span className={Style.text}>{editI > -1 ? '取消编辑' : generating ? '停止生成' : '重新生成'}</span>
         </div>
-      </md-filled-button>
-      {/*<div className={Style.button + ' ' + Style.main} onClick={e => use()}>*/}
-      {/*  <Icon size='26px'>round_done</Icon>*/}
-      {/*  <span className={Style.text}>{hadTable ? '应用文本' : '结束对话'}</span>*/}
-      {/*</div>*/}
-      <div
-        className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
-        onClick={e => {
-        }}
-        style={{
-          marginRight: '-4px',
-          display: 'none',
-        }}
-      >
-        <Icon size='24px'>round_arrow_back_ios</Icon>
       </div>
-      <div
-        className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
-        onClick={e => {
-        }}
-        style={{
-          display: 'none',
-        }}
-      >
-        <Icon size='24px'>round_arrow_forward_ios</Icon>
+      <div className={Style.shadow} style={{
+        marginTop: '-16px',
+        marginBottom: '-1px'
+      }}>
+        <div style={{
+          boxShadow: '0 0 10px 10px #fff',
+          marginTop: '16px',
+        }}></div>
       </div>
-    </div>
-    <div className={Style.inputHolder} style={{
-      height: bottomHeight,
-      minHeight: bottomHeight,
-    }}>
+      <div className={Style.buttons} style={{
+        bottom: hadTable ? '24px' : bottomHeight + 36 + 'px'
+      }}>
+        {/*<div*/}
+        {/*  className={Style.button + ' ' + Style.secondary}*/}
+        {/*  onClick={() => {}}*/}
+        {/*>*/}
+        {/*  <Icon>round_tune</Icon>*/}
+        {/*  <span className={Style.text}>清空</span>*/}
+        {/*  <md-ripple></md-ripple>*/}
+        {/*</div>*/}
+        <div
+          className={Style.button + ' ' + Style.secondary}
+          onClick={() => {clear()}}
+        >
+          <Icon>delete_outline</Icon>
+          <span className={Style.text}>重置</span>
+          <md-ripple></md-ripple>
+        </div>
+        <div
+          className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
+          onClick={() => {share()}}
+          style={{marginLeft: '10px'}}
+        >
+          <Icon size='20px'>round_share</Icon>
+          {/*<span className={Style.text}>分享</span>*/}
+          <md-ripple></md-ripple>
+        </div>
+        <div className={Style.space}></div>
+        <md-filled-button style={{
+          height: 48,
+          opacity: messages.length > 1 ? 1 : 0,
+          pointerEvents: messages.length > 1 ? 'auto' : 'none',
+          transition: 'opacity 0.2s ease-in-out',
+        }} onClick={() => {
+          if (editI > -1) {
+            setEditI(-1)
+            setQuestion('')
+          } else {
+            regenerateOrStop()
+          }
+        }}>
+          <div className={Style.buttonInner}>
+            {
+              editI > -1
+                ? <Icon size='28px'>close</Icon>
+                : generating
+                  ? <Icon size='28px'>outlined_stop</Icon>
+                  : <Icon size='24px'>round_refresh</Icon>
+            }
+            <span className={Style.text}>{editI > -1 ? '取消编辑' : generating ? '停止生成' : '重新生成'}</span>
+          </div>
+        </md-filled-button>
+        {/*<div className={Style.button + ' ' + Style.main} onClick={e => use()}>*/}
+        {/*  <Icon size='26px'>round_done</Icon>*/}
+        {/*  <span className={Style.text}>{hadTable ? '应用文本' : '结束对话'}</span>*/}
+        {/*</div>*/}
+        <div
+          className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
+          onClick={e => {
+          }}
+          style={{
+            marginRight: '-4px',
+            display: 'none',
+          }}
+        >
+          <Icon size='24px'>round_arrow_back_ios</Icon>
+        </div>
+        <div
+          className={Style.button + ' ' + Style.secondary + ' ' + Style.mini}
+          onClick={e => {
+          }}
+          style={{
+            display: 'none',
+          }}
+        >
+          <Icon size='24px'>round_arrow_forward_ios</Icon>
+        </div>
+      </div>
+      <div className={Style.inputHolder} style={{
+        height: bottomHeight,
+        minHeight: bottomHeight,
+      }}>
       <textarea
         rows={1}
         className={Style.input}
@@ -860,20 +868,21 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         }}
         ref={inputRef}
       />
-      <div
-        className={Style.mic}
-        onClick={e => sendFromInput()}
-      >
-        <Icon size='28px'>round_mic_none</Icon>
+        <div
+          className={Style.mic}
+          onClick={e => sendFromInput()}
+        >
+          <Icon size='28px'>round_mic_none</Icon>
+        </div>
+        <div
+          className={Style.send + (clickable ? ' ' + Style.sendClickable : '')}
+          onClick={e => sendFromInput()}
+        >
+          <Icon color={clickable ? '#ffffff' : '#888888'} size={clickable ? '20px' : '24px'}>round_send</Icon>
+        </div>
       </div>
-      <div
-        className={Style.send + (clickable ? ' ' + Style.sendClickable : '')}
-        onClick={e => sendFromInput()}
-      >
-        <Icon color={clickable ? '#ffffff' : '#888888'} size={clickable ? '20px' : '24px'}>round_send</Icon>
-      </div>
+      <div className={Style.mode}></div>
     </div>
-    <div className={Style.mode}></div>
   </div>
 }
 

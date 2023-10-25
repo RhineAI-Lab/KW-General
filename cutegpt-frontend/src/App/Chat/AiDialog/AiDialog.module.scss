@@ -12,13 +12,33 @@
 
 .AiDialog {
   $input-height: 54px;
+  $left-bar-width: 320px;
 
   width: 100%;
   height: 100%;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+
+  .leftBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $left-bar-width;
+    bottom: 0;
+    background: #f6f4ff;
+    border-bottom-right-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+
+  .main {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: $left-bar-width;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
   .messagesHolder {
     flex-grow: 1;
