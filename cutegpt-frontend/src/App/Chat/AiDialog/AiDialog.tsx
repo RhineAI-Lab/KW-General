@@ -375,6 +375,16 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     }
   }
 
+  const isIos = () => {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+  }
+  const ifIosClassName = () => {
+    if(isIos()) {
+      return ' ' + Style.ios
+    }
+    return ''
+  }
+
   const resizeTextarea = () => {
     const textarea = inputRef.current
     if (!textarea) return
@@ -382,7 +392,12 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     textarea.style.height = 'auto'
     // textarea.style.height = sourceHeight
     // textarea.style.height = textarea.scrollHeight + 'px'
-    setBottomHeight(textarea.scrollHeight)
+    if (isIos()) {
+      setBottomHeight(textarea.scrollHeight + 34)
+      textarea.style.marginTop = '17px'
+    } else {
+      setBottomHeight(textarea.scrollHeight)
+    }
     textarea.style.height = '100%'
   }
 
@@ -481,7 +496,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
     className={
       Style.AiDialog + ' ' +
       (hadTable ? '' : Style.hadTable + ' ' + props.className) + ' ' +
-      (dl == 0 ? Style.dl0 : '')
+      (dl == 0 ? Style.dl0 : '') + ifIosClassName()
     }
     onClick={e => setFocusI(-1)}
     {...props}
@@ -845,8 +860,6 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
         }}
         ref={inputRef}
       />
-    </div>
-    <div className={Style.sendHolder}>
       <div
         className={Style.mic}
         onClick={e => sendFromInput()}
