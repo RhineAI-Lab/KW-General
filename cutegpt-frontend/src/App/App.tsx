@@ -7,8 +7,11 @@ import Home from "./Home/Home";
 import Chat from "./Chat/Chat";
 import Icon from "../compoments/Icon/Icon";
 import {Slide} from "@mui/material";
-import {TipSnackbar} from "@/App/TipSnackbar/TipSnackbar";
+import {TipSnackbar} from "@/compoments/TipSnackbar/TipSnackbar";
 import {closeSnackbar, enqueueSnackbar, SnackbarProvider} from "notistack";
+import {message, notification} from "antd";
+import {IconType, NotificationPlacement} from "antd/es/notification/interface";
+import {NoticeType} from "antd/es/message/interface";
 
 function App() {
   return (
@@ -65,5 +68,35 @@ export const tip = (text: string, type = 'default') => {
 declare module "notistack" {
   interface VariantOverrides {
     tip: true;
+  }
+}
+
+export class AppTools {
+  static notify = (
+    title: string,
+    message = "",
+    type: IconType = "info",
+    placement: NotificationPlacement = "top"
+  ) => {
+    notification.open({
+      message: title,
+      description: message,
+      onClick: () => {
+      },
+      type: type,
+      duration: 1,
+    });
+  }
+
+  static message = (
+    title: string,
+    type: NoticeType = "info",
+    duration: number = 2,
+  ) => {
+    message.open({
+      type: type,
+      content: title,
+      duration: duration,
+    });
   }
 }

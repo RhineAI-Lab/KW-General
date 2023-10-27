@@ -8,6 +8,7 @@ import '@material/web/ripple/ripple.js';
 import Session from "@/App/Chat/AiDialog/Session/Session";
 import {Role} from "@/App/Chat/AiDialog/Session/Role";
 import ShowMessage from "@/App/Chat/AiDialog/Session/ShowMessage";
+import Message from "@/App/Chat/AiDialog/Session/Message";
 
 export class ScrollState {
   static leftAtBottom = true
@@ -344,17 +345,18 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
       tip('请先等待当前会话生成完成')
       return
     }
-    // Inference.messages = [
-    // ]
-    // Inference.tables = []
+    Session.messages = []
+    Session.base = new Message(-1, Role.SYSTEM, 'BASE MESSAGE', 'stop', -1, [])
     fresh()
-    tip('暂不支持重置会话')
+    // tip('暂不支持重置会话')
   }
 
   const share = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText('http://chat.rhineai.com')
       tip('分享链接已复制')
+    } else {
+      tip('当前浏览器环境不支持写入剪贴板')
     }
   }
 

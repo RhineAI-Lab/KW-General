@@ -40,7 +40,7 @@ class SessionController {
         val (code, user) = tokenService.getUser(token)
         if (code != 0) return Response.fail(code)
 
-        var content = "{\"title\": \"新对话\"}"
+        var content = ""
         if (body["content"] != null) {
             content = body["content"] as String
             if (content.length > 16777215) return Response.fail(10112)
