@@ -6,7 +6,7 @@ from vllm import LLM, SamplingParams
 print(torch.cuda.device_count())
 
 model_name = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_13b_112_sft_v1"
-assistant_model_name = "/data/heqianyu/big_model/instruction_tuning_github/evaluation/website/cutegpt1b3-ift"
+# assistant_model_name = "/data/heqianyu/big_model/instruction_tuning_github/evaluation/website/cutegpt1b3-ift"
 # model_name = None
 # assistant_model_name = 'opt-350m'
 
