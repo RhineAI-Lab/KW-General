@@ -8,9 +8,8 @@ import json
 import datetime
 import time
 import os
-import argparse
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0,4'
+os.environ['CUDA_VISIBLE_DEVICES'] = '3,5'
 
 host = '10.176.40.138'
 port = 23496
@@ -23,44 +22,59 @@ model_name = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_13b_1
 # LORA_WEIGHTS = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_lora_623v1/llama_lora_623v1_epoch3"
 # LORA_WEIGHTS = "/data/heqianyu/big_model/instruction_tuning_github/ckp/llama_lora_615v1_epoch2"
 
-# assistant_model_name = "cutegpt1b3-ift"
-assistant_model_name = "/data/heqianyu/big_model/instruction_tuning_github/evaluation/website/cutegpt1b3-ift"
-
 
 import pdb
 import re
 import copy
 import warnings
+import argparse
 
+from typing import Optional, List, Callable, Tuple
+from fastchat.model.model_chatglm import InvalidScoreLogitsProcessor
 from flask import Flask, request, jsonify, Response, stream_with_context
 from flask_cors import CORS, cross_origin
 
-# import torch.nn as nn
-# from peft import PeftModel
-
-# from typing import Optional, List, Callable, Tuple
-# from fastchat.model.model_chatglm import InvalidScoreLogitsProcessor
-
-# from transformers import AutoModelWithLMHead, AutoTokenizer, GenerationConfig, AutoModelForCausalLM, \
-#     StoppingCriteriaList, TextStreamer, TextIteratorStreamer
-# from transformers.generation.utils import LogitsProcessorList, logger
-# from transformers.generation.logits_process import NoBadWordsLogitsProcessor
-# from transformers import AutoModelWithLMHead, T5Tokenizer, AutoTokenizer, LlamaForCausalLM, LlamaTokenizer
-
-
 from vllm import EngineArgs, LLMEngine, SamplingParams
 
-engine = None
-device = torch.device("cuda")
+
+parser = argparse.ArgumentParser()
+parser = EngineArgs.add_cli_args(parser)
+args = parser.parse_args()
+
+engine_args = EngineArgs.from_cli_args(args)
+engine_args.model = model_name
+engine_args.dtype = 'float16'
+engine_args.tensor_parallel_size = torch.cuda.device_count()
+engine_args.tokenizer = model_name if model_name else 'auto'
+
+print('Loading model...')
+engine = LLMEngine.from_engine_args(engine_args)
+request_id = 0
+results = {}
+sp = SamplingParams(
+    temperature=0.6,
+    logprobs=1,
+    prompt_logprobs=1,
+    max_tokens=1024,
+    stop_token_ids=[engine.tokenizer.convert_tokens_to_ids('<end>')],
+)
 
 
-def init(args):
-    # Parse the CLI argument and initialize the engine.
-    engine_args = EngineArgs.from_cli_args(args)
-    engine_args.model = assistant_model_name
-    engine_args.tokenizer = model_name if model_name else 'auto'
-    global engine
-    engine = LLMEngine.from_engine_args(engine_args)
+def inference():
+    while True:
+        request_outputs = engine.step()
+        if len(request_outputs) <= 0:
+            time.sleep(0.1)
+            continue
+        # print('Outputs:')
+        # print(request_outputs)
+        for output in request_outputs:
+            rid = output.request_id
+            if rid in results:
+                results[rid].append(output)
+
+
+Thread(target=inference).start()
 
 
 def parse_text(text):
@@ -94,45 +108,6 @@ def parse_draw(response):
         return match
 
 
-@torch.no_grad()
-def normal_chat(
-    query, history=None, prompt=overall_instruction, max_length=1024, min_length=3, num_beams=1,
-    do_sample=True, top_p=0.9, top_k=50, temperature=0.5, repetition_penalty=1.2, length_penalty=1.0,
-    logits_processor=None, **kwargs
-):
-    for i, (old_query, response) in enumerate(history):
-        # 多轮对话需要跟训练时保持一致
-        prompt += f"问：{old_query}\n答：\n{response}\n"
-    prompt += f"问：{query}\n答：\n"
-    test_prompts = [(prompt, SamplingParams(
-        top_p=top_p, top_k=top_k, temperature=temperature,
-        max_tokens=max_length, stop='<end>'
-    ))]
-    print(f'\nPrompt:\n{prompt}')
-
-    request_id = 0
-    output_id = 0
-    last = ''
-    while True:
-        # To test continuous batching, we add one request at each step.
-        if test_prompts:
-            prompt, sampling_params = test_prompts.pop(0)
-            engine.add_request(str(request_id), prompt, sampling_params)
-            request_id += 1
-
-        request_outputs = engine.step()
-        for request_outputs in request_outputs:
-            output = request_outputs.outputs[0]
-            ln = len(last)
-            last = output.text
-            # yield last[ln:]
-            print(f'\nOutput {output_id}:\n{last}')
-            output_id += 1
-
-        if not (engine.has_unfinished_requests() or test_prompts):
-            break
-
-
 nonce_used = []
 
 
@@ -154,7 +129,7 @@ def check_authentication(data):
         timestamp = data['timestamp']
         model_name = data['task']['model']
         messages = data['task']['messages']
-        query = messages[len(messages)-1]['content']
+        query = messages[len(messages) - 1]['content']
     except Exception as e:
         traceback.print_exc()
         return False, '缺少鉴权参数。'
@@ -235,23 +210,10 @@ def get_options(task):
     return memory_limit, top_p, top_k, temperature
 
 
-def chat_local_test():
-    history = []
-    for i in range(999):
-        print(f'\n[Round {i}]')
-        message = input('In: ')
-        # print('Out: ', end='')
-        chat_iter = normal_chat(message, history, memory_limit=4)
-        print('\nGenerate Finished.\n')
-        continue
-        for j, resp in filter_answer(chat_iter):
-            print('Box', j)
-            print(resp)
-
-
 app = Flask(__name__)
 app.env = 'development'
 CORS(app)
+
 
 def make_sse(obj):
     return f"data: {json.dumps(obj)}\n\n"
@@ -261,6 +223,7 @@ def filter_answer(chat_iter):
     ot = '回答：'
     last = ''
     for i, response in enumerate(chat_iter):
+        print(f'Batch {i}: {response}')
         if i == 0:
             continue
         if len(last) < len(ot):
@@ -276,11 +239,14 @@ def filter_answer(chat_iter):
 
 @app.route('/chat/full/<way>', methods=['POST'])
 def chat_full_stream(way='direct'):
+    global request_id, listeners
+
     def general_return(return_data):
         if way != 'stream':
             return jsonify(return_data)
         else:
             return make_sse(return_data)
+
     data = request.json
     auth_result, auth_info = check_authentication(data)
     if not auth_result:
@@ -299,51 +265,46 @@ def chat_full_stream(way='direct'):
         return general_return({'code': 10200, 'message': 'Model is not supported.', 'type': 'ERROR'})
 
     start_time = time.time()
-    chat_iter = normal_chat(
-        query,
-        history,
-        prompt=prompt,
-        memory_limit=memory_limit,
-        top_k=top_k,
-        top_p=top_p,
-        temperature=temperature,
-    )
+    request_id += 1
+    rid = 'R' + str(request_id)
+    results[rid] = []
 
-    if way != 'stream':
-        try:
-            print('Query:', query)
-            all_response = ''
-            for i, response in filter_answer(chat_iter):
-                # print(f'Batch {i}: {response}')
-                if i == 0:
-                    continue
-                all_response += response
-            all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
-            print('\n\nAll Response:')
-            print(all_response)
-            return jsonify({'code': 0, 'message': 'Success.', 'type': 'FINISHED', 'content': all_response})
-        except Exception as e:
-            return jsonify({'code': 10000, 'message': 'Unknown error: \n ' + repr(e) + '.', 'type': 'ERROR'})
+    prompt = overall_instruction
+    for i, (old_query, response) in enumerate(history):
+        # 多轮对话需要跟训练时保持一致
+        prompt += "问：{}\n答：\n{}\n".format(old_query, response)
+    prompt += "问：{}\n答：\n".format(query)
+    print(rid, prompt)
+    engine.add_request(rid, prompt, sp)
 
     def generate():
         try:
             yield make_sse({'code': 0, 'message': 'Success.', 'type': 'START'})
             all_response = ''
-            for i, response in filter_answer(chat_iter):
-                yield make_sse({
-                    'code': 0,
-                    'message': 'Success.',
-                    'type': 'BODY',
-                    'index': i,
-                    'content': response
-                })
-                all_response += response
-            all_response = all_response.replace("<end>", "").replace("<s>", "").replace("</s>", "")
+            ri = 0
+            while True:
+                result = results[rid]
+                if len(result) > ri:
+                    output = result[ri].outputs[0]
+                    text = output.text.replace("<end>", "").replace("<s>", "").replace("</s>", "").lstrip()
+                    yield make_sse({
+                        'code': 0,
+                        'message': 'Success.',
+                        'type': 'BODY',
+                        'index': ri,
+                        'content': text[len(all_response):]
+                    })
+                    all_response = text
+                    if result[ri].finished:
+                        del result[ri]
+                        break
+                    ri += 1
             print('\n\nAll Response:')
             print(all_response)
-            yield make_sse({'code': 0, 'message': 'Success.', 'type': 'END', 'content': all_response, 'finish_reason': 'stop'})
+            yield make_sse(
+                {'code': 0, 'message': 'Success.', 'type': 'END', 'content': all_response, 'finish_reason': 'stop'})
         except Exception as e:
-            print(repr(e))
+            traceback.print_exc()
             yield make_sse({'code': 10000, 'message': 'Unknown error: \n ' + repr(e) + '.', 'type': 'ERROR'})
 
     return Response(generate(), content_type='text/event-stream')
@@ -365,9 +326,5 @@ def flask():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser = EngineArgs.add_cli_args(parser)
-    args = parser.parse_args()
-    init(args)
-    # flask()
-    chat_local_test()
+    # chat_local_test()
+    flask()

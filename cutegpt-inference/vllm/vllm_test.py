@@ -1,5 +1,5 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '0,4'
+os.environ['CUDA_VISIBLE_DEVICES'] = '3,5'
 
 import torch
 from vllm import LLM, SamplingParams

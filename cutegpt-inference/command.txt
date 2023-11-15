@@ -5,6 +5,7 @@ cd /data/heqianyu/ghr_src/
 
 cd /data/heqianyu/ghr_src/
 nohup /usr/local/anaconda3/bin/python /data/heqianyu/ghr_src/sync/deploy/server_easy.py >/data/heqianyu/ghr_src/log/nohup.out 2>&1 &
+nohup /usr/local/anaconda3/bin/python /data/heqianyu/ghr_src/sync/deploy/server_vllm.py >/data/heqianyu/ghr_src/log/nohup.out 2>&1 &
 tail -f /data/heqianyu/ghr_src/log/nohup.out
 
 ps aux | grep python
@@ -12,3 +13,4 @@ nvidia-smi
 kill -9
 
 /data/heqianyu/ghr_src/sync/deploy/restart.sh
+
