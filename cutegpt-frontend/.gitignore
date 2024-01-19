@@ -29,3 +29,6 @@ package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*npm install sass-resources-loader
+
+build_v1
+build_v2

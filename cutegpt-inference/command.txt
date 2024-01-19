@@ -10,7 +10,7 @@ tail -f /data/heqianyu/ghr_src/log/nohup.out
 
 ps aux | grep python
 nvidia-smi
-kill -9
+kill -9 xxx
 
 /data/heqianyu/ghr_src/sync/deploy/restart.sh
 
