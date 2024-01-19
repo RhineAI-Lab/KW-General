@@ -220,7 +220,8 @@ export default class Inference {
     console.log(raw)
 
     // let url = "https://rhineai.com/chat/full/stream"
-    let url = "http://10.176.40.138:23496/chat/full/stream"
+    let url = "http://shuyantech.com:23496/chat/full/stream"
+    // let url = "http://10.176.40.138:23496/chat/full/stream"
     let headers = new Headers()
     headers.append("Content-Type", "application/json")
 
@@ -241,13 +242,14 @@ export default class Inference {
         }
 
         // @ts-ignore
-        const reader = response.body.getReader();
-        let decoder = new TextDecoder();
+        const reader = response.body.getReader()
+        let decoder = new TextDecoder()
         let data = '';
 
         let line = null
+        console.log(reader)
         while (true) {
-          const {done, value} = await reader.read();
+          const {done, value} = await reader.read()
           if (done) break;
 
           data += decoder.decode(value, {stream: true});
@@ -258,6 +260,10 @@ export default class Inference {
             let event = data.slice(0, eventEndIndex);
             data = data.slice(eventEndIndex + 2);
             line = JSON.parse(event.slice(6))
+            if (line['finish_reason']) {
+              this.setGenerating(false, line['finish_reason'])
+              callback({code: 0, message: 'Normal.', type: 'END'})
+            }
             console.log('AI Receive:', line)
             callback(line)
           }
