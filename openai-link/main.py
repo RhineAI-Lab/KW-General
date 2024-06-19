@@ -1,12 +1,11 @@
 # -*- coding: utf8 -*-
 
-import os
 import json
 import traceback
 
-from flask import Flask, request, jsonify, Response, stream_with_context
-from flask_cors import CORS, cross_origin
-from call import chat, chat_stream, chat_stream_full, get_model_list, api_test
+from flask import Flask, request, jsonify, Response
+from flask_cors import CORS
+from call import chat, chat_stream_full, get_model_list, api_test
 
 app = Flask(__name__)
 app.env = 'development'

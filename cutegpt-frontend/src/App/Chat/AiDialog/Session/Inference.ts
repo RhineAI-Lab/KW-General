@@ -220,8 +220,8 @@ export default class Inference {
     console.log(raw)
 
     // let url = "https://rhineai.com/chat/full/stream"
-    let url = "http://shuyantech.com:23496/chat/full/stream"
-    // let url = "http://10.176.40.138:23496/chat/full/stream"
+    // let url = "http://shuyantech.com:23496/chat/full/stream"
+    let url = "http://10.176.40.138:23496/chat/full/stream"
     let headers = new Headers()
     headers.append("Content-Type", "application/json")
 
