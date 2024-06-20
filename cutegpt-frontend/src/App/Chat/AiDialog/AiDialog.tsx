@@ -582,7 +582,7 @@ export default function AiDialog(props: AiDialogProps): JSX.Element {
           {
             messages.map((v, i) => {
               let [role, content] = [v.role, v.content]
-              let icon = '/chat/' + (role === 'assistant' ? 'ai-easy' : 'user') + '-head-icon.png'
+              let icon = '/image/chat/' + (role === 'assistant' ? 'ai-easy' : 'user') + '-head-icon.png'
               return <div
                 className={Style.message + ' ' + rolesStyle[v.role] + ' ' + (i == focusI ? Style.focusMessage : '')}
                 key={i}
